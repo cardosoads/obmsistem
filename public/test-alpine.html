@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Alpine.js</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Teste de Abas com Alpine.js</h1>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="{ activeTab: 'profile' }">
+            <!-- Navigation -->
+            <div class="lg:col-span-1">
+                <div class="bg-white shadow rounded-lg p-4">
+                    <h2 class="text-lg font-medium mb-4">Navegação</h2>
+                    <nav class="space-y-2">
+                        <button @click="activeTab = 'profile'" 
+                                :class="activeTab === 'profile' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'"
+                                class="w-full text-left px-4 py-2 rounded-md transition-colors">
+                            Perfil
+                        </button>
+                        <button @click="activeTab = 'security'" 
+                                :class="activeTab === 'security' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'"
+                                class="w-full text-left px-4 py-2 rounded-md transition-colors">
+                            Segurança
+                        </button>
+                        <button @click="activeTab = 'system'" 
+                                :class="activeTab === 'system' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'"
+                                class="w-full text-left px-4 py-2 rounded-md transition-colors">
+                            Sistema
+                        </button>
+                        <button @click="activeTab = 'omie'" 
+                                :class="activeTab === 'omie' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'"
+                                class="w-full text-left px-4 py-2 rounded-md transition-colors">
+                            API Omie
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="lg:col-span-2">
+                <!-- Profile Tab -->
+                <div x-show="activeTab === 'profile'" class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Configurações de Perfil</h3>
+                    <p>Conteúdo da aba de perfil...</p>
+                </div>
+                
+                <!-- Security Tab -->
+                <div x-show="activeTab === 'security'" class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Configurações de Segurança</h3>
+                    <p>Conteúdo da aba de segurança...</p>
+                </div>
+                
+                <!-- System Tab -->
+                <div x-show="activeTab === 'system'" class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Configurações do Sistema</h3>
+                    <p>Conteúdo da aba do sistema...</p>
+                </div>
+                
+                <!-- Omie Tab -->
+                <div x-show="activeTab === 'omie'" class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-medium mb-4">Configurações da API Omie</h3>
+                    <p>Conteúdo da aba da API Omie...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Debug Info -->
+        <div class="mt-8 bg-white shadow rounded-lg p-4" x-data="{ activeTab: 'profile' }">
+            <h3 class="text-lg font-medium mb-2">Debug Info</h3>
+            <p>Aba ativa: <span x-text="activeTab" class="font-mono bg-gray-100 px-2 py-1 rounded"></span></p>
+            <p>Alpine.js carregado: <span x-text="typeof Alpine !== 'undefined' ? 'Sim' : 'Não'" class="font-mono bg-gray-100 px-2 py-1 rounded"></span></p>
+        </div>
+    </div>
+</body>
+</html>

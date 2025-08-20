@@ -1,0 +1,380 @@
+{
+  "AC": {
+    "estado": "Acre",
+    "regional": "Norte",
+    "cidades": [
+      "Rio Branco",
+      "Cruzeiro do Sul",
+      "Sena Madureira",
+      "Tarauacá",
+      "Feijó"
+    ]
+  },
+  "AL": {
+    "estado": "Alagoas",
+    "regional": "Nordeste",
+    "cidades": [
+      "Maceió",
+      "Arapiraca",
+      "Palmeira dos Índios",
+      "Rio Largo",
+      "Penedo"
+    ]
+  },
+  "AP": {
+    "estado": "Amapá",
+    "regional": "Norte",
+    "cidades": [
+      "Macapá",
+      "Santana",
+      "Laranjal do Jari",
+      "Oiapoque",
+      "Mazagão"
+    ]
+  },
+  "AM": {
+    "estado": "Amazonas",
+    "regional": "Norte",
+    "cidades": [
+      "Manaus",
+      "Parintins",
+      "Itacoatiara",
+      "Manacapuru",
+      "Coari"
+    ]
+  },
+  "BA": {
+    "estado": "Bahia",
+    "regional": "Nordeste",
+    "cidades": [
+      "Salvador",
+      "Feira de Santana",
+      "Vitória da Conquista",
+      "Camaçari",
+      "Juazeiro",
+      "Ilhéus",
+      "Itabuna",
+      "Lauro de Freitas"
+    ]
+  },
+  "CE": {
+    "estado": "Ceará",
+    "regional": "Nordeste",
+    "cidades": [
+      "Fortaleza",
+      "Caucaia",
+      "Juazeiro do Norte",
+      "Maracanaú",
+      "Sobral",
+      "Crato",
+      "Itapipoca"
+    ]
+  },
+  "DF": {
+    "estado": "Distrito Federal",
+    "regional": "Centro-Oeste",
+    "cidades": [
+      "Brasília",
+      "Taguatinga",
+      "Ceilândia",
+      "Samambaia",
+      "Planaltina"
+    ]
+  },
+  "ES": {
+    "estado": "Espírito Santo",
+    "regional": "Sudeste",
+    "cidades": [
+      "Vitória",
+      "Vila Velha",
+      "Cariacica",
+      "Serra",
+      "Cachoeiro de Itapemirim",
+      "Linhares",
+      "São Mateus"
+    ]
+  },
+  "GO": {
+    "estado": "Goiás",
+    "regional": "Centro-Oeste",
+    "cidades": [
+      "Goiânia",
+      "Aparecida de Goiânia",
+      "Anápolis",
+      "Rio Verde",
+      "Luziânia",
+      "Águas Lindas de Goiás",
+      "Valparaíso de Goiás"
+    ]
+  },
+  "MA": {
+    "estado": "Maranhão",
+    "regional": "Nordeste",
+    "cidades": [
+      "São Luís",
+      "Imperatriz",
+      "São José de Ribamar",
+      "Timon",
+      "Caxias",
+      "Codó",
+      "Paço do Lumiar"
+    ]
+  },
+  "MT": {
+    "estado": "Mato Grosso",
+    "regional": "Centro-Oeste",
+    "cidades": [
+      "Cuiabá",
+      "Várzea Grande",
+      "Rondonópolis",
+      "Sinop",
+      "Tangará da Serra",
+      "Cáceres",
+      "Sorriso"
+    ]
+  },
+  "MS": {
+    "estado": "Mato Grosso do Sul",
+    "regional": "Centro-Oeste",
+    "cidades": [
+      "Campo Grande",
+      "Dourados",
+      "Três Lagoas",
+      "Corumbá",
+      "Ponta Porã",
+      "Naviraí",
+      "Nova Andradina"
+    ]
+  },
+  "MG": {
+    "estado": "Minas Gerais",
+    "regional": "Sudeste",
+    "cidades": [
+      "Belo Horizonte",
+      "Uberlândia",
+      "Contagem",
+      "Juiz de Fora",
+      "Betim",
+      "Montes Claros",
+      "Ribeirão das Neves",
+      "Uberaba",
+      "Governador Valadares",
+      "Ipatinga"
+    ]
+  },
+  "PA": {
+    "estado": "Pará",
+    "regional": "Norte",
+    "cidades": [
+      "Belém",
+      "Ananindeua",
+      "Santarém",
+      "Marabá",
+      "Parauapebas",
+      "Castanhal",
+      "Abaetetuba"
+    ]
+  },
+  "PB": {
+    "estado": "Paraíba",
+    "regional": "Nordeste",
+    "cidades": [
+      "João Pessoa",
+      "Campina Grande",
+      "Santa Rita",
+      "Patos",
+      "Bayeux",
+      "Sousa",
+      "Cajazeiras"
+    ]
+  },
+  "PR": {
+    "estado": "Paraná",
+    "regional": "Sul",
+    "cidades": [
+      "Curitiba",
+      "Londrina",
+      "Maringá",
+      "Ponta Grossa",
+      "Cascavel",
+      "São José dos Pinhais",
+      "Foz do Iguaçu",
+      "Colombo",
+      "Guarapuava"
+    ]
+  },
+  "PE": {
+    "estado": "Pernambuco",
+    "regional": "Nordeste",
+    "cidades": [
+      "Recife",
+      "Jaboatão dos Guararapes",
+      "Olinda",
+      "Caruaru",
+      "Petrolina",
+      "Paulista",
+      "Cabo de Santo Agostinho",
+      "Camaragibe"
+    ]
+  },
+  "PI": {
+    "estado": "Piauí",
+    "regional": "Nordeste",
+    "cidades": [
+      "Teresina",
+      "Parnaíba",
+      "Picos",
+      "Piripiri",
+      "Floriano",
+      "Campo Maior",
+      "Barras"
+    ]
+  },
+  "RJ": {
+    "estado": "Rio de Janeiro",
+    "regional": "Sudeste",
+    "cidades": [
+      "Rio de Janeiro",
+      "São Gonçalo",
+      "Duque de Caxias",
+      "Nova Iguaçu",
+      "Niterói",
+      "Campos dos Goytacazes",
+      "Belford Roxo",
+      "São João de Meriti",
+      "Petrópolis",
+      "Volta Redonda"
+    ]
+  },
+  "RN": {
+    "estado": "Rio Grande do Norte",
+    "regional": "Nordeste",
+    "cidades": [
+      "Natal",
+      "Mossoró",
+      "Parnamirim",
+      "São Gonçalo do Amarante",
+      "Macaíba",
+      "Ceará-Mirim",
+      "Caicó"
+    ]
+  },
+  "RS": {
+    "estado": "Rio Grande do Sul",
+    "regional": "Sul",
+    "cidades": [
+      "Porto Alegre",
+      "Caxias do Sul",
+      "Pelotas",
+      "Canoas",
+      "Santa Maria",
+      "Gravataí",
+      "Viamão",
+      "Novo Hamburgo",
+      "São Leopoldo",
+      "Rio Grande"
+    ]
+  },
+  "RO": {
+    "estado": "Rondônia",
+    "regional": "Norte",
+    "cidades": [
+      "Porto Velho",
+      "Ji-Paraná",
+      "Ariquemes",
+      "Vilhena",
+      "Cacoal",
+      "Rolim de Moura",
+      "Jaru"
+    ]
+  },
+  "RR": {
+    "estado": "Roraima",
+    "regional": "Norte",
+    "cidades": [
+      "Boa Vista",
+      "Rorainópolis",
+      "Caracaraí",
+      "Alto Alegre",
+      "Mucajaí"
+    ]
+  },
+  "SC": {
+    "estado": "Santa Catarina",
+    "regional": "Sul",
+    "cidades": [
+      "Florianópolis",
+      "Joinville",
+      "Blumenau",
+      "São José",
+      "Criciúma",
+      "Chapecó",
+      "Itajaí",
+      "Jaraguá do Sul",
+      "Lages",
+      "Palhoça"
+    ]
+  },
+  "SP": {
+    "estado": "São Paulo",
+    "regional": "Sudeste",
+    "cidades": [
+      "São Paulo",
+      "Guarulhos",
+      "Campinas",
+      "São Bernardo do Campo",
+      "Santo André",
+      "Osasco",
+      "Ribeirão Preto",
+      "Sorocaba",
+      "Mauá",
+      "São José dos Campos",
+      "Mogi das Cruzes",
+      "Diadema",
+      "Jundiaí",
+      "Carapicuíba",
+      "Piracicaba",
+      "Bauru",
+      "São Vicente",
+      "Itaquaquecetuba",
+      "Franca",
+      "Guarujá",
+      "Taubaté",
+      "Praia Grande",
+      "Limeira",
+      "Suzano",
+      "Taboão da Serra",
+      "Sumaré",
+      "Barueri",
+      "Embu das Artes",
+      "São Carlos",
+      "Marília"
+    ]
+  },
+  "SE": {
+    "estado": "Sergipe",
+    "regional": "Nordeste",
+    "cidades": [
+      "Aracaju",
+      "Nossa Senhora do Socorro",
+      "Lagarto",
+      "Itabaiana",
+      "São Cristóvão",
+      "Estância",
+      "Tobias Barreto"
+    ]
+  },
+  "TO": {
+    "estado": "Tocantins",
+    "regional": "Norte",
+    "cidades": [
+      "Palmas",
+      "Araguaína",
+      "Gurupi",
+      "Porto Nacional",
+      "Paraíso do Tocantins",
+      "Colinas do Tocantins",
+      "Guaraí"
+    ]
+  }
+}
