@@ -14,9 +14,10 @@ class OmieApiService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.omie.api_url');
-        $this->appKey = config('services.omie.app_key');
-        $this->appSecret = config('services.omie.app_secret');
+        // Carrega as configurações do banco de dados
+        $this->baseUrl = config('services.omie.api_url', 'https://app.omie.com.br/api/v1/');
+        $this->appKey = \App\Models\Setting::get('omie_app_key');
+        $this->appSecret = \App\Models\Setting::get('omie_app_secret');
     }
 
     /**
@@ -24,6 +25,12 @@ class OmieApiService
      */
     public function getClientes(array $filters = []): array
     {
+        // Verifica se as chaves estão configuradas
+        if (empty($this->appKey) || empty($this->appSecret)) {
+            Log::error('Chaves da API Omie não configuradas');
+            return [];
+        }
+        
         $cacheKey = 'omie_clientes_' . md5(serialize($filters));
         
         return Cache::remember($cacheKey, 300, function () use ($filters) {
@@ -69,6 +76,12 @@ class OmieApiService
      */
     public function getCliente(int $omieId): ?array
     {
+        // Verifica se as chaves estão configuradas
+        if (empty($this->appKey) || empty($this->appSecret)) {
+            Log::error('Chaves da API Omie não configuradas');
+            return null;
+        }
+        
         $cacheKey = "omie_cliente_{$omieId}";
         
         return Cache::remember($cacheKey, 600, function () use ($omieId) {

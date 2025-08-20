@@ -14,9 +14,10 @@ class OmieService
 
     public function __construct()
     {
-        $this->appKey = config('services.omie.app_key');
-        $this->appSecret = config('services.omie.app_secret');
-        $this->apiUrl = config('services.omie.api_url');
+        // Carrega as configurações do banco de dados
+        $this->appKey = \App\Models\Setting::get('omie_app_key');
+        $this->appSecret = \App\Models\Setting::get('omie_app_secret');
+        $this->apiUrl = config('services.omie.api_url', 'https://app.omie.com.br/api/v1/');
     }
 
     /**
@@ -27,6 +28,15 @@ class OmieService
     public function testConnection()
     {
         try {
+            // Verifica se as chaves estão configuradas
+            if (empty($this->appKey) || empty($this->appSecret)) {
+                return [
+                    'success' => false,
+                    'message' => 'A chave de acesso não está preenchida ou não é válida. Configure as chaves da API Omie nas configurações do sistema.',
+                    'error' => 'Chaves da API não configuradas'
+                ];
+            }
+            
             // Teste simples com ListarClientes com parâmetros mínimos
             $response = $this->makeRequest('geral/clientes/', 'ListarClientes', [
                 'pagina' => 1,
