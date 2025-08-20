@@ -17,6 +17,7 @@ class Fornecedor extends Model
         'phone',
         'active'
     ];
+    
 
     protected $casts = [
         'created_at' => 'datetime',
