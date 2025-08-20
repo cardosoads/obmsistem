@@ -245,7 +245,7 @@
                                 <input type="text" 
                                        id="omie_app_key" 
                                        name="omie_app_key" 
-                                       value="{{ old('omie_app_key', $omieSettings->where('key', 'omie_app_key')->first()->value ?? '') }}" 
+                                       value="{{ old('omie_app_key', $omieSettings['omie_app_key'] ?? '') }}" 
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('omie_app_key') border-red-300 @enderror"
                                        placeholder="Digite o App Key fornecido pela Omie"
                                        required>
@@ -262,7 +262,7 @@
                                 <input type="password" 
                                        id="omie_app_secret" 
                                        name="omie_app_secret" 
-                                       value="{{ old('omie_app_secret', $omieSettings->where('key', 'omie_app_secret')->first()->value ?? '') }}" 
+                                       value="{{ old('omie_app_secret', $omieSettings['omie_app_secret'] ?? '') }}" 
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('omie_app_secret') border-red-300 @enderror"
                                        placeholder="Digite o App Secret fornecido pela Omie"
                                        required>

@@ -35,7 +35,15 @@ class Setting extends Model
                 return $default;
             }
             
-            $value = $setting->is_encrypted ? Crypt::decrypt($setting->value) : $setting->value;
+            if ($setting->is_encrypted) {
+                $value = Crypt::decryptString($setting->value);
+                // Se o valor ainda estiver serializado, deserializar
+                if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
+                    $value = unserialize($value);
+                }
+            } else {
+                $value = $setting->value;
+            }
             
             return static::castValue($value, $setting->type);
         });
@@ -92,7 +100,15 @@ class Setting extends Model
     public static function getByGroup(string $group)
     {
         return static::where('group', $group)->get()->mapWithKeys(function ($setting) {
-            $value = $setting->is_encrypted ? Crypt::decrypt($setting->value) : $setting->value;
+            if ($setting->is_encrypted) {
+                $value = Crypt::decryptString($setting->value);
+                // Se o valor ainda estiver serializado, deserializar
+                if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
+                    $value = unserialize($value);
+                }
+            } else {
+                $value = $setting->value;
+            }
             return [$setting->key => static::castValue($value, $setting->type)];
         });
     }
