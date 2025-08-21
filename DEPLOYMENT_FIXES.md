@@ -40,6 +40,19 @@ public function register(): void
 }
 ```
 
+#### 3. Correção da Ordem dos Scripts do Composer
+Reordenamos os scripts `post-autoload-dump` no `composer.json` para executar `package:discover` antes de `config:clear`:
+
+```json
+"post-autoload-dump": [
+    "@php artisan package:discover --ansi",
+    "@php artisan clear-compiled",
+    "@php artisan config:clear"
+]
+```
+
+**Motivo**: O comando `config:clear` tenta carregar todos os service providers antes do `package:discover` processar as exclusões do auto-discovery.
+
 ### Benefícios da Solução
 
 1. **Compatibilidade com Produção**: O Laravel Pail não será carregado em produção, evitando erros
