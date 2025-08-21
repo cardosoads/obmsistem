@@ -30,12 +30,23 @@ class OmieService
         try {
             // Verifica se as chaves estão configuradas
             if (empty($this->appKey) || empty($this->appSecret)) {
+                Log::warning('Tentativa de teste de conexão Omie sem chaves configuradas');
                 return [
                     'success' => false,
                     'message' => 'A chave de acesso não está preenchida ou não é válida. Configure as chaves da API Omie nas configurações do sistema.',
-                    'error' => 'Chaves da API não configuradas'
+                    'error' => 'Chaves da API não configuradas',
+                    'debug_info' => [
+                        'app_key_configured' => !empty($this->appKey),
+                        'app_secret_configured' => !empty($this->appSecret),
+                        'api_url' => $this->apiUrl
+                    ]
                 ];
             }
+            
+            Log::info('Iniciando teste de conexão com API Omie', [
+                'api_url' => $this->apiUrl,
+                'app_key_length' => strlen($this->appKey)
+            ]);
             
             // Teste simples com ListarClientes com parâmetros mínimos
             $response = $this->makeRequest('geral/clientes/', 'ListarClientes', [
@@ -44,6 +55,7 @@ class OmieService
             ]);
             
             if ($response['success']) {
+                Log::info('Teste de conexão Omie bem-sucedido');
                 return [
                     'success' => true,
                     'message' => 'Conexão estabelecida com sucesso!',
@@ -51,19 +63,38 @@ class OmieService
                 ];
             }
             
+            Log::error('Falha no teste de conexão Omie', [
+                'response' => $response,
+                'status_code' => $response['status_code'] ?? null
+            ]);
+            
             return [
                 'success' => false,
                 'message' => 'Falha na conexão: ' . ($response['message'] ?? 'Erro desconhecido'),
-                'error' => $response['error'] ?? null
+                'error' => $response['error'] ?? null,
+                'debug_info' => [
+                    'status_code' => $response['status_code'] ?? null,
+                    'api_url' => $this->apiUrl
+                ]
             ];
             
         } catch (Exception $e) {
-            Log::error('Erro ao testar conexão Omie: ' . $e->getMessage());
+            Log::error('Exceção ao testar conexão Omie', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             
             return [
                 'success' => false,
                 'message' => 'Erro de conexão: ' . $e->getMessage(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'debug_info' => [
+                    'exception_type' => get_class($e),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
             ];
         }
     }
@@ -78,6 +109,8 @@ class OmieService
      */
     private function makeRequest($endpoint, $call, $param = [])
     {
+        $startTime = microtime(true);
+        
         try {
             $url = rtrim($this->apiUrl, '/') . '/' . ltrim($endpoint, '/');
             
@@ -88,53 +121,141 @@ class OmieService
                 'param' => [$param] // Sempre enviar como array, mesmo se vazio
             ];
 
-            Log::info('Omie API Request', [
+            Log::info('Omie API Request iniciada', [
                 'url' => $url,
                 'call' => $call,
-                'app_key' => $this->appKey
+                'app_key_length' => strlen($this->appKey),
+                'payload_size' => strlen(json_encode($payload)),
+                'php_version' => PHP_VERSION,
+                'curl_version' => curl_version()['version'] ?? 'N/A'
             ]);
+
+            // Teste de conectividade básica antes da requisição
+            $parsedUrl = parse_url($url);
+            $host = $parsedUrl['host'] ?? '';
+            $port = $parsedUrl['port'] ?? ($parsedUrl['scheme'] === 'https' ? 443 : 80);
+            
+            if (!empty($host)) {
+                $connection = @fsockopen($host, $port, $errno, $errstr, 5);
+                if (!$connection) {
+                    Log::error('Falha na conectividade básica com API Omie', [
+                        'host' => $host,
+                        'port' => $port,
+                        'errno' => $errno,
+                        'errstr' => $errstr
+                    ]);
+                } else {
+                    fclose($connection);
+                    Log::info('Conectividade básica com API Omie OK', [
+                        'host' => $host,
+                        'port' => $port
+                    ]);
+                }
+            }
 
             $response = Http::timeout(30)
                 ->withHeaders([
                     'Content-Type' => 'application/json',
+                    'User-Agent' => 'Laravel-OBM-System/1.0'
                 ])
                 ->post($url, $payload);
+
+            $duration = round((microtime(true) - $startTime) * 1000, 2);
 
             if ($response->successful()) {
                 $data = $response->json();
                 
-                Log::info('Omie API Response Success', ['data' => $data]);
+                Log::info('Omie API Response Success', [
+                    'status_code' => $response->status(),
+                    'duration_ms' => $duration,
+                    'response_size' => strlen($response->body()),
+                    'data_keys' => is_array($data) ? array_keys($data) : 'not_array'
+                ]);
                 
                 return [
                     'success' => true,
                     'data' => $data,
-                    'status_code' => $response->status()
+                    'status_code' => $response->status(),
+                    'duration_ms' => $duration
                 ];
             }
 
             $errorData = $response->json();
             Log::error('Omie API Error Response', [
-                'status' => $response->status(),
-                'body' => $errorData
+                'status_code' => $response->status(),
+                'duration_ms' => $duration,
+                'error_data' => $errorData,
+                'response_headers' => $response->headers()
             ]);
 
             return [
                 'success' => false,
                 'message' => $errorData['faultstring'] ?? 'Erro na API',
                 'error' => $errorData,
-                'status_code' => $response->status()
+                'status_code' => $response->status(),
+                'duration_ms' => $duration
             ];
 
-        } catch (Exception $e) {
-            Log::error('Omie API Exception', [
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            $duration = round((microtime(true) - $startTime) * 1000, 2);
+            
+            Log::error('Omie API Connection Exception', [
                 'message' => $e->getMessage(),
+                'duration_ms' => $duration,
+                'url' => $url ?? 'N/A',
+                'exception_type' => 'ConnectionException',
                 'trace' => $e->getTraceAsString()
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Erro de conexão: ' . $e->getMessage(),
-                'error' => $e->getMessage()
+                'message' => 'Erro de conexão com a API Omie: ' . $e->getMessage(),
+                'error' => $e->getMessage(),
+                'error_type' => 'connection',
+                'duration_ms' => $duration
+            ];
+            
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            $duration = round((microtime(true) - $startTime) * 1000, 2);
+            
+            Log::error('Omie API Request Exception', [
+                'message' => $e->getMessage(),
+                'duration_ms' => $duration,
+                'url' => $url ?? 'N/A',
+                'exception_type' => 'RequestException',
+                'response_status' => $e->response ? $e->response->status() : 'N/A',
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Erro na requisição para API Omie: ' . $e->getMessage(),
+                'error' => $e->getMessage(),
+                'error_type' => 'request',
+                'status_code' => $e->response ? $e->response->status() : null,
+                'duration_ms' => $duration
+            ];
+            
+        } catch (Exception $e) {
+            $duration = round((microtime(true) - $startTime) * 1000, 2);
+            
+            Log::error('Omie API General Exception', [
+                'message' => $e->getMessage(),
+                'duration_ms' => $duration,
+                'url' => $url ?? 'N/A',
+                'exception_type' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Erro inesperado: ' . $e->getMessage(),
+                'error' => $e->getMessage(),
+                'error_type' => 'general',
+                'exception_type' => get_class($e),
+                'duration_ms' => $duration
             ];
         }
     }
