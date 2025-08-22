@@ -144,17 +144,11 @@
                         <span class="text-sm font-medium text-gray-900">Novo Orçamento</span>
                     </a>
                     
-                    <!-- Clientes removido: agora utilizamos integração com API OMIE -->
-                    <div class="flex flex-col items-center p-4 bg-gray-100 rounded-lg opacity-50">
-                        <i class="fas fa-user-tie text-gray-400 text-3xl mb-2"></i>
-                        <span class="text-sm font-medium text-gray-500">Clientes (API OMIE)</span>
-                    </div>
-                    
-                    <!-- Fornecedores removidos - integração via API OMIE -->
-                    <div class="flex flex-col items-center p-4 bg-gray-50 rounded-lg opacity-50">
-                        <i class="fas fa-truck text-orange-500 text-3xl mb-2"></i>
-                        <span class="text-sm font-medium text-gray-500">Fornecedores (API OMIE)</span>
-                    </div>
+                    <!-- Clientes/Fornecedores unificado - API OMIE -->
+                    <a href="{{ route('admin.omie.pessoas') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                        <i class="fas fa-users text-blue-500 text-3xl mb-2"></i>
+                        <span class="text-sm font-medium text-gray-900">Clientes/Fornecedores</span>
+                    </a>
                     
                     <a href="{{ route('admin.bases.index') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
                         <i class="fas fa-map-marker-alt text-red-500 text-3xl mb-2"></i>
