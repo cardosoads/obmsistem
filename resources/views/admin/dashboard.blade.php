@@ -147,7 +147,7 @@
                     <!-- Clientes/Fornecedores unificado - API OMIE -->
                     <a href="{{ route('admin.omie.pessoas') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
                         <i class="fas fa-users text-blue-500 text-3xl mb-2"></i>
-                        <span class="text-sm font-medium text-gray-900">Clientes/Fornecedores</span>
+                        <span class="text-sm font-medium text-gray-900 text-center">Clientes/<br>Fornecedores</span>
                     </a>
                     
                     <a href="{{ route('admin.bases.index') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
