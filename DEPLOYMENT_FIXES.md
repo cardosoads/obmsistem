@@ -97,37 +97,85 @@ O CollisionServiceProvider é uma dependência de desenvolvimento que não é in
 
 ### Solução Implementada
 
-#### Registro Condicional do CollisionServiceProvider
+#### 1. Registro Condicional do CollisionServiceProvider
 
-1. **Modificação do `bootstrap/providers.php`**: Adicionado registro condicional
-2. **Verificação de existência da classe**: Usado `class_exists()` antes do registro
-3. **Limpeza do cache**: Removidos arquivos de cache para aplicar mudanças
-
-**Código da Solução:**
+**Modificação do `bootstrap/providers.php`:**
 ```php
-// Registro condicional do CollisionServiceProvider
-if (class_exists('NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider')) {
-    $providers[] = 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider';
-}
+<?php
+
+return array_filter([
+    App\Providers\AppServiceProvider::class,
+    // Collision é apenas para desenvolvimento
+    class_exists('NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider') 
+        ? NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider::class 
+        : null,
+]);
+```
+
+#### 2. Script de Deploy Otimizado
+
+Criado `deploy.sh` com as seguintes melhorias:
+
+1. **Limpeza de Cache Preventiva**: Remove arquivos de cache antes da instalação
+2. **Regeneração do Autoload**: Força regeneração após instalar dependências
+3. **Limpeza Completa do Laravel**: Limpa todos os caches do framework
+4. **Otimização para Produção**: Aplica caches otimizados após deploy
+
+**Principais comandos do script:**
+```bash
+# Limpeza preventiva
+rm -f bootstrap/cache/packages.php
+rm -f bootstrap/cache/services.php
+
+# Instalação otimizada
+composer install --no-dev --optimize-autoloader
+composer dump-autoload --optimize --no-dev
+
+# Limpeza do Laravel
+php artisan config:clear
+php artisan cache:clear
+php artisan clear-compiled
+
+# Otimização final
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 ```
 
 ### Benefícios da Solução
 
-1. **Compatibilidade com Produção**: Permite deploy sem dependências de desenvolvimento
-2. **Funcionalidade Preservada**: Mantém debug em ambiente local
-3. **Flexibilidade**: Evita erros durante `composer install --no-dev`
-4. **Estabilidade**: Deployments mais confiáveis
+1. **Compatibilidade Total com Produção**: Elimina completamente erros de dependências dev
+2. **Deploy Mais Rápido**: Caches otimizados melhoram performance
+3. **Tratamento de Erros**: Script para se houver falhas
+4. **Logs Detalhados**: Facilita debugging de problemas
+5. **Verificação Automática**: Confirma funcionamento após deploy
 
-### Arquivos Modificados
+### Arquivos Criados/Modificados
 
 - `bootstrap/providers.php`: Registro condicional do CollisionServiceProvider
+- `deploy.sh`: Script de deploy otimizado
+- `DEPLOY_GUIDE.md`: Documentação completa do processo
+
+### Como Usar
+
+**No Laravel Forge:**
+Substitua o script de deploy por:
+```bash
+bash deploy.sh
+```
+
+**Manualmente:**
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
 
 ### Prevenção
 
 Para evitar problemas similares no futuro:
-1. Sempre teste deployments em ambiente similar à produção
-2. Use `composer install --no-dev` localmente para simular produção
-3. Avalie cuidadosamente a necessidade de pacotes de desenvolvimento
-4. Considere alternativas que não causem conflitos em produção
-5. Mantenha dependências de desenvolvimento ao mínimo necessário
-6. Use registro condicional para service providers de desenvolvimento
+1. Use o script `deploy.sh` para todos os deployments
+2. Teste localmente com `composer install --no-dev`
+3. Monitore logs de deploy para identificar problemas cedo
+4. Mantenha dependências de desenvolvimento ao mínimo
+5. Use registro condicional para service providers de desenvolvimento
+6. Documente mudanças no processo de deploy

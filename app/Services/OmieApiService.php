@@ -15,9 +15,9 @@ class OmieApiService
     public function __construct()
     {
         // Carrega as configurações das variáveis de ambiente
-        $this->baseUrl = config('services.omie.api_url', env('OMIE_API_URL', 'https://app.omie.com.br/api/v1/'));
-        $this->appKey = env('OMIE_APP_KEY');
-        $this->appSecret = env('OMIE_APP_SECRET');
+        $this->baseUrl = config('services.omie.api_url', 'https://app.omie.com.br/api/v1/');
+        $this->appKey = config('services.omie.app_key');
+        $this->appSecret = config('services.omie.app_secret');
     }
 
     /**
