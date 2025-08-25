@@ -118,7 +118,7 @@ class OmieService
                 'call' => $call,
                 'app_key' => $this->appKey,
                 'app_secret' => $this->appSecret,
-                'param' => [$param] // Sempre enviar como array, mesmo se vazio
+                'param' => $param // Enviar parâmetros diretamente, não como array aninhado
             ];
 
             Log::info('Omie API Request iniciada', [
