@@ -103,12 +103,12 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Status</h3>
             <div class="flex items-center">
                 <input type="checkbox" 
-                       id="ativo" 
-                       name="ativo" 
+                       id="active" 
+                       name="active" 
                        value="1" 
-                       {{ old('ativo', $base->ativo) ? 'checked' : '' }}
+                       {{ old('active', $base->active) ? 'checked' : '' }}
                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="ativo" class="ml-2 block text-sm text-gray-700">
+                <label for="active" class="ml-2 block text-sm text-gray-700">
                     Base ativa
                 </label>
             </div>

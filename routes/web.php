@@ -163,6 +163,15 @@ Route::middleware(['admin.auth'])->group(function () {
 
 });
 
+// API de Localidades IBGE (sem autenticação para uso via AJAX)
+Route::prefix('admin/localidades')->name('admin.localidades.')->group(function () {
+    Route::get('/estados', [\App\Http\Controllers\Admin\LocalidadeController::class, 'estados'])->name('estados');
+    Route::get('/municipios/{uf}', [\App\Http\Controllers\Admin\LocalidadeController::class, 'municipiosPorUf'])->name('municipios.uf');
+    Route::get('/municipio/{id}', [\App\Http\Controllers\Admin\LocalidadeController::class, 'municipio'])->name('municipio');
+    Route::get('/regioes', [\App\Http\Controllers\Admin\LocalidadeController::class, 'regioes'])->name('regioes');
+    Route::post('/limpar-cache', [\App\Http\Controllers\Admin\LocalidadeController::class, 'limparCache'])->name('limpar-cache');
+});
+
 // API OMIE - Clientes e Fornecedores (sem autenticação para uso via AJAX)
 Route::prefix('api/omie')->name('api.omie.')->group(function () {
     Route::get('/clientes/search', [\App\Http\Controllers\Api\OmieClienteController::class, 'search'])->name('clientes.search');
@@ -171,6 +180,8 @@ Route::prefix('api/omie')->name('api.omie.')->group(function () {
     
     Route::get('/fornecedores/search', [\App\Http\Controllers\Api\OmieFornecedorController::class, 'search'])->name('fornecedores.search');
     Route::get('/fornecedores/{omieId}', [\App\Http\Controllers\Api\OmieFornecedorController::class, 'show'])->name('fornecedores.show');
+
+
 
 });
 

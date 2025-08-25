@@ -55,12 +55,18 @@ class BaseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'uf' => 'required|string|size:2',
             'city' => 'required|string|max:100',
-            'uf' => 'nullable|string|size:2',
-            'regional' => 'nullable|string|max:50',
+            'regional' => 'required|string|max:50',
             'sigla' => 'nullable|string|max:3|regex:/^[A-Z0-9\s]+$/',
             'supervisor' => 'nullable|string|max:255',
             'active' => 'boolean'
+        ], [
+            'uf.required' => 'O campo UF é obrigatório.',
+            'uf.size' => 'O campo UF deve ter exatamente 2 caracteres.',
+            'city.required' => 'O campo cidade é obrigatório.',
+            'regional.required' => 'O campo regional é obrigatório.',
+            'sigla.regex' => 'A sigla deve conter apenas letras maiúsculas, números e espaços.'
         ]);
         
         try {
@@ -98,12 +104,18 @@ class BaseController extends Controller
     public function update(Request $request, Base $base)
     {
         $validated = $request->validate([
+            'uf' => 'required|string|size:2',
             'city' => 'required|string|max:100',
-            'uf' => 'nullable|string|size:2',
-            'regional' => 'nullable|string|max:50',
+            'regional' => 'required|string|max:50',
             'sigla' => 'nullable|string|max:3|regex:/^[A-Z0-9\s]+$/',
             'supervisor' => 'nullable|string|max:255',
             'active' => 'boolean'
+        ], [
+            'uf.required' => 'O campo UF é obrigatório.',
+            'uf.size' => 'O campo UF deve ter exatamente 2 caracteres.',
+            'city.required' => 'O campo cidade é obrigatório.',
+            'regional.required' => 'O campo regional é obrigatório.',
+            'sigla.regex' => 'A sigla deve conter apenas letras maiúsculas, números e espaços.'
         ]);
         
         try {
