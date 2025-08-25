@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrcamentoAumentoKm extends Model
 {
+    use HasFactory;
+
     protected $table = 'orcamento_aumento_km';
 
     protected $fillable = [
@@ -29,6 +31,7 @@ class OrcamentoAumentoKm extends Model
 
     protected $casts = [
         'km_dia' => 'decimal:2',
+        'qtd_dias' => 'integer',
         'km_total_mes' => 'decimal:2',
         'combustivel_km_litro' => 'decimal:2',
         'total_combustivel' => 'decimal:2',
@@ -39,48 +42,123 @@ class OrcamentoAumentoKm extends Model
         'valor_lucro' => 'decimal:2',
         'impostos_percentual' => 'decimal:2',
         'valor_impostos' => 'decimal:2',
-        'valor_total' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'valor_total' => 'decimal:2'
     ];
 
     /**
-     * Relacionamento com orçamento
+     * Relacionamento com Orcamento
      */
-    public function orcamento(): BelongsTo
+    public function orcamento()
     {
         return $this->belongsTo(Orcamento::class);
     }
 
     /**
-     * Calcula o valor total adicional baseado em KM e valor por KM
+     * Calcula o valor total adicional
      */
-    public function calcularValorTotalAdicional(): float
+    public function calcularValorTotalAdicional()
     {
-        return $this->km_adicional * $this->valor_km_adicional;
+        $custoTotal = $this->custo_total_combustivel_he ?? 0;
+        $valorLucro = $this->valor_lucro ?? 0;
+        $valorImpostos = $this->valor_impostos ?? 0;
+        
+        return $custoTotal + $valorLucro + $valorImpostos;
     }
 
     /**
      * Accessor para KM adicional formatado
      */
-    public function getKmAdicionalFormattedAttribute(): string
+    public function getKmAdicionalAttribute()
     {
-        return number_format($this->km_adicional, 2, ',', '.') . ' km';
+        return number_format($this->km_total_mes ?? 0, 2, ',', '.');
     }
 
     /**
-     * Accessor para valor por KM adicional formatado
+     * Accessor para valor KM adicional formatado
      */
-    public function getValorKmAdicionalFormattedAttribute(): string
+    public function getValorKmAdicionalAttribute()
     {
-        return 'R$ ' . number_format($this->valor_km_adicional, 2, ',', '.');
+        return 'R$ ' . number_format($this->valor_combustivel ?? 0, 2, ',', '.');
     }
 
     /**
      * Accessor para valor total adicional formatado
      */
-    public function getValorTotalAdicionalFormattedAttribute(): string
+    public function getValorTotalAdicionalAttribute()
     {
-        return 'R$ ' . number_format($this->valor_total_adicional, 2, ',', '.');
+        return 'R$ ' . number_format($this->valor_total ?? 0, 2, ',', '.');
+    }
+
+    /**
+     * Calcula o KM total do mês
+     */
+    public function calcularKmTotalMes(): float
+    {
+        return $this->km_dia * $this->qtd_dias;
+    }
+
+    /**
+     * Calcula o total de combustível necessário
+     */
+    public function calcularTotalCombustivel(): float
+    {
+        if ($this->combustivel_km_litro > 0) {
+            return $this->km_total_mes / $this->combustivel_km_litro;
+        }
+        return 0;
+    }
+
+    /**
+     * Calcula o custo total de combustível + hora extra
+     */
+    public function calcularCustoTotalCombustivelHe(): float
+    {
+        return ($this->total_combustivel * $this->valor_combustivel) + $this->hora_extra;
+    }
+
+    /**
+     * Calcula o valor do lucro
+     */
+    public function calcularValorLucro(): float
+    {
+        return $this->custo_total_combustivel_he * ($this->lucro_percentual / 100);
+    }
+
+    /**
+     * Calcula o subtotal (custo + lucro)
+     */
+    public function calcularSubtotal(): float
+    {
+        return $this->custo_total_combustivel_he + $this->valor_lucro;
+    }
+
+    /**
+     * Calcula o valor dos impostos sobre o subtotal
+     */
+    public function calcularValorImpostos(): float
+    {
+        return $this->calcularSubtotal() * ($this->impostos_percentual / 100);
+    }
+
+    /**
+     * Calcula o valor total final
+     */
+    public function calcularValorTotal(): float
+    {
+        return $this->calcularSubtotal() + $this->calcularValorImpostos();
+    }
+
+    /**
+     * Atualiza todos os valores calculados
+     * Este é o método que o controller está chamando
+     */
+    public function calcularValores(): void
+    {
+        $this->km_total_mes = $this->calcularKmTotalMes();
+        $this->total_combustivel = $this->calcularTotalCombustivel();
+        $this->custo_total_combustivel_he = $this->calcularCustoTotalCombustivelHe();
+        $this->valor_lucro = $this->calcularValorLucro();
+        $this->valor_impostos = $this->calcularValorImpostos();
+        $this->valor_total = $this->calcularValorTotal();
     }
 }

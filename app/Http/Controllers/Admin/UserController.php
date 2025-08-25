@@ -106,7 +106,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load('orcamentos');
+        // Removido: $user->load('orcamentos'); - orçamentos foram removidos do sistema
         
         return view('admin.users.show', compact('user'));
     }
@@ -177,12 +177,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         try {
-            // Verificar se o usuário tem orçamentos associados
-            if ($user->orcamentos()->count() > 0) {
-                return back()->withErrors([
-                    'error' => 'Não é possível excluir este usuário pois ele possui orçamentos associados.'
-                ]);
-            }
+            // Removido: verificação de orçamentos - orçamentos foram removidos do sistema
             
             // Não permitir excluir o próprio usuário
             if ($user->id === auth()->id()) {

@@ -37,6 +37,12 @@ class OmieClienteController extends Controller
                 $clientesOmie = array_filter($clientesOmie, function ($cliente) use ($search) {
                     $searchLower = strtolower($search);
                     
+                    // Buscar por ID numérico (código_cliente_omie)
+                    if (is_numeric($search)) {
+                        return ($cliente['codigo_cliente_omie'] ?? '') == $search;
+                    }
+                    
+                    // Buscar por nome, nome fantasia ou CNPJ/CPF
                     return str_contains(strtolower($cliente['razao_social'] ?? ''), $searchLower) ||
                            str_contains(strtolower($cliente['nome_fantasia'] ?? ''), $searchLower) ||
                            str_contains($cliente['cnpj_cpf'] ?? '', $search);

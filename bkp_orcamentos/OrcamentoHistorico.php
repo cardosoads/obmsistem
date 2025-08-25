@@ -46,33 +46,33 @@ class OrcamentoHistorico extends Model
     /**
      * Scope para ações de criação
      */
-    public function scopeCriacao($query)
+    public function scopeCriado($query)
     {
-        return $query->where('acao', 'criacao');
+        return $query->where('acao', 'criado');
     }
 
     /**
      * Scope para ações de edição
      */
-    public function scopeEdicao($query)
+    public function scopeEditado($query)
     {
-        return $query->where('acao', 'edicao');
+        return $query->where('acao', 'editado');
     }
 
     /**
      * Scope para ações de aprovação
      */
-    public function scopeAprovacao($query)
+    public function scopeAprovado($query)
     {
-        return $query->where('acao', 'aprovacao');
+        return $query->where('acao', 'aprovado');
     }
 
     /**
      * Scope para ações de envio
      */
-    public function scopeEnvio($query)
+    public function scopeEnviado($query)
     {
-        return $query->where('acao', 'envio');
+        return $query->where('acao', 'enviado');
     }
 
     /**
@@ -81,13 +81,12 @@ class OrcamentoHistorico extends Model
     public function getAcaoFormattedAttribute(): string
     {
         $acaoMap = [
-            'criacao' => 'Criação',
-            'edicao' => 'Edição',
-            'aprovacao' => 'Aprovação',
-            'rejeicao' => 'Rejeição',
-            'envio' => 'Envio',
-            'cancelamento' => 'Cancelamento',
-            'expiracao' => 'Expiração'
+            'criado' => 'Criado',
+            'editado' => 'Editado',
+            'enviado' => 'Enviado',
+            'aprovado' => 'Aprovado',
+            'rejeitado' => 'Rejeitado',
+            'cancelado' => 'Cancelado'
         ];
 
         return $acaoMap[$this->acao] ?? $this->acao;

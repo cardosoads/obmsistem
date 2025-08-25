@@ -32,13 +32,7 @@ class CentroCusto extends Model
         'updated_at' => 'datetime'
     ];
 
-    /**
-     * Orçamentos deste centro de custo
-     */
-    public function orcamentos(): HasMany
-    {
-        return $this->hasMany(Orcamento::class);
-    }
+
 
     /**
      * Relacionamento com Base

@@ -95,7 +95,7 @@ class CentroCustoController extends Controller
      */
     public function show(CentroCusto $centroCusto)
     {
-        $centroCusto->load(['base', 'marca', 'orcamentos']);
+        $centroCusto->load(['base', 'marca']); // Removido: 'orcamentos' - orçamentos foram removidos do sistema
         
         return view('admin.centros-custo.show', compact('centroCusto'));
     }
@@ -153,13 +153,7 @@ class CentroCustoController extends Controller
      */
     public function destroy(CentroCusto $centroCusto)
     {
-        // Verificar se o centro de custo possui orçamentos
-        if ($centroCusto->orcamentos()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Não é possível excluir este centro de custo pois ele possui orçamentos associados.'
-            ], 422);
-        }
+        // Removido: verificação de orçamentos - orçamentos foram removidos do sistema
         
         try {
             $centroCusto->delete();

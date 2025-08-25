@@ -109,7 +109,7 @@ class ClienteController extends Controller
      */
     public function show(Cliente $cliente)
     {
-        $cliente->load('orcamentos.user');
+        // Removido: $cliente->load('orcamentos.user'); - orçamentos foram removidos do sistema
         
         return view('admin.clientes.show', compact('cliente'));
     }
@@ -177,12 +177,7 @@ class ClienteController extends Controller
      */
     public function destroy(Cliente $cliente)
     {
-        // Verificar se o cliente possui orçamentos
-        if ($cliente->orcamentos()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Não é possível excluir este cliente pois ele possui orçamentos associados.'
-            ], 422);
+        // Removido: verificação de orçamentos - orçamentos foram removidos do sistema
         }
         
         try {

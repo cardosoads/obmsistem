@@ -139,106 +139,14 @@
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Estatísticas</h3>
                 
                 <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-lg border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Total de Orçamentos</p>
-                                <p class="text-2xl font-bold text-blue-600">{{ $centroCusto->orcamentos_count ?? 0 }}</p>
-                            </div>
-                            <div class="p-3 bg-blue-100 rounded-full">
-                                <i class="fas fa-file-invoice text-blue-600"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    @if(isset($centroCusto->orcamentos_count) && $centroCusto->orcamentos_count > 0)
-                        <div class="bg-white p-4 rounded-lg border">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-500">Orçamentos Ativos</p>
-                                    <p class="text-2xl font-bold text-green-600">{{ $centroCusto->orcamentos_ativos_count ?? 0 }}</p>
-                                </div>
-                                <div class="p-3 bg-green-100 rounded-full">
-                                    <i class="fas fa-check-circle text-green-600"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white p-4 rounded-lg border">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-500">Valor Total</p>
-                                    <p class="text-2xl font-bold text-purple-600">R$ {{ number_format($centroCusto->valor_total_orcamentos ?? 0, 2, ',', '.') }}</p>
-                                </div>
-                                <div class="p-3 bg-purple-100 rounded-full">
-                                    <i class="fas fa-dollar-sign text-purple-600"></i>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
+                    <!-- Removido: seção de orçamentos - orçamentos foram removidos do sistema -->
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Orçamentos Relacionados -->
-    @if(isset($orcamentos) && $orcamentos->count() > 0)
-        <div class="mt-6">
-            <div class="bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Orçamentos Relacionados</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full table-auto">
-                        <thead class="bg-white">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Número</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Valor</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @foreach($orcamentos as $orcamento)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-2 text-sm font-medium text-gray-900">
-                                        #{{ str_pad($orcamento->id, 6, '0', STR_PAD_LEFT) }}
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-900">
-                                        {{ $orcamento->cliente_nome ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-900">
-                                        R$ {{ number_format($orcamento->valor_total ?? 0, 2, ',', '.') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            {{ $orcamento->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ $orcamento->active ? 'Ativo' : 'Inativo' }}
-                        </span>
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-500">
-                                        {{ $orcamento->created_at->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <a href="{{ route('admin.orcamentos.show', $orcamento->id) }}" 
-                                           class="text-blue-600 hover:text-blue-900 text-sm">
-                                            Ver detalhes
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                
-                @if($orcamentos->hasPages())
-                    <div class="mt-4">
-                        {{ $orcamentos->links() }}
-                    </div>
-                @endif
-            </div>
-        </div>
-    @endif
+    <!-- Removido: seção de orçamentos relacionados - orçamentos foram removidos do sistema -->
 </div>
 
 <script>

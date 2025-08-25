@@ -1,826 +1,1794 @@
 @extends('layouts.admin')
 
-@section('title', 'Novo Orçamento')
+@section('title', 'Criar Novo Orçamento')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Novo Orçamento</h1>
-        <a href="{{ route('admin.orcamentos.index') }}" 
-           class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-200">
-            <i class="fas fa-arrow-left mr-2"></i>Voltar
-        </a>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200/60 p-8 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Criar Novo Orçamento</h1>
+                        <p class="text-slate-500 mt-1">Preencha os dados para gerar um orçamento detalhado</p>
+                    </div>
+                </div>
+                <a href="{{ route('admin.orcamentos.index') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-medium rounded-xl shadow-lg hover:from-slate-700 hover:to-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Voltar
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden">
+
+            <form action="{{ route('admin.orcamentos.store') }}" method="POST" id="orcamentoForm">
+                @csrf
+                <div class="p-8">
+                    @if ($errors->any())
+                        <div class="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/60 rounded-2xl p-6 mb-8 shadow-lg">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-red-800 font-semibold">Atenção! Corrija os seguintes erros:</h4>
+                            </div>
+                            <ul class="space-y-2">
+                                @foreach ($errors->all() as $error)
+                                    <li class="flex items-center text-red-700">
+                                        <svg class="w-3 h-3 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $error }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <!-- Seção: Informações Básicas -->
+                    <div class="mb-12">
+                        <div class="flex items-center mb-6">
+                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-800">Informações Básicas</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Data de Solicitação -->
+                            <div class="group">
+                                <label for="data_solicitacao" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Data de Solicitação
+                                        <span class="text-red-500 ml-1">*</span>
+                                    </span>
+                                </label>
+                                <input type="date" 
+                                       class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('data_solicitacao') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                       id="data_solicitacao" 
+                                       name="data_solicitacao" 
+                                       value="{{ old('data_solicitacao', date('Y-m-d')) }}" 
+                                       required>
+                                @error('data_solicitacao')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Centro de Custo -->
+                            <div class="group">
+                                <label for="centro_custo_id" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                        Centro de Custo
+                                        <span class="text-red-500 ml-1">*</span>
+                                    </span>
+                                </label>
+                                <select class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('centro_custo_id') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                        id="centro_custo_id" 
+                                        name="centro_custo_id" 
+                                        required>
+                                    <option value="" class="text-slate-400">Selecione o centro de custo</option>
+                                    @foreach($centrosCusto as $centro)
+                                        <option value="{{ $centro->id }}" 
+                                                {{ old('centro_custo_id') == $centro->id ? 'selected' : '' }}>
+                                            {{ $centro->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('centro_custo_id')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Número do Orçamento -->
+                            <div class="group">
+                                <label for="numero_orcamento" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                        </svg>
+                                        Número do Orçamento
+                                    </span>
+                                </label>
+                                <input type="text" 
+                                       class="w-full px-4 py-3.5 bg-slate-100 border border-slate-200 rounded-xl text-slate-600 cursor-not-allowed" 
+                                       id="numero_orcamento" 
+                                       name="numero_orcamento" 
+                                       value="{{ old('numero_orcamento', 'Gerado automaticamente') }}" 
+                                       readonly>
+                                <p class="mt-2 text-sm text-slate-500 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    O número será gerado automaticamente ao salvar
+                                </p>
+                            </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                            <!-- Tipo de Orçamento -->
+                            <div class="group">
+                                <label for="tipo_orcamento" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                        </svg>
+                                        Tipo de Orçamento
+                                        <span class="text-red-500 ml-1">*</span>
+                                    </span>
+                                </label>
+                                <select class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('tipo_orcamento') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                        id="tipo_orcamento" 
+                                        name="tipo_orcamento" 
+                                        required>
+                                    <option value="" class="text-slate-400">Selecione o tipo</option>
+                                    <option value="prestador" {{ old('tipo_orcamento') == 'prestador' ? 'selected' : '' }}>Prestador</option>
+                                    <option value="aumento_km" {{ old('tipo_orcamento') == 'aumento_km' ? 'selected' : '' }}>Aumento KM</option>
+                                    <option value="proprio_nova_rota" {{ old('tipo_orcamento') == 'proprio_nova_rota' ? 'selected' : '' }}>Próprio Nova Rota</option>
+                                </select>
+                                @error('tipo_orcamento')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Nome da Rota -->
+                            <div class="group">
+                                <label for="nome_rota" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                        </svg>
+                                        Nome da Rota
+                                        <span class="text-red-500 ml-1">*</span>
+                                    </span>
+                                </label>
+                                <input type="text" 
+                                       class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('nome_rota') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                       id="nome_rota" 
+                                       name="nome_rota" 
+                                       value="{{ old('nome_rota') }}" 
+                                       placeholder="Ex: São Paulo - Rio de Janeiro" 
+                                       required>
+                                @error('nome_rota')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- ID LOGCARE -->
+                            <div class="group">
+                                <label for="id_logcare" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+                                        </svg>
+                                        ID LOGCARE
+                                    </span>
+                                </label>
+                                <input type="text" 
+                                       class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('id_logcare') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                       id="id_logcare" 
+                                       name="id_logcare" 
+                                       value="{{ old('id_logcare') }}" 
+                                       placeholder="Ex: LOG123456">
+                                @error('id_logcare')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                            <!-- Cliente OMIE -->
+                            <div class="md:col-span-2 lg:col-span-3">
+                                <label for="cliente_omie_search" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Cliente (OMIE) <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="text" 
+                                           class="block w-full pl-12 pr-12 py-4 text-base border-2 border-gray-200 rounded-xl bg-white shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none @error('cliente_omie_id') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-100 @enderror" 
+                                           id="cliente_omie_search" 
+                                           placeholder="Digite para buscar cliente..." 
+                                           autocomplete="off">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <!-- Dropdown de sugestões -->
+                                    <div id="cliente_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
+                                        <div id="cliente_loading" class="px-6 py-4 text-sm text-gray-600 hidden">
+                                            <div class="flex items-center">
+                                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span class="font-medium">Buscando clientes...</span>
+                                            </div>
+                                        </div>
+                                        <div id="cliente_results"></div>
+                                        <div id="cliente_no_results" class="px-6 py-4 text-sm text-gray-500 hidden">
+                                            <div class="flex items-center justify-center">
+                                                <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                                Nenhum cliente encontrado
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" 
+                                       id="cliente_omie_id" 
+                                       name="cliente_omie_id" 
+                                       value="{{ old('cliente_omie_id') }}">
+                                <input type="hidden" 
+                                       id="cliente_nome" 
+                                       name="cliente_nome" 
+                                       value="{{ old('cliente_nome') }}">
+                                <p class="mt-3 text-sm text-gray-500 flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Digite para buscar clientes na API OMIE
+                                </p>
+                                <div id="cliente_selecionado" class="mt-3 hidden">
+                                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 shadow-sm">
+                                        <div class="flex items-center">
+                                            <svg class="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <p class="text-sm text-green-800">
+                                                <span class="font-semibold">Cliente selecionado:</span> 
+                                                <span id="nome_cliente_selecionado" class="font-medium"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                @error('cliente_omie_id')
+                                    <div class="mt-3 flex items-center text-sm text-red-600">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                            <!-- Horário -->
+                            <div>
+                                <label for="horario" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Horário <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="time" 
+                                           class="block w-full pl-12 pr-4 py-4 text-base border-2 border-gray-200 rounded-xl bg-gray-50 shadow-sm transition-all duration-200 hover:border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none @error('horario') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-100 @enderror" 
+                                           id="horario" 
+                                           name="horario" 
+                                           value="{{ old('horario', '00:00') }}" 
+                                           required>
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('horario')
+                                    <div class="mt-3 flex items-center text-sm text-red-600">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <!-- Frequência de Atendimento -->
+                            <div>
+                                <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Frequência de Atendimento <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="segunda" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('segunda', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Seg</span>
+                                    </label>
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="terca" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('terca', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Ter</span>
+                                    </label>
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="quarta" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('quarta', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Qua</span>
+                                    </label>
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="quinta" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('quinta', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Qui</span>
+                                    </label>
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="sexta" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('sexta', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Sex</span>
+                                    </label>
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="sabado" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('sabado', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Sáb</span>
+                                    </label>
+                                    <label class="flex items-center px-3 py-2 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                        <input type="checkbox" name="frequencia_atendimento[]" value="domingo" class="mr-2 w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" {{ in_array('domingo', old('frequencia_atendimento', [])) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">Dom</span>
+                                    </label>
+                                </div>
+                                @error('frequencia_atendimento')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+
+                            <!-- Status -->
+                            <div>
+                                <label for="status" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Status <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <div class="relative">
+                                    <select class="block w-full px-4 py-3 pr-10 border-2 border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-base bg-white hover:border-gray-300 appearance-none @error('status') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                            id="status" 
+                                            name="status" 
+                                            required>
+                                        <option value="">Selecione o status</option>
+                                        <option value="rascunho" {{ old('status', 'rascunho') == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                                        <option value="enviado" {{ old('status') == 'enviado' ? 'selected' : '' }}>Enviado</option>
+                                        <option value="aprovado" {{ old('status') == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
+                                        <option value="rejeitado" {{ old('status') == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
+                                        <option value="cancelado" {{ old('status') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('status')
+                                    <div class="flex items-center mt-2 text-sm text-red-600">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Seção do Aumento KM -->
+                        <div id="aumento_km_section" class="bg-white shadow-lg rounded-2xl mt-8 border border-gray-100" style="display: none;">
+                            <div class="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-2xl">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h3 class="text-lg font-semibold text-gray-900">Dados do Aumento KM</h3>
+                                        <p class="text-sm text-gray-600">Informações para cálculo do aumento de quilometragem</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-8 py-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <!-- KM por Dia -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                            </svg>
+                                            KM por Dia <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('km_dia') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="km_dia" 
+                                                   name="km_dia" 
+                                                   value="{{ old('km_dia') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('km_dia')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Quantidade de Dias de Aumento -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Quantidade de Dias de Aumento
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   min="1"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="qtd_dias_aumento" 
+                                                   name="qtd_dias_aumento" 
+                                                   value="{{ old('qtd_dias_aumento') }}"
+                                                   placeholder="1">
+                                        </div>
+                                        @error('qtd_dias_aumento')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Combustível KM/Litro -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                            </svg>
+                                            Combustível KM/Litro <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('combustivel_km_litro') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="combustivel_km_litro" 
+                                                   name="combustivel_km_litro" 
+                                                   value="{{ old('combustivel_km_litro') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('combustivel_km_litro')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Valor Combustível -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                            </svg>
+                                            Valor Combustível <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">R$</span>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('valor_combustivel') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="valor_combustivel" 
+                                                   name="valor_combustivel" 
+                                                   value="{{ old('valor_combustivel') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('valor_combustivel')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Hora Extra -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Hora Extra
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">R$</span>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('hora_extra') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="hora_extra" 
+                                                   name="hora_extra" 
+                                                   value="{{ old('hora_extra') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('hora_extra')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Valor Total Calculado -->
+                                    <div class="md:col-span-2 lg:col-span-3">
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Valor Total Calculado
+                                        </label>
+                                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                                            <div class="text-2xl font-bold text-green-600" id="valor_total_aumento_km">R$ 0,00</div>
+                                            <div class="text-sm text-gray-600 mt-1">Cálculo baseado nos valores informados</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção do Próprio Nova Rota -->
+                        <div id="proprio_nova_rota_section" class="bg-white shadow-lg rounded-2xl mt-8 border border-gray-100" style="display: none;">
+                            <div class="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-2xl">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h3 class="text-lg font-semibold text-gray-900">Dados da Nova Rota</h3>
+                                        <p class="text-sm text-gray-600">Informações para cálculo da nova rota própria</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mensagem de Em Desenvolvimento -->
+                            <div class="px-8 py-4 bg-yellow-50 border-b border-yellow-200">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-yellow-800">
+                                            <strong>Em desenvolvimento</strong> - Esta funcionalidade está sendo implementada e pode não estar totalmente funcional.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="px-8 py-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Nova Origem -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                            Nova Origem
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="nova_origem" 
+                                                   name="nova_origem" 
+                                                   value="{{ old('nova_origem') }}"
+                                                   placeholder="Digite a nova origem">
+                                        </div>
+                                        @error('nova_origem')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Novo Destino -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                            Novo Destino
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="novo_destino" 
+                                                   name="novo_destino" 
+                                                   value="{{ old('novo_destino') }}"
+                                                   placeholder="Digite o novo destino">
+                                        </div>
+                                        @error('novo_destino')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Distância (KM) -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                            </svg>
+                                            Distância (KM)
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="distancia_km_proprio" 
+                                                   name="distancia_km_proprio" 
+                                                   value="{{ old('distancia_km_proprio') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('distancia_km_proprio')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Valor por KM -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                            </svg>
+                                            Valor por KM
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="valor_km_proprio" 
+                                                   name="valor_km_proprio" 
+                                                   value="{{ old('valor_km_proprio') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('valor_km_proprio')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Valor Total Calculado -->
+                                    <div class="md:col-span-2">
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Valor Total Calculado
+                                        </label>
+                                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+                                            <div class="text-2xl font-bold text-indigo-600" id="valor_total_proprio_nova_rota">R$ 0,00</div>
+                                            <div class="text-sm text-gray-600 mt-1">Distância × Valor/KM</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção do Prestador -->
+                        <div id="prestador_section" class="bg-white shadow-lg rounded-2xl mt-8 border border-gray-100" style="display: none;">
+                            <div class="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h3 class="text-xl font-bold text-gray-900">Dados do Prestador</h3>
+                                        <p class="mt-1 text-sm text-gray-600">Informações específicas para orçamentos de prestador</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-8 py-6 space-y-6">
+                                <!-- Busca de Fornecedor OMIE -->
+                                <div class="mb-6">
+                                    <label for="fornecedor_omie_search" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                        Buscar Fornecedor OMIE <span class="text-red-500 ml-1">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                        </div>
+                                        <input type="text" 
+                                               class="block w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-base bg-white hover:border-gray-300" 
+                                               id="fornecedor_omie_search" 
+                                               placeholder="Digite para buscar fornecedor..." 
+                                               autocomplete="off">
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                        </div>
+                                        
+                                        <!-- Dropdown de resultados -->
+                                        <div id="fornecedor_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
+                                            <!-- Loading -->
+                                            <div id="fornecedor_loading" class="px-6 py-4 text-center text-gray-500 hidden">
+                                                <div class="inline-flex items-center">
+                                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <span class="text-sm font-medium">Buscando fornecedores...</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Resultados -->
+                                            <div id="fornecedor_results"></div>
+                                            
+                                            <!-- Nenhum resultado -->
+                                            <div id="fornecedor_no_results" class="px-6 py-4 text-center text-gray-500 hidden">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                    </svg>
+                                                    <span class="text-sm font-medium">Nenhum fornecedor encontrado</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @error('fornecedor_omie_id')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Fornecedor Selecionado -->
+                                <div id="fornecedor_selecionado" class="mb-6" style="display: none;">
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0">
+                                                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm font-medium text-green-800">
+                                                    Fornecedor selecionado: <span id="nome_fornecedor_selecionado"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Campos ocultos para o fornecedor -->
+                                <input type="hidden" id="fornecedor_omie_id" name="fornecedor_omie_id" value="{{ old('fornecedor_omie_id') }}">
+                                <input type="hidden" id="fornecedor_nome" name="fornecedor_nome" value="{{ old('fornecedor_nome') }}">
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                    <!-- Valor de Referência -->
+                                    <div>
+                                        <label for="valor_referencia" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                            </svg>
+                                            Valor de Referência (R$) <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="valor_referencia" 
+                                                   name="valor_referencia" 
+                                                   value="{{ old('valor_referencia') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('valor_referencia')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <!-- Quantidade de Dias -->
+                                    <div>
+                                        <label for="qtd_dias" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Quantidade de Dias <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   min="1"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="qtd_dias" 
+                                                   name="qtd_dias" 
+                                                   value="{{ old('qtd_dias') }}"
+                                                   placeholder="1">
+                                        </div>
+                                        @error('qtd_dias')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Percentual de Lucro -->
+                                    <div>
+                                        <label for="lucro_percentual" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                            </svg>
+                                            Percentual de Lucro (%) <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   max="100"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="lucro_percentual"
+                                name="lucro_percentual"
+                                value="{{ old('lucro_percentual') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('lucro_percentual')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Percentual de Impostos -->
+                                    <div>
+                                        <label for="impostos_percentual" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Percentual de Impostos (%) <span class="text-red-500 ml-1">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   max="100"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400" 
+                                                   id="impostos_percentual"
+                                name="impostos_percentual"
+                                value="{{ old('impostos_percentual') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('impostos_percentual')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Resumo dos Cálculos -->
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                                    <div class="flex items-center mb-4">
+                                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <h4 class="text-lg font-semibold text-gray-900">Resumo dos Cálculos</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v2"></path>
+                                                </svg>
+                                                <span class="text-sm text-gray-600 font-medium">Custo Fornecedor</span>
+                                            </div>
+                                            <div class="text-xl font-bold text-gray-900" id="custo_fornecedor_display">R$ 0,00</div>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                                </svg>
+                                                <span class="text-sm text-gray-600 font-medium">Valor Lucro</span>
+                                            </div>
+                                            <div class="text-xl font-bold text-green-600" id="valor_lucro_display">R$ 0,00</div>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <span class="text-sm text-gray-600 font-medium">Valor Impostos</span>
+                                            </div>
+                                            <div class="text-xl font-bold text-red-600" id="valor_impostos_display">R$ 0,00</div>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-4 shadow-sm border border-indigo-200 ring-2 ring-indigo-100">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                                </svg>
+                                                <span class="text-sm text-gray-600 font-medium">Valor Total</span>
+                                            </div>
+                                            <div class="text-2xl font-bold text-indigo-600" id="valor_total_display">R$ 0,00</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                            <!-- Observações -->
+                            <div class="md:col-span-2 lg:col-span-3">
+                                <label for="observacoes" class="flex items-center text-sm font-medium text-gray-700 mb-3">
+                                    <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                    Observações
+                                </label>
+                                <div class="relative">
+                                    <textarea class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 resize-none text-base @error('observacoes') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-500 @enderror" 
+                                              id="observacoes" 
+                                              name="observacoes" 
+                                              rows="4" 
+                                              placeholder="Digite observações adicionais sobre o orçamento...">{{ old('observacoes') }}</textarea>
+                                    <div class="absolute left-3 top-3 pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('observacoes')
+                                    <div class="mt-2 flex items-center text-sm text-red-600">
+                                        <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 rounded-b-lg">
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" 
+                                    class="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200" 
+                                    onclick="window.history.back()">
+                                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                </svg>
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105 transition-all duration-200">
+                                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                Salvar Orçamento
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <ul class="list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form action="{{ route('admin.orcamentos.store') }}" method="POST" class="space-y-6">
-        @csrf
-
-        <!-- Informações Básicas -->
-        <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Informações Básicas</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                    <label for="data_solicitacao" class="block text-sm font-medium text-gray-700 mb-2">Data de Solicitação *</label>
-                    <input type="date" 
-                           id="data_solicitacao" 
-                           name="data_solicitacao" 
-                           value="{{ old('data_solicitacao', date('Y-m-d')) }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           required>
-                </div>
-
-                <div>
-                    <label for="centro_custo_id" class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo *</label>
-                    <select id="centro_custo_id" 
-                            name="centro_custo_id" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required>
-                        <option value="">Selecione um centro de custo</option>
-                        @foreach($centrosCusto as $centroCusto)
-                            <option value="{{ $centroCusto->id }}" {{ old('centro_custo_id') == $centroCusto->id ? 'selected' : '' }}>
-                                {{ $centroCusto->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div>
-                    <label for="numero_orcamento" class="block text-sm font-medium text-gray-700 mb-2">Número do Orçamento</label>
-                    <input type="text" 
-                           id="numero_orcamento" 
-                           name="numero_orcamento" 
-                           value="{{ old('numero_orcamento', 'AUTO-' . date('YmdHis')) }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                           readonly>
-                </div>
-
-                <div>
-                    <label for="evento" class="block text-sm font-medium text-gray-700 mb-2">Evento *</label>
-                    <select id="evento" 
-                            name="evento" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required>
-                        <option value="">Selecione o evento</option>
-                        <option value="AUMENTO DE KM" {{ old('evento') == 'AUMENTO DE KM' ? 'selected' : '' }}>AUMENTO DE KM</option>
-                        <option value="BASE" {{ old('evento') == 'BASE' ? 'selected' : '' }}>BASE</option>
-                        <option value="INCLUSÃO" {{ old('evento') == 'INCLUSÃO' ? 'selected' : '' }}>INCLUSÃO</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="nome_rota" class="block text-sm font-medium text-gray-700 mb-2">Nome da Rota *</label>
-                    <input type="text" 
-                           id="nome_rota" 
-                           name="nome_rota" 
-                           value="{{ old('nome_rota') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           required>
-                </div>
-
-                <div>
-                    <label for="id_logcare" class="block text-sm font-medium text-gray-700 mb-2">ID LOGCARE *</label>
-                    <input type="text" 
-                           id="id_logcare" 
-                           name="id_logcare" 
-                           value="{{ old('id_logcare') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           required>
-                </div>
-
-                <div>
-                    <label for="cliente_omie" class="block text-sm font-medium text-gray-700 mb-2">Cliente (OMIE) *</label>
-                    <div class="relative">
-                        <input type="text" 
-                               id="cliente_omie_search" 
-                               name="cliente_omie_search"
-                               placeholder="Digite para buscar cliente..."
-                               value="{{ old('cliente_nome') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               autocomplete="off"
-                               required>
-                        <input type="hidden" 
-                               id="cliente_omie_id" 
-                               name="cliente_omie_id" 
-                               value="{{ old('cliente_omie_id') }}">
-                        <input type="hidden" 
-                               id="cliente_nome" 
-                               name="cliente_nome" 
-                               value="{{ old('cliente_nome') }}">
-                        
-                        <!-- Dropdown de resultados -->
-                        <div id="cliente_dropdown" 
-                             class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto hidden">
-                            <div id="cliente_loading" class="p-3 text-center text-gray-500 hidden">
-                                <i class="fas fa-spinner fa-spin"></i> Buscando clientes...
-                            </div>
-                            <div id="cliente_results"></div>
-                            <div id="cliente_no_results" class="p-3 text-center text-gray-500 hidden">
-                                Nenhum cliente encontrado
-                            </div>
-                        </div>
-                    </div>
-                    <small class="text-gray-500">Cliente selecionado será buscado da API OMIE</small>
-                </div>
-
-                <div>
-                    <label for="horario" class="block text-sm font-medium text-gray-700 mb-2">Horário *</label>
-                    <input type="time" 
-                           id="horario" 
-                           name="horario" 
-                           value="{{ old('horario') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           required>
-                </div>
-
-                <div>
-                    <label for="frequencia_atendimento" class="block text-sm font-medium text-gray-700 mb-2">Frequência de Atendimento *</label>
-                    <input type="text" 
-                           id="frequencia_atendimento" 
-                           name="frequencia_atendimento" 
-                           value="{{ old('frequencia_atendimento') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="Ex: Diário, Semanal, etc."
-                           required>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tipo de Orçamento -->
-        <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Tipo de Orçamento</h3>
-            <div class="mb-4">
-                <label for="tipo_orcamento" class="block text-sm font-medium text-gray-700 mb-2">Selecione o Tipo *</label>
-                <select id="tipo_orcamento" 
-                        name="tipo_orcamento" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required>
-                    <option value="">Selecione o tipo de orçamento</option>
-                    <option value="prestador" {{ old('tipo_orcamento') == 'prestador' ? 'selected' : '' }}>TIPO 1 - SOLICITAÇÃO DE NOVO ORÇAMENTO (PRESTADOR)</option>
-                    <option value="aumento_km" {{ old('tipo_orcamento') == 'aumento_km' ? 'selected' : '' }}>TIPO 2 - SOLICITAÇÃO DE NOVO ORÇAMENTO (AUMENTO DE KM)</option>
-                    <option value="proprio_nova_rota" {{ old('tipo_orcamento') == 'proprio_nova_rota' ? 'selected' : '' }}>TIPO 3 - SOLICITAÇÃO DE NOVO ORÇAMENTO (PRÓPRIO/NOVA ROTA)</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Campos Específicos por Tipo de Orçamento -->
-        
-        <!-- TIPO 1 - PRESTADOR -->
-        <div id="campos_prestador" class="bg-blue-50 p-6 rounded-lg" style="display: none;">
-            <h3 class="text-lg font-semibold text-blue-700 mb-4">TIPO 1 - SOLICITAÇÃO DE NOVO ORÇAMENTO (PRESTADOR)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                    <label for="fornecedor_omie_id" class="block text-sm font-medium text-gray-700 mb-2">ID Fornecedor Omie *</label>
-                    <input type="text" 
-                           id="fornecedor_omie_id" 
-                           name="fornecedor_omie_id" 
-                           value="{{ old('fornecedor_omie_id') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="Digite o ID do fornecedor...">
-                </div>
-
-                <div>
-                    <label for="fornecedor_nome" class="block text-sm font-medium text-gray-700 mb-2">Nome do Fornecedor</label>
-                    <div class="relative">
-                        <input type="text" 
-                               id="fornecedor_nome" 
-                               name="fornecedor_nome" 
-                               value="{{ old('fornecedor_nome') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="Nome será preenchido automaticamente"
-                               readonly>
-                        <div id="fornecedor_loading" class="absolute right-3 top-2 text-gray-500 hidden">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </div>
-                    </div>
-                    <div id="fornecedor_error" class="text-red-500 text-sm mt-1 hidden">Fornecedor não encontrado</div>
-                </div>
-
-                <div>
-                    <label for="valor_referencia" class="block text-sm font-medium text-gray-700 mb-2">Valor Referência</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_referencia" 
-                               name="valor_referencia" 
-                               value="{{ old('valor_referencia') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="qtd_dias" class="block text-sm font-medium text-gray-700 mb-2">Qtd Dias</label>
-                    <input type="number" 
-                           id="qtd_dias" 
-                           name="qtd_dias" 
-                           value="{{ old('qtd_dias') }}"
-                           min="1"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="30">
-                </div>
-
-                <div>
-                    <label for="custo_fornecedor" class="block text-sm font-medium text-gray-700 mb-2">Custo Fornecedor</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="custo_fornecedor" 
-                               name="custo_fornecedor" 
-                               value="{{ old('custo_fornecedor') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="lucro_percentual" class="block text-sm font-medium text-gray-700 mb-2">Lucro (%)</label>
-                    <div class="relative">
-                        <input type="number" 
-                               id="lucro_percentual" 
-                               name="lucro_percentual" 
-                               value="{{ old('lucro_percentual') }}"
-                               step="0.01"
-                               min="0"
-                               max="100"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                        <span class="absolute right-3 top-2 text-gray-500">%</span>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="valor_lucro_prestador" class="block text-sm font-medium text-gray-700 mb-2">Valor do Lucro</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_lucro_prestador" 
-                               name="valor_lucro" 
-                               value="{{ old('valor_lucro') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="impostos_percentual_prestador" class="block text-sm font-medium text-gray-700 mb-2">Impostos (%)</label>
-                    <div class="relative">
-                        <input type="number" 
-                               id="impostos_percentual_prestador" 
-                               name="impostos_percentual" 
-                               value="{{ old('impostos_percentual') }}"
-                               step="0.01"
-                               min="0"
-                               max="100"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                        <span class="absolute right-3 top-2 text-gray-500">%</span>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="valor_impostos_prestador" class="block text-sm font-medium text-gray-700 mb-2">Valor dos Impostos</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_impostos_prestador" 
-                               name="valor_impostos" 
-                               value="{{ old('valor_impostos') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="valor_total_prestador" class="block text-sm font-medium text-gray-700 mb-2">Valor Total</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_total_prestador" 
-                               name="valor_total" 
-                               value="{{ old('valor_total') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TIPO 2 - AUMENTO DE KM -->
-        <div id="campos_aumento_km" class="bg-green-50 p-6 rounded-lg" style="display: none;">
-            <h3 class="text-lg font-semibold text-green-700 mb-4">TIPO 2 - SOLICITAÇÃO DE NOVO ORÇAMENTO (AUMENTO DE KM)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                    <label for="km_dia" class="block text-sm font-medium text-gray-700 mb-2">KM Dia</label>
-                    <input type="number" 
-                           id="km_dia" 
-                           name="km_dia" 
-                           value="{{ old('km_dia') }}"
-                           step="0.01"
-                           min="0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="0,00">
-                </div>
-
-                <div>
-                    <label for="qtd_dias_km" class="block text-sm font-medium text-gray-700 mb-2">Qtd Dias</label>
-                    <input type="number" 
-                           id="qtd_dias_km" 
-                           name="qtd_dias" 
-                           value="{{ old('qtd_dias') }}"
-                           min="1"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="30">
-                </div>
-
-                <div>
-                    <label for="km_total_mes" class="block text-sm font-medium text-gray-700 mb-2">KM Total (Mês)</label>
-                    <input type="number" 
-                           id="km_total_mes" 
-                           name="km_total_mes" 
-                           value="{{ old('km_total_mes') }}"
-                           step="0.01"
-                           min="0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                           placeholder="0,00"
-                           readonly>
-                </div>
-
-                <div>
-                    <label for="combustivel_km_litro" class="block text-sm font-medium text-gray-700 mb-2">Combustível (KM/Litro)</label>
-                    <input type="number" 
-                           id="combustivel_km_litro" 
-                           name="combustivel_km_litro" 
-                           value="{{ old('combustivel_km_litro') }}"
-                           step="0.01"
-                           min="0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="0,00">
-                </div>
-
-                <div>
-                    <label for="total_combustivel" class="block text-sm font-medium text-gray-700 mb-2">Total de Combustível</label>
-                    <input type="number" 
-                           id="total_combustivel" 
-                           name="total_combustivel" 
-                           value="{{ old('total_combustivel') }}"
-                           step="0.01"
-                           min="0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                           placeholder="0,00"
-                           readonly>
-                </div>
-
-                <div>
-                    <label for="valor_combustivel" class="block text-sm font-medium text-gray-700 mb-2">Valor do Combustível</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_combustivel" 
-                               name="valor_combustivel" 
-                               value="{{ old('valor_combustivel') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="hora_extra" class="block text-sm font-medium text-gray-700 mb-2">Hora Extra</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="hora_extra" 
-                               name="hora_extra" 
-                               value="{{ old('hora_extra') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="custo_total_combustivel_he" class="block text-sm font-medium text-gray-700 mb-2">Custo Total Combustível + HE</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="custo_total_combustivel_he" 
-                               name="custo_total_combustivel_he" 
-                               value="{{ old('custo_total_combustivel_he') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="lucro_percentual_km" class="block text-sm font-medium text-gray-700 mb-2">Lucro (%)</label>
-                    <div class="relative">
-                        <input type="number" 
-                               id="lucro_percentual_km" 
-                               name="lucro_percentual" 
-                               value="{{ old('lucro_percentual') }}"
-                               step="0.01"
-                               min="0"
-                               max="100"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                        <span class="absolute right-3 top-2 text-gray-500">%</span>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="valor_lucro_km" class="block text-sm font-medium text-gray-700 mb-2">Valor do Lucro</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_lucro_km" 
-                               name="valor_lucro" 
-                               value="{{ old('valor_lucro') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="impostos_percentual_km" class="block text-sm font-medium text-gray-700 mb-2">Impostos (%)</label>
-                    <div class="relative">
-                        <input type="number" 
-                               id="impostos_percentual_km" 
-                               name="impostos_percentual" 
-                               value="{{ old('impostos_percentual') }}"
-                               step="0.01"
-                               min="0"
-                               max="100"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="0,00">
-                        <span class="absolute right-3 top-2 text-gray-500">%</span>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="valor_impostos_km" class="block text-sm font-medium text-gray-700 mb-2">Valor dos Impostos</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_impostos_km" 
-                               name="valor_impostos" 
-                               value="{{ old('valor_impostos') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="valor_total_km" class="block text-sm font-medium text-gray-700 mb-2">Valor Total</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2 text-gray-500">R$</span>
-                        <input type="number" 
-                               id="valor_total_km" 
-                               name="valor_total" 
-                               value="{{ old('valor_total') }}"
-                               step="0.01"
-                               min="0"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
-                               placeholder="0,00"
-                               readonly>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TIPO 3 - PRÓPRIO/NOVA ROTA -->
-        <div id="campos_proprio_nova_rota" class="bg-yellow-50 p-6 rounded-lg" style="display: none;">
-            <h3 class="text-lg font-semibold text-yellow-700 mb-4">TIPO 3 - SOLICITAÇÃO DE NOVO ORÇAMENTO (PRÓPRIO/NOVA ROTA)</h3>
-            <div class="text-center py-8">
-                <p class="text-gray-600 text-lg">Campos ainda não definidos para este tipo de orçamento.</p>
-                <p class="text-gray-500 text-sm mt-2">Esta seção será implementada quando os campos forem especificados.</p>
-            </div>
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-        <!-- Botões de Ação -->
-        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-            <a href="{{ route('admin.orcamentos.index') }}" 
-               class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition duration-200">
-                Cancelar
-            </a>
-            <button type="submit" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition duration-200">
-                <i class="fas fa-save mr-2"></i>Salvar Orçamento
-            </button>
-        </div>
-    </form>
 </div>
 
+
+
+@push('scripts')
 <script>
-// Controle de exibição dos campos por tipo de orçamento
-function toggleTipoOrcamentoFields() {
-    const tipoOrcamento = document.getElementById('tipo_orcamento').value;
-    
-    // Ocultar todas as seções
-    document.getElementById('campos_prestador').style.display = 'none';
-    document.getElementById('campos_aumento_km').style.display = 'none';
-    document.getElementById('campos_proprio_nova_rota').style.display = 'none';
-    
-    // Exibir a seção correspondente
-    if (tipoOrcamento === 'prestador') {
-        document.getElementById('campos_prestador').style.display = 'block';
-    } else if (tipoOrcamento === 'aumento_km') {
-        document.getElementById('campos_aumento_km').style.display = 'block';
-    } else if (tipoOrcamento === 'proprio_nova_rota') {
-        document.getElementById('campos_proprio_nova_rota').style.display = 'block';
-    }
-}
+// Funções globais para busca de clientes
+let timeoutId;
+let selectedIndex = -1;
+let currentResults = [];
 
-// Cálculos para PRESTADOR
-function calculatePrestadorValues() {
-    const custoFornecedor = parseFloat(document.getElementById('custo_fornecedor').value) || 0;
-    const lucroPercentual = parseFloat(document.getElementById('lucro_percentual').value) || 0;
-    const impostosPercentual = parseFloat(document.getElementById('impostos_percentual_prestador').value) || 0;
-    
-    // Calcular valor do lucro
-    const valorLucro = custoFornecedor * (lucroPercentual / 100);
-    document.getElementById('valor_lucro_prestador').value = valorLucro.toFixed(2);
-    
-    // Calcular subtotal (custo + lucro)
-    const subtotal = custoFornecedor + valorLucro;
-    
-    // Calcular valor dos impostos
-    const valorImpostos = subtotal * (impostosPercentual / 100);
-    document.getElementById('valor_impostos_prestador').value = valorImpostos.toFixed(2);
-    
-    // Calcular valor total
-    const valorTotal = subtotal + valorImpostos;
-    document.getElementById('valor_total_prestador').value = valorTotal.toFixed(2);
-}
-
-// Cálculos para AUMENTO DE KM
-function calculateAumentoKmValues() {
-    const kmDia = parseFloat(document.getElementById('km_dia').value) || 0;
-    const qtdDias = parseFloat(document.getElementById('qtd_dias_km').value) || 0;
-    const combustivelKmLitro = parseFloat(document.getElementById('combustivel_km_litro').value) || 0;
-    const valorCombustivel = parseFloat(document.getElementById('valor_combustivel').value) || 0;
-    const horaExtra = parseFloat(document.getElementById('hora_extra').value) || 0;
-    const lucroPercentual = parseFloat(document.getElementById('lucro_percentual_km').value) || 0;
-    const impostosPercentual = parseFloat(document.getElementById('impostos_percentual_km').value) || 0;
-    
-    // Calcular KM total do mês
-    const kmTotalMes = kmDia * qtdDias;
-    document.getElementById('km_total_mes').value = kmTotalMes.toFixed(2);
-    
-    // Calcular total de combustível em litros
-    const totalCombustivel = combustivelKmLitro > 0 ? kmTotalMes / combustivelKmLitro : 0;
-    document.getElementById('total_combustivel').value = totalCombustivel.toFixed(2);
-    
-    // Calcular custo total combustível + HE
-    const custoTotalCombustivelHe = (totalCombustivel * valorCombustivel) + horaExtra;
-    document.getElementById('custo_total_combustivel_he').value = custoTotalCombustivelHe.toFixed(2);
-    
-    // Calcular valor do lucro
-    const valorLucro = custoTotalCombustivelHe * (lucroPercentual / 100);
-    document.getElementById('valor_lucro_km').value = valorLucro.toFixed(2);
-    
-    // Calcular subtotal (custo + lucro)
-    const subtotal = custoTotalCombustivelHe + valorLucro;
-    
-    // Calcular valor dos impostos
-    const valorImpostos = subtotal * (impostosPercentual / 100);
-    document.getElementById('valor_impostos_km').value = valorImpostos.toFixed(2);
-    
-    // Calcular valor total
-    const valorTotal = subtotal + valorImpostos;
-    document.getElementById('valor_total_km').value = valorTotal.toFixed(2);
-}
-
-// Funcionalidade de busca de clientes OMIE
-let clienteSearchTimeout;
-const clienteSearchInput = document.getElementById('cliente_omie_search');
+// Constantes globais para elementos DOM
+const clienteSelecionado = document.getElementById('cliente_selecionado');
+const clienteOmieId = document.getElementById('cliente_omie_id');
+const clienteNome = document.getElementById('cliente_nome');
+const nomeClienteSelecionado = document.getElementById('nome_cliente_selecionado');
 const clienteDropdown = document.getElementById('cliente_dropdown');
 const clienteLoading = document.getElementById('cliente_loading');
 const clienteResults = document.getElementById('cliente_results');
 const clienteNoResults = document.getElementById('cliente_no_results');
-const clienteOmieId = document.getElementById('cliente_omie_id');
-const clienteNome = document.getElementById('cliente_nome');
 
-if (clienteSearchInput) {
-    clienteSearchInput.addEventListener('input', function() {
-        const searchTerm = this.value.trim();
-        
-        // Limpar timeout anterior
-        clearTimeout(clienteSearchTimeout);
-        
-        if (searchTerm.length < 2) {
-            hideClienteDropdown();
-            return;
-        }
-        
-        // Aguardar 300ms antes de fazer a busca
-        clienteSearchTimeout = setTimeout(() => {
-            searchClientes(searchTerm);
-        }, 300);
-    });
-    
-    // Esconder dropdown quando clicar fora
-    document.addEventListener('click', function(e) {
-        if (!clienteSearchInput.contains(e.target) && !clienteDropdown.contains(e.target)) {
-            hideClienteDropdown();
-        }
-    });
+function showDropdown() {
+    if (clienteDropdown) clienteDropdown.classList.remove('hidden');
 }
 
-function searchClientes(searchTerm) {
-    showClienteLoading();
+function hideDropdown() {
+    if (clienteDropdown) clienteDropdown.classList.add('hidden');
+    selectedIndex = -1;
+    currentResults = [];
+}
+
+function showLoading() {
+    if (clienteLoading) clienteLoading.classList.remove('hidden');
+    if (clienteResults) clienteResults.innerHTML = '';
+    if (clienteNoResults) clienteNoResults.classList.add('hidden');
+    showDropdown();
+}
+
+function hideLoading() {
+    if (clienteLoading) clienteLoading.classList.add('hidden');
+}
+
+function buscarClientesOmie(termo) {
+    showLoading();
     
-    fetch(`/api/omie/clientes/search?search=${encodeURIComponent(searchTerm)}`)
+    fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`)
         .then(response => response.json())
         .then(data => {
-            hideClienteLoading();
+            hideLoading();
             
-            if (data.success && data.data.length > 0) {
-                displayClienteResults(data.data);
+            if (data.success && data.data && data.data.length > 0) {
+                displayResults(data.data);
             } else {
-                showClienteNoResults();
+                if (clienteNoResults) clienteNoResults.classList.remove('hidden');
+                if (clienteResults) clienteResults.innerHTML = '';
+                showDropdown();
             }
         })
         .catch(error => {
-            console.error('Erro ao buscar clientes:', error);
-            hideClienteLoading();
-            showClienteNoResults();
-        });
-}
-
-function displayClienteResults(clientes) {
-    clienteResults.innerHTML = '';
-    
-    clientes.forEach(cliente => {
-        const item = document.createElement('div');
-        item.className = 'p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200';
-        item.innerHTML = `
-            <div class="font-medium text-gray-900">${cliente.nome}</div>
-            <div class="text-sm text-gray-500">${cliente.documento || 'Sem documento'}</div>
-            <div class="text-xs text-gray-400">${cliente.cidade || ''} ${cliente.estado || ''}</div>
-        `;
-        
-        item.addEventListener('click', function() {
-            selectCliente(cliente);
-        });
-        
-        clienteResults.appendChild(item);
-    });
-    
-    showClienteDropdown();
-    clienteNoResults.classList.add('hidden');
-}
-
-function selectCliente(cliente) {
-    clienteSearchInput.value = cliente.nome;
-    clienteOmieId.value = cliente.omie_id;
-    clienteNome.value = cliente.nome;
-    hideClienteDropdown();
-}
-
-function showClienteLoading() {
-    clienteLoading.classList.remove('hidden');
-    clienteResults.innerHTML = '';
-    clienteNoResults.classList.add('hidden');
-    showClienteDropdown();
-}
-
-function hideClienteLoading() {
-    clienteLoading.classList.add('hidden');
-}
-
-function showClienteNoResults() {
-    clienteNoResults.classList.remove('hidden');
-    clienteResults.innerHTML = '';
-    showClienteDropdown();
-}
-
-function showClienteDropdown() {
-    clienteDropdown.classList.remove('hidden');
-}
-
-function hideClienteDropdown() {
-    clienteDropdown.classList.add('hidden');
-    clienteLoading.classList.add('hidden');
-    clienteNoResults.classList.add('hidden');
-}
-
-// Busca de fornecedor por ID
-const fornecedorIdInput = document.getElementById('fornecedor_omie_id');
-const fornecedorNomeInput = document.getElementById('fornecedor_nome');
-const fornecedorLoading = document.getElementById('fornecedor_loading');
-const fornecedorError = document.getElementById('fornecedor_error');
-
-if (fornecedorIdInput) {
-    let fornecedorTimeout;
-    
-    fornecedorIdInput.addEventListener('input', function() {
-        const fornecedorId = this.value.trim();
-        
-        clearTimeout(fornecedorTimeout);
-        
-        // Limpar nome e erro
-        fornecedorNomeInput.value = '';
-        fornecedorError.classList.add('hidden');
-        
-        if (fornecedorId.length === 0) {
-            return;
-        }
-        
-        // Aguardar 500ms antes de fazer a busca
-        fornecedorTimeout = setTimeout(() => {
-            buscarFornecedorPorId(fornecedorId);
-        }, 500);
-    });
-}
-
-function buscarFornecedorPorId(fornecedorId) {
-    fornecedorLoading.classList.remove('hidden');
-    fornecedorError.classList.add('hidden');
-    
-    fetch(`/api/omie/clientes/${fornecedorId}`)
-        .then(response => response.json())
-        .then(data => {
-            fornecedorLoading.classList.add('hidden');
+            console.error('Erro ao buscar clientes OMIE:', error);
+            hideLoading();
             
-            if (data.success && data.data) {
-                fornecedorNomeInput.value = data.data.nome;
-            } else {
-                fornecedorError.classList.remove('hidden');
-                fornecedorNomeInput.value = '';
+            if (clienteResults) {
+                clienteResults.innerHTML = `
+                    <div class="px-4 py-3 text-red-600 text-sm">
+                        Erro ao buscar clientes. Tente novamente.
+                    </div>
+                `;
             }
-        })
-        .catch(error => {
-            fornecedorLoading.classList.add('hidden');
-            fornecedorError.classList.remove('hidden');
-            fornecedorNomeInput.value = '';
-            console.error('Erro ao buscar fornecedor:', error);
+            showDropdown();
         });
 }
 
-// Calcular valor final automaticamente
+function displayResults(clientes) {
+    hideLoading();
+    currentResults = clientes;
+    selectedIndex = -1;
+    
+    const clienteResults = document.getElementById('cliente_results');
+    const clienteNoResults = document.getElementById('cliente_no_results');
+    
+    if (clientes.length === 0) {
+        if (clienteResults) clienteResults.innerHTML = '';
+        if (clienteNoResults) clienteNoResults.classList.remove('hidden');
+        showDropdown();
+        return;
+    }
+    
+    if (clienteNoResults) clienteNoResults.classList.add('hidden');
+    
+    const html = clientes.map((cliente, index) => `
+        <div class="cliente-item px-4 py-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0" 
+             data-index="${index}">
+            <div class="font-medium text-gray-900">${cliente.razao_social || cliente.nome_fantasia || cliente.nome}</div>
+            <div class="text-sm text-gray-500">
+                ${cliente.documento || cliente.cnpj_cpf ? 'CNPJ/CPF: ' + (cliente.documento || cliente.cnpj_cpf) : ''}
+                ${cliente.omie_id || cliente.id || cliente.codigo_cliente_omie ? ' • Código: ' + (cliente.omie_id || cliente.id || cliente.codigo_cliente_omie) : ''}
+            </div>
+        </div>
+    `).join('');
+    
+    if (clienteResults) {
+        clienteResults.innerHTML = html;
+        
+        // Adicionar event listeners para clique
+        clienteResults.querySelectorAll('.cliente-item').forEach((item, index) => {
+            item.addEventListener('click', () => {
+                selecionarCliente(clientes[index]);
+            });
+            
+            item.addEventListener('mouseenter', () => {
+                selectedIndex = index;
+                updateSelection();
+            });
+        });
+    }
+    
+    showDropdown();
+}
+
+function selecionarCliente(cliente) {
+    const clienteSearch = document.getElementById('cliente_omie_search');
+    
+    if (clienteOmieId) clienteOmieId.value = cliente.omie_id || cliente.id || cliente.codigo_cliente_omie;
+    if (clienteNome) clienteNome.value = cliente.razao_social || cliente.nome_fantasia || cliente.nome;
+    if (clienteSearch) clienteSearch.value = cliente.razao_social || cliente.nome_fantasia || cliente.nome;
+    if (nomeClienteSelecionado) nomeClienteSelecionado.textContent = cliente.razao_social || cliente.nome_fantasia || cliente.nome;
+    if (clienteSelecionado) clienteSelecionado.style.display = 'block';
+    hideDropdown();
+    
+    console.log('Cliente selecionado:', {
+        id: cliente.omie_id || cliente.id || cliente.codigo_cliente_omie,
+        nome: cliente.razao_social || cliente.nome_fantasia || cliente.nome
+    });
+}
+
+function updateSelection() {
+    if (!clienteResults) return;
+    const items = clienteResults.querySelectorAll('.cliente-item');
+    items.forEach((item, index) => {
+        if (index === selectedIndex) {
+            item.classList.add('bg-indigo-50', 'text-indigo-900');
+        } else {
+            item.classList.remove('bg-indigo-50', 'text-indigo-900');
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Controle de tipo de orçamento
-    document.getElementById('tipo_orcamento').addEventListener('change', toggleTipoOrcamentoFields);
+    // Controle de exibição das seções por tipo de orçamento
+    const tipoOrcamentoSelect = document.getElementById('tipo_orcamento');
+    const prestadorSection = document.getElementById('prestador_section');
+    const aumentoKmSection = document.getElementById('aumento_km_section');
+    const proprioNovaRotaSection = document.getElementById('proprio_nova_rota_section');
     
-    // Event listeners para cálculos do PRESTADOR
-    ['custo_fornecedor', 'lucro_percentual', 'impostos_percentual_prestador'].forEach(function(id) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener('input', calculatePrestadorValues);
+    // Função para mostrar/ocultar seções baseado no tipo
+    function toggleSections() {
+        if (tipoOrcamentoSelect) {
+            // Ocultar todas as seções
+            if (prestadorSection) prestadorSection.style.display = 'none';
+            if (aumentoKmSection) aumentoKmSection.style.display = 'none';
+            if (proprioNovaRotaSection) proprioNovaRotaSection.style.display = 'none';
+            
+            // Exibir seção correspondente ao tipo selecionado
+            const tipoSelecionado = tipoOrcamentoSelect.value;
+            if (tipoSelecionado === 'prestador' && prestadorSection) {
+                prestadorSection.style.display = 'block';
+            } else if (tipoSelecionado === 'aumento_km' && aumentoKmSection) {
+                aumentoKmSection.style.display = 'block';
+            } else if (tipoSelecionado === 'proprio_nova_rota' && proprioNovaRotaSection) {
+                proprioNovaRotaSection.style.display = 'block';
+            }
+        }
+    }
+    
+    // Event listener para mudança de tipo de orçamento
+    if (tipoOrcamentoSelect) {
+        tipoOrcamentoSelect.addEventListener('change', toggleSections);
+    }
+    
+    // Verificar estado inicial
+    toggleSections();
+    
+    // Cálculos automáticos do prestador
+    const valorReferenciaInput = document.getElementById('valor_referencia');
+    const qtdDiasInput = document.getElementById('qtd_dias');
+    const percentualLucroInput = document.getElementById('lucro_percentual');
+            const percentualImpostosInput = document.getElementById('impostos_percentual');
+    
+    const custoFornecedorDisplay = document.getElementById('custo_fornecedor_display');
+    const valorLucroDisplay = document.getElementById('valor_lucro_display');
+    const valorImpostosDisplay = document.getElementById('valor_impostos_display');
+    const valorTotalDisplay = document.getElementById('valor_total_display');
+    
+    function formatarMoeda(valor) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor || 0);
+    }
+    
+    function calcularValoresPrestador() {
+        const valorReferencia = parseFloat(valorReferenciaInput.value) || 0;
+        const qtdDias = parseInt(qtdDiasInput.value) || 0;
+        const percentualLucro = parseFloat(percentualLucroInput.value) || 0;
+        const percentualImpostos = parseFloat(percentualImpostosInput.value) || 0;
+        
+        // Custo Fornecedor = Valor Referência × Quantidade de Dias
+        const custoFornecedor = valorReferencia * qtdDias;
+        
+        // Valor Lucro = Custo Fornecedor × (Percentual Lucro / 100)
+        const valorLucro = custoFornecedor * (percentualLucro / 100);
+        
+        // Subtotal = Custo Fornecedor + Valor Lucro
+        const subtotal = custoFornecedor + valorLucro;
+        
+        // Valor Impostos = Subtotal × (Percentual Impostos / 100)
+        const valorImpostos = subtotal * (percentualImpostos / 100);
+        
+        // Valor Total = Subtotal + Valor Impostos
+        const valorTotal = subtotal + valorImpostos;
+        
+        // Atualizar displays
+        custoFornecedorDisplay.textContent = formatarMoeda(custoFornecedor);
+        valorLucroDisplay.textContent = formatarMoeda(valorLucro);
+        valorImpostosDisplay.textContent = formatarMoeda(valorImpostos);
+        valorTotalDisplay.textContent = formatarMoeda(valorTotal);
+        
+        // Atualizar campo valor_total do orçamento principal se for prestador
+        const valorTotalPrincipal = document.getElementById('valor_total');
+        if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'prestador' && valorTotalPrincipal) {
+            valorTotalPrincipal.value = valorTotal.toFixed(2);
+        }
+    }
+    
+    // Event listeners para cálculos automáticos
+    if (valorReferenciaInput) valorReferenciaInput.addEventListener('input', calcularValoresPrestador);
+    if (qtdDiasInput) qtdDiasInput.addEventListener('input', calcularValoresPrestador);
+    if (percentualLucroInput) percentualLucroInput.addEventListener('input', calcularValoresPrestador);
+    if (percentualImpostosInput) percentualImpostosInput.addEventListener('input', calcularValoresPrestador);
+    
+    // Calcular valores iniciais se houver dados
+    calcularValoresPrestador();
+    
+    // Cálculos automáticos do Aumento KM
+    const kmDiaInput = document.getElementById('km_dia');
+    const qtdDiasAumentoInput = document.getElementById('qtd_dias_aumento');
+    const combustivelKmLitroInput = document.getElementById('combustivel_km_litro');
+    const valorCombustivelInput = document.getElementById('valor_combustivel');
+    const horaExtraInput = document.getElementById('hora_extra');
+    const valorTotalAumentoKmDisplay = document.getElementById('valor_total_aumento_km');
+    
+    function calcularValoresAumentoKm() {
+        const kmDia = parseFloat(kmDiaInput?.value) || 0;
+        const qtdDiasAumento = parseInt(qtdDiasAumentoInput?.value) || 0;
+        const combustivelKmLitro = parseFloat(combustivelKmLitroInput?.value) || 0;
+        const valorCombustivel = parseFloat(valorCombustivelInput?.value) || 0;
+        const horaExtra = parseFloat(horaExtraInput?.value) || 0;
+        
+        // Cálculo básico: KM total do mês
+        const kmTotalMes = kmDia * qtdDiasAumento;
+        
+        // Cálculo do combustível total
+        const totalCombustivel = combustivelKmLitro > 0 ? kmTotalMes / combustivelKmLitro : 0;
+        
+        // Custo total combustível + hora extra
+        const custoTotalCombustivelHe = (totalCombustivel * valorCombustivel) + horaExtra;
+        
+        // Para simplificar, vamos mostrar apenas o custo básico no display
+        const valorTotal = custoTotalCombustivelHe;
+        
+        // Atualizar display
+        if (valorTotalAumentoKmDisplay) {
+            valorTotalAumentoKmDisplay.textContent = formatarMoeda(valorTotal);
+        }
+        
+        // Atualizar campo valor_total do orçamento principal se for aumento_km
+        const valorTotalPrincipal = document.getElementById('valor_total');
+        if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'aumento_km' && valorTotalPrincipal) {
+            valorTotalPrincipal.value = valorTotal.toFixed(2);
+        }
+    }
+    
+    // Event listeners para cálculos automáticos do Aumento KM
+    if (kmDiaInput) kmDiaInput.addEventListener('input', calcularValoresAumentoKm);
+    if (qtdDiasAumentoInput) qtdDiasAumentoInput.addEventListener('input', calcularValoresAumentoKm);
+    if (combustivelKmLitroInput) combustivelKmLitroInput.addEventListener('input', calcularValoresAumentoKm);
+    if (valorCombustivelInput) valorCombustivelInput.addEventListener('input', calcularValoresAumentoKm);
+    if (horaExtraInput) horaExtraInput.addEventListener('input', calcularValoresAumentoKm);
+    
+    // Calcular valores iniciais do Aumento KM
+    calcularValoresAumentoKm();
+    
+    // Cálculos automáticos do Próprio Nova Rota
+    const distanciaKmInput = document.getElementById('distancia_km_proprio');
+    const valorKmProprioInput = document.getElementById('valor_km_proprio');
+    const valorTotalProprioNovaRotaDisplay = document.getElementById('valor_total_proprio_nova_rota');
+    
+    function calcularValoresProprioNovaRota() {
+        const distanciaKm = parseFloat(distanciaKmInput.value) || 0;
+        const valorKmProprio = parseFloat(valorKmProprioInput.value) || 0;
+        
+        // Valor Total = Distância KM × Valor por KM
+        const valorTotal = distanciaKm * valorKmProprio;
+        
+        // Atualizar display
+        if (valorTotalProprioNovaRotaDisplay) {
+            valorTotalProprioNovaRotaDisplay.textContent = formatarMoeda(valorTotal);
+        }
+        
+        // Atualizar campo valor_total do orçamento principal se for proprio_nova_rota
+        const valorTotalPrincipal = document.getElementById('valor_total');
+        if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'proprio_nova_rota' && valorTotalPrincipal) {
+            valorTotalPrincipal.value = valorTotal.toFixed(2);
+        }
+    }
+    
+    // Event listeners para cálculos automáticos do Próprio Nova Rota
+    if (distanciaKmInput) distanciaKmInput.addEventListener('input', calcularValoresProprioNovaRota);
+    if (valorKmProprioInput) valorKmProprioInput.addEventListener('input', calcularValoresProprioNovaRota);
+    
+    // Calcular valores iniciais do Próprio Nova Rota
+    calcularValoresProprioNovaRota();
+    
+    // Busca de clientes OMIE
+    const clienteSearch = document.getElementById('cliente_omie_search');
+    const orcamentoForm = document.getElementById('orcamentoForm');
+    
+    if (clienteSearch) {
+        clienteSearch.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            const termo = this.value.trim();
+            
+            // Se o campo estiver vazio, limpar seleção
+            if (termo === '') {
+                if (clienteSelecionado) clienteSelecionado.style.display = 'none';
+                if (clienteOmieId) clienteOmieId.value = '';
+                if (clienteNome) clienteNome.value = '';
+                hideDropdown();
+                return;
+            }
+            
+            // Buscar após 500ms de inatividade
+            if (termo.length >= 2) {
+                timeoutId = setTimeout(function() {
+                    buscarClientesOmie(termo);
+                }, 500);
+            } else {
+                hideDropdown();
+            }
+        });
+        
+        // Navegação por teclado
+        clienteSearch.addEventListener('keydown', function(e) {
+            if (clienteDropdown && !clienteDropdown.classList.contains('hidden')) {
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, currentResults.length - 1);
+                        updateSelection();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        updateSelection();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && currentResults[selectedIndex]) {
+                            selecionarCliente(currentResults[selectedIndex]);
+                        }
+                        break;
+                    case 'Escape':
+                        hideDropdown();
+                        break;
+                }
+            }
+        });
+        
+        // Foco no campo de busca quando a página carregar
+        clienteSearch.focus();
+    }
+    
+    // Fechar dropdown ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#cliente_omie_search') && !e.target.closest('#cliente_dropdown')) {
+            hideDropdown();
         }
     });
     
-    // Event listeners para cálculos do AUMENTO DE KM
-    ['km_dia', 'qtd_dias_km', 'combustivel_km_litro', 'valor_combustivel', 'hora_extra', 'lucro_percentual_km', 'impostos_percentual_km'].forEach(function(id) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener('input', calculateAumentoKmValues);
+    // Funções removidas - agora estão no escopo global
+    
+    // Validação do formulário
+    if (orcamentoForm) {
+        orcamentoForm.addEventListener('submit', function(e) {
+            const clienteId = clienteOmieId ? clienteOmieId.value : '';
+            if (!clienteId) {
+                e.preventDefault();
+                alert('Por favor, selecione um cliente válido.');
+                if (clienteSearch) clienteSearch.focus();
+                return false;
+            }
+        });
+    }
+    
+    // Os checkboxes de frequência de atendimento agora funcionam diretamente como array
+    // Não é necessário JavaScript adicional para conversão
+    
+    // Busca de fornecedores OMIE - Funcionalidade igual à do cliente
+    let fornecedorTimeoutId;
+    
+    const fornecedorSearch = document.getElementById('fornecedor_omie_search');
+    const fornecedorSelecionado = document.getElementById('fornecedor_selecionado');
+    const fornecedorOmieId = document.getElementById('fornecedor_omie_id');
+    const fornecedorNome = document.getElementById('fornecedor_nome');
+    const nomeFornecedorSelecionado = document.getElementById('nome_fornecedor_selecionado');
+    const fornecedorDropdown = document.getElementById('fornecedor_dropdown');
+    const fornecedorLoading = document.getElementById('fornecedor_loading');
+    const fornecedorResults = document.getElementById('fornecedor_results');
+    const fornecedorNoResults = document.getElementById('fornecedor_no_results');
+    
+    let fornecedorSelectedIndex = -1;
+    let fornecedorCurrentResults = [];
+    
+    function showFornecedorLoading() {
+        if (fornecedorLoading) fornecedorLoading.classList.remove('hidden');
+        if (fornecedorResults) fornecedorResults.innerHTML = '';
+        if (fornecedorNoResults) fornecedorNoResults.classList.add('hidden');
+    }
+    
+    function hideFornecedorLoading() {
+        if (fornecedorLoading) fornecedorLoading.classList.add('hidden');
+    }
+    
+    function updateFornecedorSelection() {
+        if (!fornecedorResults) return;
+        
+        const items = fornecedorResults.querySelectorAll('.fornecedor-item');
+        items.forEach((item, index) => {
+            if (index === fornecedorSelectedIndex) {
+                item.classList.add('bg-indigo-50');
+            } else {
+                item.classList.remove('bg-indigo-50');
+            }
+        });
+    }
+    
+    function displayFornecedorResults(fornecedores) {
+        fornecedorCurrentResults = fornecedores;
+        fornecedorSelectedIndex = -1;
+        
+        if (fornecedores.length === 0) {
+            if (fornecedorResults) fornecedorResults.innerHTML = '';
+            if (fornecedorNoResults) fornecedorNoResults.classList.remove('hidden');
+            showFornecedorDropdown();
+            return;
+        }
+        
+        if (fornecedorNoResults) fornecedorNoResults.classList.add('hidden');
+        
+        const html = fornecedores.map((fornecedor, index) => `
+            <div class="fornecedor-item px-4 py-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0" 
+                 data-index="${index}">
+                <div class="font-medium text-gray-900">${fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome}</div>
+                <div class="text-sm text-gray-500">
+                    ${fornecedor.documento || fornecedor.cnpj_cpf ? 'CNPJ/CPF: ' + (fornecedor.documento || fornecedor.cnpj_cpf) : ''}
+                    ${fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie ? ' • Código: ' + (fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie) : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        if (fornecedorResults) {
+            fornecedorResults.innerHTML = html;
+            
+            // Adicionar event listeners para clique
+            fornecedorResults.querySelectorAll('.fornecedor-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    selecionarFornecedor(fornecedores[index]);
+                });
+                
+                item.addEventListener('mouseenter', () => {
+                    fornecedorSelectedIndex = index;
+                    updateFornecedorSelection();
+                });
+            });
+        }
+        
+        showFornecedorDropdown();
+    }
+    
+    if (fornecedorSearch) {
+        fornecedorSearch.addEventListener('input', function() {
+            clearTimeout(fornecedorTimeoutId);
+            const termo = this.value.trim();
+            
+            if (termo.length >= 2) {
+                fornecedorTimeoutId = setTimeout(() => {
+                    buscarFornecedoresOmie(termo);
+                }, 500);
+            } else {
+                hideFornecedorDropdown();
+            }
+        });
+        
+        // Navegação por teclado
+        fornecedorSearch.addEventListener('keydown', function(e) {
+            if (fornecedorDropdown && !fornecedorDropdown.classList.contains('hidden')) {
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        fornecedorSelectedIndex = Math.min(fornecedorSelectedIndex + 1, fornecedorCurrentResults.length - 1);
+                        updateFornecedorSelection();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        fornecedorSelectedIndex = Math.max(fornecedorSelectedIndex - 1, -1);
+                        updateFornecedorSelection();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (fornecedorSelectedIndex >= 0 && fornecedorCurrentResults[fornecedorSelectedIndex]) {
+                            selecionarFornecedor(fornecedorCurrentResults[fornecedorSelectedIndex]);
+                        }
+                        break;
+                    case 'Escape':
+                        hideFornecedorDropdown();
+                        break;
+                }
+            }
+        });
+    }
+    
+    // Fechar dropdown ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#fornecedor_omie_search') && !e.target.closest('#fornecedor_dropdown')) {
+            hideFornecedorDropdown();
         }
     });
+    
+    function showFornecedorDropdown() {
+        if (fornecedorDropdown) fornecedorDropdown.classList.remove('hidden');
+    }
+    
+    function hideFornecedorDropdown() {
+        if (fornecedorDropdown) fornecedorDropdown.classList.add('hidden');
+        fornecedorSelectedIndex = -1;
+    }
+    
+    function buscarFornecedoresOmie(termo) {
+        showFornecedorLoading();
+        
+        // Usar a mesma API de clientes como fonte de dados
+        fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`)
+            .then(response => response.json())
+            .then(data => {
+                hideFornecedorLoading();
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    displayFornecedorResults(data.data);
+                } else {
+                    // Nenhum resultado encontrado
+                    if (fornecedorNoResults) fornecedorNoResults.classList.remove('hidden');
+                    if (fornecedorResults) fornecedorResults.innerHTML = '';
+                    showFornecedorDropdown();
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar fornecedores OMIE:', error);
+                hideFornecedorLoading();
+                
+                // Mostrar mensagem de erro
+                if (fornecedorResults) {
+                    fornecedorResults.innerHTML = `
+                        <div class="px-4 py-3 text-red-600 text-sm">
+                            Erro ao buscar fornecedores. Tente novamente.
+                        </div>
+                    `;
+                }
+                showFornecedorDropdown();
+            });
+    }
+    
+    function selecionarFornecedor(fornecedor) {
+        if (fornecedorOmieId) fornecedorOmieId.value = fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie;
+        if (fornecedorNome) fornecedorNome.value = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
+        if (fornecedorSearch) fornecedorSearch.value = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
+        if (nomeFornecedorSelecionado) nomeFornecedorSelecionado.textContent = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
+        if (fornecedorSelecionado) fornecedorSelecionado.style.display = 'block';
+        hideFornecedorDropdown();
+        
+        console.log('Fornecedor selecionado:', {
+            id: fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie,
+            nome: fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome
+        });
+    }
+    
+    // Validação do formulário
+    if (orcamentoForm) {
+        orcamentoForm.addEventListener('submit', function(e) {
+            const clienteId = clienteOmieId ? clienteOmieId.value : '';
+            const fornecedorId = fornecedorOmieId ? fornecedorOmieId.value : '';
+            const tipoOrcamento = tipoOrcamentoSelect ? tipoOrcamentoSelect.value : '';
+            
+            if (!clienteId) {
+                e.preventDefault();
+                alert('Por favor, selecione um cliente válido.');
+                if (clienteSearch) clienteSearch.focus();
+                return false;
+            }
+            
+            // Validar fornecedor apenas para tipo 'prestador'
+            if (tipoOrcamento === 'prestador' && !fornecedorId) {
+                e.preventDefault();
+                alert('Por favor, selecione um fornecedor válido.');
+                if (fornecedorSearch) fornecedorSearch.focus();
+                return false;
+            }
+        });
+    }
 });
 </script>
+@endpush
+
 @endsection

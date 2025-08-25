@@ -79,7 +79,7 @@ class BaseController extends Controller
      */
     public function show(Base $base)
     {
-        $base->load(['orcamentosOrigem', 'orcamentosDestino']);
+        // $base->load(['orcamentosOrigem', 'orcamentosDestino']); // Removido: orçamentos foram removidos do sistema
         
         return view('admin.bases.show', compact('base'));
     }
@@ -122,16 +122,7 @@ class BaseController extends Controller
      */
     public function destroy(Base $base)
     {
-        // Verificar se a base possui orçamentos como origem ou destino
-        $orcamentosOrigem = $base->orcamentosOrigem()->count();
-        $orcamentosDestino = $base->orcamentosDestino()->count();
-        
-        if ($orcamentosOrigem > 0 || $orcamentosDestino > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Não é possível excluir esta base pois ela possui orçamentos associados.'
-            ], 422);
-        }
+        // Verificação de orçamentos removida - sistema de orçamentos foi removido
         
         try {
             $base->delete();

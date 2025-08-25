@@ -89,7 +89,7 @@ class MarcaController extends Controller
      */
     public function show(Marca $marca)
     {
-        $marca->load('orcamentosPrestador.orcamento');
+        // Removido: $marca->load('orcamentosPrestador.orcamento'); - orçamentos foram removidos do sistema
         
         return view('admin.marcas.show', compact('marca'));
     }
@@ -145,13 +145,7 @@ class MarcaController extends Controller
      */
     public function destroy(Marca $marca)
     {
-        // Verificar se a marca possui orçamentos
-        if ($marca->orcamentosPrestador()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Não é possível excluir esta marca pois ela possui orçamentos associados.'
-            ], 422);
-        }
+        // Removido: verificação de orçamentos - orçamentos foram removidos do sistema
         
         try {
             $marca->delete();

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrcamentoProprioNovaRota extends Model
 {
+    use HasFactory;
+
     protected $table = 'orcamento_proprio_nova_rota';
 
     protected $fillable = [
@@ -23,56 +25,64 @@ class OrcamentoProprioNovaRota extends Model
     protected $casts = [
         'km_nova_rota' => 'decimal:2',
         'valor_km_nova_rota' => 'decimal:2',
-        'valor_total_nova_rota' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'valor_total_nova_rota' => 'decimal:2'
     ];
 
     /**
-     * Relacionamento com orçamento
+     * Relacionamento com Orcamento
      */
-    public function orcamento(): BelongsTo
+    public function orcamento()
     {
         return $this->belongsTo(Orcamento::class);
     }
 
     /**
-     * Calcula o valor total da nova rota baseado em KM e valor por KM
+     * Calcula o valor total da nova rota
      */
-    public function calcularValorTotalNovaRota(): float
+    public function calcularValorTotalNovaRota()
     {
-        return $this->km_nova_rota * $this->valor_km_nova_rota;
+        $km = $this->km_nova_rota ?? 0;
+        $valorKm = $this->valor_km_nova_rota ?? 0;
+        
+        return $km * $valorKm;
     }
 
     /**
-     * Accessor para descrição completa da nova rota
+     * Accessor para rota completa
      */
-    public function getNovaRotaCompletaAttribute(): string
+    public function getNovaRotaCompletaAttribute()
     {
-        return "{$this->nova_origem} → {$this->novo_destino}";
+        $origem = $this->nova_origem ?? '';
+        $destino = $this->novo_destino ?? '';
+        
+        if ($origem && $destino) {
+            return $origem . ' → ' . $destino;
+        }
+        
+        return $origem . $destino;
     }
 
     /**
      * Accessor para KM da nova rota formatado
      */
-    public function getKmNovaRotaFormattedAttribute(): string
+    public function getKmNovaRotaFormattedAttribute()
     {
-        return number_format($this->km_nova_rota, 2, ',', '.') . ' km';
+        return number_format($this->km_nova_rota ?? 0, 2, ',', '.') . ' km';
     }
 
     /**
      * Accessor para valor por KM da nova rota formatado
      */
-    public function getValorKmNovaRotaFormattedAttribute(): string
+    public function getValorKmNovaRotaFormattedAttribute()
     {
-        return 'R$ ' . number_format($this->valor_km_nova_rota, 2, ',', '.');
+        return 'R$ ' . number_format($this->valor_km_nova_rota ?? 0, 2, ',', '.');
     }
 
     /**
      * Accessor para valor total da nova rota formatado
      */
-    public function getValorTotalNovaRotaFormattedAttribute(): string
+    public function getValorTotalNovaRotaFormattedAttribute()
     {
-        return 'R$ ' . number_format($this->valor_total_nova_rota, 2, ',', '.');
+        return 'R$ ' . number_format($this->valor_total_nova_rota ?? 0, 2, ',', '.');
     }
 }

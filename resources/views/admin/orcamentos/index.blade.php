@@ -1,333 +1,334 @@
 @extends('layouts.admin')
 
 @section('title', 'Orçamentos')
+@section('page-title', 'Orçamentos')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Orçamentos</h1>
-        <a href="{{ route('admin.orcamentos.create') }}" 
-           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200">
-            <i class="fas fa-plus mr-2"></i>Novo Orçamento
-        </a>
-    </div>
-
-    <!-- Filtros -->
-    <div class="bg-gray-50 p-4 rounded-lg mb-6">
-        <form method="GET" action="{{ route('admin.orcamentos.index') }}" class="flex flex-wrap gap-4">
-            <div class="flex-1 min-w-64">
-                <input type="text" 
-                       name="search" 
-                       value="{{ request('search') }}"
-                       placeholder="Buscar por número, cliente ou observações..."
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            
-            <div>
-                <select name="status" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Todos os Status</option>
-                    <option value="rascunho" {{ request('status') == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
-                    <option value="aguardando" {{ request('status') == 'aguardando' ? 'selected' : '' }}>Aguardando</option>
-                    <option value="aprovado" {{ request('status') == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
-                    <option value="rejeitado" {{ request('status') == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
-                    <option value="cancelado" {{ request('status') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
-                </select>
-            </div>
-            
-            <div>
-                <select name="tipo" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Todos os Tipos</option>
-                    <option value="prestador" {{ request('tipo') == 'prestador' ? 'selected' : '' }}>Prestador</option>
-                    <option value="proprio_nova_rota" {{ request('tipo') == 'proprio_nova_rota' ? 'selected' : '' }}>Próprio Nova Rota</option>
-                    <option value="aumento_km" {{ request('tipo') == 'aumento_km' ? 'selected' : '' }}>Aumento KM</option>
-                </select>
-            </div>
-            
-            <div>
-                <input type="text" 
-                       name="cliente_nome" 
-                       placeholder="Buscar por cliente..."
-                       value="{{ request('cliente_nome') }}"
-                       class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
-                <i class="fas fa-search mr-2"></i>Filtrar
-            </button>
-            
-            <a href="{{ route('admin.orcamentos.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition duration-200">
-                <i class="fas fa-times mr-2"></i>Limpar
-            </a>
-        </form>
-    </div>
-
-    <!-- Estatísticas Rápidas -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+<div class="mx-auto">
+    <div class="bg-white shadow-sm rounded-lg">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-blue-600">Total</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ $estatisticas['total'] ?? 0 }}</p>
-                </div>
-                <i class="fas fa-file-invoice text-blue-500 text-2xl"></i>
+                <h3 class="text-lg font-medium text-gray-900">Gerenciar Orçamentos</h3>
+                <a href="{{ route('admin.orcamentos.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <i class="fas fa-plus mr-2"></i> Novo Orçamento
+                </a>
             </div>
         </div>
-        
-        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-yellow-600">Pendentes</p>
-                    <p class="text-2xl font-bold text-yellow-700">{{ $estatisticas['pendentes'] ?? 0 }}</p>
+
+        <!-- Filtros -->
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <form method="GET" action="{{ route('admin.orcamentos.index') }}" class="mb-6" id="filters-form">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div class="md:col-span-2">
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+                        <input type="text" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                               id="search" 
+                               name="search" 
+                               value="{{ request('search') }}" 
+                               placeholder="Número, cliente, rota...">
+                    </div>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="status" name="status">
+                            <option value="">Todos</option>
+                            <option value="rascunho" {{ request('status') == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                            <option value="enviado" {{ request('status') == 'enviado' ? 'selected' : '' }}>Enviado</option>
+                            <option value="aprovado" {{ request('status') == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
+                            <option value="rejeitado" {{ request('status') == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
+                            <option value="cancelado" {{ request('status') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tipo_orcamento" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="tipo_orcamento" name="tipo_orcamento">
+                            <option value="">Todos</option>
+                            <option value="prestador" {{ request('tipo_orcamento') == 'prestador' ? 'selected' : '' }}>Prestador</option>
+                            <option value="aumento_km" {{ request('tipo_orcamento') == 'aumento_km' ? 'selected' : '' }}>Aumento KM</option>
+                            <option value="proprio_nova_rota" {{ request('tipo_orcamento') == 'proprio_nova_rota' ? 'selected' : '' }}>Próprio Nova Rota</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="data_inicio" class="block text-sm font-medium text-gray-700 mb-1">Data Início</label>
+                        <input type="date" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                               id="data_inicio" 
+                               name="data_inicio" 
+                               value="{{ request('data_inicio') }}">
+                    </div>
+                    <div>
+                        <label for="data_fim" class="block text-sm font-medium text-gray-700 mb-1">Data Fim</label>
+                        <input type="date" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                               id="data_fim" 
+                               name="data_fim" 
+                               value="{{ request('data_fim') }}">
+                    </div>
+                    <div class="flex flex-col justify-end">
+                        <button type="submit" class="w-full px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-                <i class="fas fa-clock text-yellow-500 text-2xl"></i>
-            </div>
-        </div>
-        
-        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-green-600">Aprovados</p>
-                    <p class="text-2xl font-bold text-green-700">{{ $estatisticas['aprovados'] ?? 0 }}</p>
+                <div class="mt-4">
+                    <a href="{{ route('admin.orcamentos.index') }}" class="inline-flex items-center px-3 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <i class="fas fa-times mr-2"></i> Limpar Filtros
+                    </a>
                 </div>
-                <i class="fas fa-check-circle text-green-500 text-2xl"></i>
-            </div>
-        </div>
-        
-        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-purple-600">Valor Total</p>
-                    <p class="text-lg font-bold text-purple-700">R$ {{ number_format($estatisticas['valor_total'] ?? 0, 2, ',', '.') }}</p>
+                    </form>
                 </div>
-                <i class="fas fa-dollar-sign text-purple-500 text-2xl"></i>
+
+                <!-- Mensagens de Sessão -->
+                @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 mx-6 mt-4" role="alert">
+                        <span class="block sm:inline">{{ session('success') }}</span>
+                        <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.style.display='none'">
+                            <svg class="fill-current h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <title>Fechar</title>
+                                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                            </svg>
+                        </span>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 mx-6 mt-4" role="alert">
+                        <span class="block sm:inline">{{ session('error') }}</span>
+                        <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.style.display='none'">
+                            <svg class="fill-current h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <title>Fechar</title>
+                                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                            </svg>
+                        </span>
+                    </div>
+                @endif
+
+                <div class="overflow-hidden">
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Solicitação</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rota</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsável</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($orcamentos as $orcamento)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <strong>{{ $orcamento->numero_orcamento }}</strong>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $orcamento->data_solicitacao->format('d/m/Y') }}
+                                            <br><small class="text-gray-400">{{ $orcamento->data_solicitacao->diffForHumans() }}</small>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <strong>{{ $orcamento->cliente_nome }}</strong>
+                                            @if($orcamento->cliente_omie_id)
+                                                <br><small class="text-gray-400">ID: {{ $orcamento->cliente_omie_id }}</small>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $orcamento->nome_rota }}
+                                            @if($orcamento->id_logcare)
+                                                <br><small class="text-gray-400">LOGCARE: {{ $orcamento->id_logcare }}</small>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @switch($orcamento->tipo_orcamento)
+                                                @case('prestador')
+                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Prestador</span>
+                                                    @break
+                                                @case('aumento_km')
+                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Aumento KM</span>
+                                                    @break
+                                                @case('proprio_nova_rota')
+                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Próprio Nova Rota</span>
+                                                    @break
+                                                @default
+                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ $orcamento->tipo_orcamento }}</span>
+                                            @endswitch
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap" style="min-width: 140px;">
+                                            <select class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 status-select bg-white" 
+                                                    data-orcamento-id="{{ $orcamento->id }}" 
+                                                    data-current-status="{{ $orcamento->status }}">
+                                                <option value="rascunho" {{ $orcamento->status == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                                                <option value="enviado" {{ $orcamento->status == 'enviado' ? 'selected' : '' }}>Enviado</option>
+                                                <option value="aprovado" {{ $orcamento->status == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
+                                                <option value="rejeitado" {{ $orcamento->status == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
+                                                <option value="cancelado" {{ $orcamento->status == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                                            </select>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            @if($orcamento->valor_final)
+                                                <strong>R$ {{ number_format($orcamento->valor_final, 2, ',', '.') }}</strong>
+                                            @elseif($orcamento->valor_total)
+                                                R$ {{ number_format($orcamento->valor_total, 2, ',', '.') }}
+                                            @else
+                                                <span class="text-gray-400">Não informado</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $orcamento->user->name ?? 'N/A' }}
+                                            @if($orcamento->data_orcamento)
+                                                <br><small class="text-gray-400">{{ $orcamento->data_orcamento->format('d/m/Y') }}</small>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex space-x-2">
+                                                <a href="{{ route('admin.orcamentos.show', $orcamento) }}" 
+                                                   class="inline-flex items-center px-2 py-1 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150" 
+                                                   title="Visualizar">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ route('admin.orcamentos.edit', $orcamento) }}" 
+                                                   class="inline-flex items-center px-2 py-1 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150" 
+                                                   title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        class="inline-flex items-center px-2 py-1 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" 
+                                                        title="Excluir"
+                                                        onclick="confirmDelete({{ $orcamento->id }}, '{{ $orcamento->numero_orcamento }}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="px-6 py-4 text-center">
+                                            <div class="text-gray-500">
+                                                <i class="fas fa-inbox text-3xl mb-3"></i>
+                                                <h5 class="text-lg font-medium mb-2">Nenhum orçamento encontrado</h5>
+                                                <p class="mb-4">Não há orçamentos cadastrados com os filtros selecionados.</p>
+                                                <a href="{{ route('admin.orcamentos.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                    <i class="fas fa-plus mr-2"></i> Criar Primeiro Orçamento
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @if($orcamentos->hasPages())
+                    <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <small class="text-gray-500">
+                                    Mostrando {{ $orcamentos->firstItem() }} a {{ $orcamentos->lastItem() }} 
+                                    de {{ $orcamentos->total() }} resultados
+                                </small>
+                            </div>
+                            <div>
+                                {{ $orcamentos->appends(request()->query())->links() }}
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
-
-    <!-- Tabela -->
-    <div class="overflow-x-auto">
-        <table class="min-w-full table-auto">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DT Solicitação</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orçamento</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CC (+)</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Evento</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalhes (+)</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total (+)</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DT Aprovação</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DT Início</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DT Exclusão</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DT Envio</th>
-                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($orcamentos as $orcamento)
-                    <tr class="hover:bg-gray-50">
-                        <!-- DT Solicitação -->
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $orcamento->created_at->format('d/m/Y H:i') }}
-                        </td>
-                        
-                        <!-- Orçamento -->
-                        <td class="px-3 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">
-                                #{{ str_pad($orcamento->id, 6, '0', STR_PAD_LEFT) }}
-                            </div>
-                            <div class="text-xs text-gray-500">{{ $orcamento->cliente_nome ?? 'N/A' }}</div>
-                        </td>
-                        
-                        <!-- CC (+) -->
-                        <td class="px-3 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900" title="{{ $orcamento->centroCusto->descricao ?? 'N/A' }}">
-                                {{ $orcamento->centroCusto->codigo ?? 'N/A' }}
-                            </div>
-                        </td>
-                        
-                        <!-- Evento -->
-                        <td class="px-3 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900" title="{{ $orcamento->evento ?? '' }}">
-                                {{ Str::limit($orcamento->evento ?? '-', 20) }}
-                            </div>
-                        </td>
-                        
-                        <!-- Detalhes (+) -->
-                        <td class="px-3 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900" title="{{ $orcamento->detalhes ?? '' }}">
-                                {{ Str::limit($orcamento->detalhes ?? '-', 25) }}
-                            </div>
-                        </td>
-                        
-                        <!-- Valor Total (+) -->
-                        <td class="px-3 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900" title="Valor com impostos: R$ {{ number_format($orcamento->valor_final ?? 0, 2, ',', '.') }}">
-                                R$ {{ number_format($orcamento->valor_total ?? 0, 2, ',', '.') }}
-                            </div>
-                        </td>
-                        
-                        <!-- Status -->
-                        <td class="px-3 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                @switch($orcamento->status)
-                                    @case('rascunho')
-                                        bg-gray-100 text-gray-800
-                                        @break
-                                    @case('aguardando')
-                                        bg-yellow-100 text-yellow-800
-                                        @break
-                                    @case('aprovado')
-                                        bg-green-100 text-green-800
-                                        @break
-                                    @case('rejeitado')
-                                        bg-red-100 text-red-800
-                                        @break
-                                    @case('cancelado')
-                                        bg-red-100 text-red-800
-                                        @break
-                                    @default
-                                        bg-gray-100 text-gray-800
-                                @endswitch">
-                                @switch($orcamento->status)
-                                    @case('aguardando')
-                                        AGUARDANDO
-                                        @break
-                                    @case('aprovado')
-                                        APROVADO
-                                        @break
-                                    @case('rejeitado')
-                                        REPROVADO
-                                        @break
-                                    @default
-                                        {{ strtoupper($orcamento->status ?? 'rascunho') }}
-                                @endswitch
-                            </span>
-                        </td>
-                        
-                        <!-- DT Aprovação -->
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $orcamento->data_aprovacao ? $orcamento->data_aprovacao->format('d/m/Y H:i') : '-' }}
-                        </td>
-                        
-                        <!-- DT Início -->
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $orcamento->data_inicio ? $orcamento->data_inicio->format('d/m/Y H:i') : '-' }}
-                        </td>
-                        
-                        <!-- DT Exclusão -->
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $orcamento->data_exclusao ? $orcamento->data_exclusao->format('d/m/Y H:i') : '-' }}
-                        </td>
-                        
-                        <!-- DT Envio -->
-                        <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $orcamento->data_envio ? $orcamento->data_envio->format('d/m/Y H:i') : '-' }}
-                        </td>
-                        
-                        <!-- Ações -->
-                        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex space-x-1">
-                                <a href="{{ route('admin.orcamentos.show', $orcamento->id) }}" 
-                                   class="text-blue-600 hover:text-blue-900 transition duration-200" 
-                                   title="Visualizar">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                @if(in_array($orcamento->status, ['rascunho', 'aguardando']))
-                                    <a href="{{ route('admin.orcamentos.edit', $orcamento->id) }}" 
-                                       class="text-yellow-600 hover:text-yellow-900 transition duration-200" 
-                                       title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                @endif
-                                <button onclick="duplicateOrcamento({{ $orcamento->id }})" 
-                                        class="text-green-600 hover:text-green-900 transition duration-200" 
-                                        title="Duplicar">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                                <button onclick="deleteOrcamento({{ $orcamento->id }}, '#{{ str_pad($orcamento->id, 6, '0', STR_PAD_LEFT) }}')" 
-                                        class="text-red-600 hover:text-red-900 transition duration-200" 
-                                        title="Excluir">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                            <div class="flex flex-col items-center justify-center py-8">
-                                <i class="fas fa-file-invoice text-4xl text-gray-300 mb-4"></i>
-                                <p class="text-lg font-medium">Nenhum orçamento encontrado</p>
-                                <p class="text-sm">Comece criando seu primeiro orçamento</p>
-                                <a href="{{ route('admin.orcamentos.create') }}" 
-                                   class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-200">
-                                    <i class="fas fa-plus mr-2"></i>Criar Orçamento
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Paginação -->
-    @if($orcamentos->hasPages())
-        <div class="mt-6">
-            {{ $orcamentos->links() }}
-        </div>
-    @endif
 </div>
 
-<!-- Scripts -->
+<!-- Modal de Confirmação de Exclusão -->
+<div id="delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Confirmar Exclusão</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeDeleteModal()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm text-gray-500">
+                    Tem certeza que deseja excluir o orçamento <strong id="numeroOrcamentoExclusao" class="text-gray-900"></strong>?
+                </p>
+                <p class="text-sm text-red-600 mt-2">
+                    <small>Esta ação não pode ser desfeita.</small>
+                </p>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300" 
+                        onclick="closeDeleteModal()">
+                    Cancelar
+                </button>
+                <form id="formExclusao" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Excluir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
 <script>
-function duplicateOrcamento(id) {
-    if (confirm('Tem certeza que deseja duplicar este orçamento?')) {
-        fetch(`/admin/orcamentos/${id}/duplicate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = `/admin/orcamentos/${data.new_id}/edit`;
-            } else {
-                alert('Erro ao duplicar orçamento: ' + (data.message || 'Erro desconhecido'));
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao duplicar orçamento');
+// Auto-submit do formulário de filtros com delay
+let timeoutId;
+document.getElementById('search')?.addEventListener('input', function() {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+        document.getElementById('filters-form')?.submit();
+    }, 500);
+});
+
+// Submit imediato para outros filtros
+const filterElements = ['status', 'tipo_orcamento', 'data_inicio', 'data_fim'];
+filterElements.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+        element.addEventListener('change', function() {
+            document.getElementById('filters-form')?.submit();
         });
     }
+});
+
+// Funções do modal de exclusão
+function confirmDelete(id, numero) {
+    document.getElementById('numeroOrcamentoExclusao').textContent = numero;
+    document.getElementById('formExclusao').action = `/admin/orcamentos/${id}`;
+    document.getElementById('delete-modal').classList.remove('hidden');
 }
 
-function deleteOrcamento(id, numero) {
-    if (confirm(`Tem certeza que deseja excluir o orçamento ${numero}?\n\nEsta ação não pode ser desfeita.`)) {
-        fetch(`/admin/orcamentos/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Erro ao excluir orçamento: ' + (data.message || 'Erro desconhecido'));
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao excluir orçamento');
-        });
-    }
+function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
 }
+
+// Fechar modal ao clicar fora dele
+document.getElementById('delete-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+// Fechar modal com ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeleteModal();
+    }
+});
 </script>
+@endpush
 @endsection

@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Carbon\Carbon;
 
 class Orcamento extends Model
 {
@@ -22,15 +22,11 @@ class Orcamento extends Model
         'tipo_orcamento',
         'user_id',
         'data_orcamento',
-        'data_validade',
-        'data_aprovacao',
-        'data_inicio',
-        'data_exclusao',
-        'data_envio',
-        'detalhes',
         'valor_total',
         'valor_impostos',
         'valor_final',
+        'percentual_lucro',
+        'percentual_impostos',
         'status',
         'observacoes'
     ];
@@ -38,95 +34,45 @@ class Orcamento extends Model
     protected $casts = [
         'data_solicitacao' => 'date',
         'data_orcamento' => 'date',
-        'data_validade' => 'date',
-        'data_aprovacao' => 'datetime',
-        'data_inicio' => 'datetime',
-        'data_exclusao' => 'datetime',
-        'data_envio' => 'datetime',
+        'horario' => 'datetime:H:i',
         'valor_total' => 'decimal:2',
         'valor_impostos' => 'decimal:2',
         'valor_final' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'percentual_lucro' => 'decimal:2',
+        'percentual_impostos' => 'decimal:2',
+        'frequencia_atendimento' => 'array'
     ];
 
-    /**
-     * Obter dados do cliente da API OMIE
-     */
-    public function getClienteOmieAttribute()
-    {
-        if (!$this->cliente_omie_id) {
-            return null;
-        }
-
-        try {
-            $omieService = app(\App\Services\OmieApiService::class);
-            return $omieService->getCliente($this->cliente_omie_id);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao buscar cliente OMIE: ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Relacionamento com centro de custo
-     */
+    // Relacionamentos
     public function centroCusto(): BelongsTo
     {
         return $this->belongsTo(CentroCusto::class);
     }
 
-    /**
-     * Relacionamento com usuário responsável
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Orçamentos de prestador
-     */
-    public function orcamentosPrestador(): HasMany
+    public function orcamentoPrestador(): HasOne
     {
-        return $this->hasMany(OrcamentoPrestador::class);
+        return $this->hasOne(OrcamentoPrestador::class);
     }
 
-    /**
-     * Aumentos de KM
-     */
-    public function aumentosKm(): HasMany
+    public function orcamentoAumentoKm(): HasOne
     {
-        return $this->hasMany(OrcamentoAumentoKm::class);
+        return $this->hasOne(OrcamentoAumentoKm::class);
     }
 
-    /**
-     * Novas rotas próprias
-     */
-    public function novasRotasProprias(): HasMany
+    public function orcamentoProprioNovaRota(): HasOne
     {
-        return $this->hasMany(OrcamentoProprioNovaRota::class);
+        return $this->hasOne(OrcamentoProprioNovaRota::class);
     }
 
-    /**
-     * Histórico do orçamento
-     */
-    public function historico(): HasMany
-    {
-        return $this->hasMany(OrcamentoHistorico::class);
-    }
-
-    /**
-     * Scopes para diferentes status
-     */
+    // Scopes
     public function scopeRascunho($query)
     {
         return $query->where('status', 'rascunho');
-    }
-
-    public function scopeAprovado($query)
-    {
-        return $query->where('status', 'aprovado');
     }
 
     public function scopeEnviado($query)
@@ -134,37 +80,56 @@ class Orcamento extends Model
         return $query->where('status', 'enviado');
     }
 
-    /**
-     * Verifica se o orçamento está vencido
-     */
-    public function isVencido(): bool
+    public function scopeAprovado($query)
     {
-        return $this->data_validade && $this->data_validade->isPast();
+        return $query->where('status', 'aprovado');
     }
 
-    /**
-     * Calcula o valor total com impostos
-     */
+    // Métodos auxiliares
+
     public function calcularValorFinal(): float
     {
         return $this->valor_total + $this->valor_impostos;
     }
 
-    /**
-     * Accessor para status formatado
-     */
     public function getStatusFormattedAttribute(): string
     {
         $statusMap = [
             'rascunho' => 'Rascunho',
             'enviado' => 'Enviado',
-            'aguardando' => 'Aguardando',
             'aprovado' => 'Aprovado',
             'rejeitado' => 'Rejeitado',
-            'cancelado' => 'Cancelado',
-            'expirado' => 'Expirado'
+            'cancelado' => 'Cancelado'
         ];
 
         return $statusMap[$this->status] ?? $this->status;
+    }
+
+    // Geração automática do número do orçamento
+    public static function gerarNumeroOrcamento(): string
+    {
+        return 'ORC-' . date('YmdHis');
+    }
+
+    // Boot method para auto-gerar número do orçamento e atualizar valores
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($orcamento) {
+            if (empty($orcamento->numero_orcamento)) {
+                $orcamento->numero_orcamento = self::gerarNumeroOrcamento();
+            }
+            if (empty($orcamento->data_orcamento)) {
+                $orcamento->data_orcamento = Carbon::now()->format('Y-m-d');
+            }
+        });
+
+        // Atualizar valor_final automaticamente ao salvar
+        static::saving(function ($orcamento) {
+            if ($orcamento->valor_total !== null && $orcamento->valor_impostos !== null) {
+                $orcamento->valor_final = $orcamento->valor_total + $orcamento->valor_impostos;
+            }
+        });
     }
 }

@@ -22,168 +22,197 @@
 <body class="bg-gray-50 font-sans antialiased">
     <div class="h-screen flex overflow-hidden" x-data="{ sidebarOpen: false }">
         <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col" 
+        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col backdrop-blur-sm" 
              :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
             
             <!-- Logo -->
-            <div class="flex items-center justify-center h-16 px-4 bg-gray-900 flex-shrink-0">
-                <h1 class="text-xl font-bold text-white">Admin Panel</h1>
+            <div class="flex items-center justify-center h-16 px-4 bg-gradient-to-r from-blue-600 to-purple-600 flex-shrink-0 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
+                <h1 class="text-xl font-bold text-white relative z-10 tracking-wide">Admin Panel</h1>
+                <div class="absolute -top-2 -right-2 w-8 h-8 bg-white/10 rounded-full animate-bounce delay-1000"></div>
             </div>
             
             <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto py-4" x-data="{ 
-                orcamentosOpen: {{ request()->routeIs('admin.orcamentos*') ? 'true' : 'false' }},
+            <nav class="flex-1 overflow-y-auto py-6 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent" x-data="{ 
                 cadastrosOpen: {{ request()->routeIs('admin.bases*', 'admin.marcas*') ? 'true' : 'false' }},
                 omieOpen: {{ request()->routeIs('admin.omie*') ? 'true' : 'false' }},
                 financeirosOpen: {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*') ? 'true' : 'false' }}
             }">
-                <div class="px-4 space-y-2">
+                <div class="px-4 space-y-3">
                     <!-- Dashboard -->
                     <a href="{{ route('admin.dashboard') }}" 
-                       class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : '' }}">
+                       class="group flex items-center px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25' : '' }}">
                         <i class="fas fa-tachometer-alt w-5 h-5 mr-3"></i>
-                        Dashboard
+                        <span class="font-medium">Dashboard</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-chevron-right w-3 h-3"></i>
+                        </div>
                     </a>
                     
-                    <!-- Orçamentos -->
-                    <div class="space-y-1">
-                        <button @click="orcamentosOpen = !orcamentosOpen" 
-                                class="w-full flex items-center justify-between px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.orcamentos*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                            <div class="flex items-center">
-                                <i class="fas fa-file-invoice-dollar w-5 h-5 mr-3"></i>
-                                Orçamentos
-                            </div>
-                            <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': orcamentosOpen }"></i>
-                        </button>
-                        
-                        <div x-show="orcamentosOpen" x-transition class="ml-6 space-y-1">
-                            <a href="{{ route('admin.orcamentos.index') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.orcamentos.index') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-list w-4 h-4 mr-3"></i>
-                                Listar Orçamentos
-                            </a>
-                            <a href="{{ route('admin.orcamentos.create') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.orcamentos.create') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-plus w-4 h-4 mr-3"></i>
-                                Novo Orçamento
-                            </a>
-                        </div>
-                    </div>
+
                     
                     <!-- Cadastros -->
-                    <div class="space-y-1">
+                    <div class="space-y-2">
                         <button @click="cadastrosOpen = !cadastrosOpen" 
-                                class="w-full flex items-center justify-between px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.bases*', 'admin.marcas*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                class="group w-full flex items-center justify-between px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-emerald-600/20 hover:to-teal-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('admin.bases*', 'admin.marcas*') ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/25' : '' }}">
                             <div class="flex items-center">
                                 <i class="fas fa-address-book w-5 h-5 mr-3"></i>
-                                Cadastros
+                                <span class="font-medium">Cadastros</span>
                             </div>
-                            <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': cadastrosOpen }"></i>
+                            <i class="fas fa-chevron-down w-4 h-4 transition-all duration-300 group-hover:text-emerald-300" :class="{ 'rotate-180': cadastrosOpen }"></i>
                         </button>
                         
-                        <div x-show="cadastrosOpen" x-transition class="ml-6 space-y-1">
+                        <div x-show="cadastrosOpen" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform -translate-y-2"
+                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform translate-y-0"
+                             x-transition:leave-end="opacity-0 transform -translate-y-2"
+                             class="ml-6 space-y-2 border-l-2 border-slate-700 pl-4">
 
                             <a href="{{ route('admin.bases.index') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.bases*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-map-marker-alt w-4 h-4 mr-3"></i>
-                                Bases
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-emerald-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.bases*') ? 'bg-slate-700 text-emerald-300 border-l-2 border-emerald-500' : '' }}">
+                                <i class="fas fa-map-marker-alt w-4 h-4 mr-3 group-hover:text-emerald-400"></i>
+                                <span>Bases</span>
                             </a>
                             <a href="{{ route('admin.marcas.index') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.marcas*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-tags w-4 h-4 mr-3"></i>
-                                Marcas
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-emerald-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.marcas*') ? 'bg-slate-700 text-emerald-300 border-l-2 border-emerald-500' : '' }}">
+                                <i class="fas fa-tags w-4 h-4 mr-3 group-hover:text-emerald-400"></i>
+                                <span>Marcas</span>
                             </a>
                         </div>
                     </div>
                     
                     <!-- Omie -->
-                    <div class="space-y-1">
+                    <div class="space-y-2">
                         <button @click="omieOpen = !omieOpen" 
-                                class="w-full flex items-center justify-between px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.omie*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                class="group w-full flex items-center justify-between px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-cyan-600/20 hover:to-blue-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('admin.omie*') ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25' : '' }}">
                             <div class="flex items-center">
                                 <i class="fas fa-cloud w-5 h-5 mr-3"></i>
-                                Omie
+                                <span class="font-medium">Omie</span>
                             </div>
-                            <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': omieOpen }"></i>
+                            <i class="fas fa-chevron-down w-4 h-4 transition-all duration-300 group-hover:text-cyan-300" :class="{ 'rotate-180': omieOpen }"></i>
                         </button>
                         
-                        <div x-show="omieOpen" x-transition class="ml-6 space-y-1">
+                        <div x-show="omieOpen" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform -translate-y-2"
+                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform translate-y-0"
+                             x-transition:leave-end="opacity-0 transform -translate-y-2"
+                             class="ml-6 space-y-2 border-l-2 border-slate-700 pl-4">
                             <a href="{{ route('admin.omie.clientes') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.omie.clientes', 'admin.omie.fornecedores') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-users w-4 h-4 mr-3"></i>
-                                Clientes/Fornecedores
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-cyan-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.omie.clientes', 'admin.omie.fornecedores') ? 'bg-slate-700 text-cyan-300 border-l-2 border-cyan-500' : '' }}">
+                                <i class="fas fa-users w-4 h-4 mr-3 group-hover:text-cyan-400"></i>
+                                <span>Clientes/Fornecedores</span>
                             </a>
                         </div>
                     </div>
                     
                     <!-- Financeiro -->
-                    <div class="space-y-1">
+                    <div class="space-y-2">
                         <button @click="financeirosOpen = !financeirosOpen" 
-                                class="w-full flex items-center justify-between px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                                class="group w-full flex items-center justify-between px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-amber-600/20 hover:to-orange-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*') ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25' : '' }}">
                             <div class="flex items-center">
                                 <i class="fas fa-calculator w-5 h-5 mr-3"></i>
-                                Financeiro
+                                <span class="font-medium">Financeiro</span>
                             </div>
-                            <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': financeirosOpen }"></i>
+                            <i class="fas fa-chevron-down w-4 h-4 transition-all duration-300 group-hover:text-amber-300" :class="{ 'rotate-180': financeirosOpen }"></i>
                         </button>
                         
-                        <div x-show="financeirosOpen" x-transition class="ml-6 space-y-1">
+                        <div x-show="financeirosOpen" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform -translate-y-2"
+                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform translate-y-0"
+                             x-transition:leave-end="opacity-0 transform -translate-y-2"
+                             class="ml-6 space-y-2 border-l-2 border-slate-700 pl-4">
                             <a href="{{ route('admin.centros-custo.index') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.centros-custo*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-building w-4 h-4 mr-3"></i>
-                                Centros de Custo
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-amber-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.centros-custo*') ? 'bg-slate-700 text-amber-300 border-l-2 border-amber-500' : '' }}">
+                                <i class="fas fa-building w-4 h-4 mr-3 group-hover:text-amber-400"></i>
+                                <span>Centros de Custo</span>
                             </a>
                             <a href="{{ route('admin.impostos.index') }}" 
-                               class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.impostos.index') ? 'bg-blue-50 text-blue-700' : '' }}">
-                                <i class="fas fa-percentage w-4 h-4 mr-3"></i>
-                                Impostos
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-amber-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.impostos.index') ? 'bg-slate-700 text-amber-300 border-l-2 border-amber-500' : '' }}">
+                                <i class="fas fa-percentage w-4 h-4 mr-3 group-hover:text-amber-400"></i>
+                                <span>Impostos</span>
                             </a>
 
                         </div>
                     </div>
                     
+                    <!-- Orçamentos -->
+                    <a href="{{ route('admin.orcamentos.index') }}" 
+                       class="group flex items-center px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-indigo-600/20 hover:to-purple-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg {{ request()->routeIs('admin.orcamentos*') ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25' : '' }}">
+                        <i class="fas fa-file-invoice w-5 h-5 mr-3"></i>
+                        <span class="font-medium">Orçamentos</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-chevron-right w-3 h-3"></i>
+                        </div>
+                    </a>
+                    
                     <!-- Divisor -->
-                    <div class="border-t border-gray-200 my-4"></div>
+                    <div class="relative my-6">
+                        <div class="border-t border-slate-700"></div>
+                        <div class="absolute inset-0 flex justify-center">
+                            <div class="bg-gradient-to-r from-slate-900 via-slate-600 to-slate-900 px-3">
+                                <i class="fas fa-grip-lines-vertical text-slate-600 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Usuários -->
                     <a href="{{ route('admin.users.index') }}" 
-                       class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.users*') ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : '' }}">
+                       class="group flex items-center px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-rose-600/20 hover:to-pink-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg {{ request()->routeIs('admin.users*') ? 'bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-lg shadow-rose-500/25' : '' }}">
                         <i class="fas fa-users w-5 h-5 mr-3"></i>
-                        Usuários
+                        <span class="font-medium">Usuários</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-chevron-right w-3 h-3"></i>
+                        </div>
                     </a>
                     
                     <!-- Relatórios -->
                     <a href="{{ route('admin.reports') }}" 
-                       class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.reports*') ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : '' }}">
+                       class="group flex items-center px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-green-600/20 hover:to-emerald-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg {{ request()->routeIs('admin.reports*') ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/25' : '' }}">
                         <i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
-                        Relatórios
+                        <span class="font-medium">Relatórios</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-chevron-right w-3 h-3"></i>
+                        </div>
                     </a>
                     
                     <!-- Configurações -->
                     <a href="{{ route('admin.settings') }}" 
-                       class="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors duration-200 {{ request()->routeIs('admin.settings*') ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700' : '' }}">
+                       class="group flex items-center px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-slate-600/20 hover:to-gray-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg {{ request()->routeIs('admin.settings*') ? 'bg-gradient-to-r from-slate-600 to-gray-600 text-white shadow-lg shadow-slate-500/25' : '' }}">
                         <i class="fas fa-cog w-5 h-5 mr-3"></i>
-                        Configurações
+                        <span class="font-medium">Configurações</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-chevron-right w-3 h-3"></i>
+                        </div>
                     </a>
                 </div>
             </nav>
             
             <!-- User Info -->
-            <div class="flex-shrink-0 p-4 border-t border-gray-200">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                            <span class="text-sm font-medium text-gray-700">{{ substr(auth()->user()->name, 0, 1) }}</span>
+            <div class="flex-shrink-0 p-4 border-t border-slate-700 bg-gradient-to-r from-slate-800 to-slate-900">
+                <div class="flex items-center group hover:bg-slate-700/30 rounded-xl p-2 transition-all duration-300">
+                    <div class="flex-shrink-0 relative">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-slate-600 group-hover:ring-blue-400 transition-all duration-300">
+                            <span class="text-sm font-bold text-white">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         </div>
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-slate-800"></div>
                     </div>
                     <div class="ml-3 flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
+                        <p class="text-sm font-medium text-white truncate group-hover:text-blue-300 transition-colors duration-300">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-slate-400 truncate group-hover:text-slate-300 transition-colors duration-300">{{ auth()->user()->email }}</p>
                     </div>
                     <form method="POST" action="{{ route('auth.logout') }}" class="ml-2">
                         @csrf
-                        <button type="submit" class="text-gray-400 hover:text-gray-600 transition-colors duration-200" title="Sair">
-                            <i class="fas fa-sign-out-alt w-5 h-5"></i>
+                        <button type="submit" class="text-slate-400 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-all duration-200 transform hover:scale-110" title="Sair">
+                            <i class="fas fa-sign-out-alt w-4 h-4"></i>
                         </button>
                     </form>
                 </div>
@@ -204,24 +233,7 @@
         
         <!-- Main content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top bar -->
-            <header class="bg-white shadow-sm border-b border-gray-200">
-                <div class="flex items-center justify-between px-4 py-4">
-                    <div class="flex items-center">
-                        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
-                            <i class="fas fa-bars w-6 h-6"></i>
-                        </button>
-                        <h2 class="ml-4 text-xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h2>
-                    </div>
-                    
-                    <div class="flex items-center space-x-4">
-                        <!-- Notifications -->
-                        <button class="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
-                            <i class="fas fa-bell w-6 h-6"></i>
-                        </button>
-                    </div>
-                </div>
-            </header>
+
             
             <!-- Page content -->
             <main class="flex-1 overflow-y-auto bg-gray-50">

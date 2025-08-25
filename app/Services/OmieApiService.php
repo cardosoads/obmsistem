@@ -14,10 +14,10 @@ class OmieApiService
 
     public function __construct()
     {
-        // Carrega as configurações do banco de dados
-        $this->baseUrl = config('services.omie.api_url', 'https://app.omie.com.br/api/v1/');
-        $this->appKey = \App\Models\Setting::get('omie_app_key');
-        $this->appSecret = \App\Models\Setting::get('omie_app_secret');
+        // Carrega as configurações das variáveis de ambiente
+        $this->baseUrl = config('services.omie.api_url', env('OMIE_API_URL', 'https://app.omie.com.br/api/v1/'));
+        $this->appKey = env('OMIE_APP_KEY');
+        $this->appSecret = env('OMIE_APP_SECRET');
     }
 
     /**

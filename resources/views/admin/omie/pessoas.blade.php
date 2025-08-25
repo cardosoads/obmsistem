@@ -3,7 +3,7 @@
 @section('title', 'Pessoas Omie')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white shadow-sm rounded-lg">
         <div class="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between">
             <h3 class="text-lg font-medium text-gray-900 mb-4 md:mb-0">Pessoas Omie (Clientes e Fornecedores)</h3>

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Admin\OrcamentoController;
+
 use App\Http\Controllers\Admin\ClienteController;
 use App\Http\Controllers\Admin\OmieController;
 use App\Http\Controllers\Admin\OmiePessoaController;
@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CentroCustoController;
 use App\Http\Controllers\Admin\ImpostoController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\OrcamentoController;
 
 // Rota de login (página inicial)
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -31,20 +32,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/settings', [SettingsController::class, 'index'])->name('admin.settings');
     Route::get('/admin/reports', [DashboardController::class, 'reports'])->name('admin.reports');
     
-    // Orçamentos
-    Route::resource('admin/orcamentos', OrcamentoController::class, [
-        'names' => [
-            'index' => 'admin.orcamentos.index',
-            'create' => 'admin.orcamentos.create',
-            'store' => 'admin.orcamentos.store',
-            'show' => 'admin.orcamentos.show',
-            'edit' => 'admin.orcamentos.edit',
-            'update' => 'admin.orcamentos.update',
-            'destroy' => 'admin.orcamentos.destroy'
-        ]
-    ]);
-    Route::post('/admin/orcamentos/{orcamento}/duplicate', [OrcamentoController::class, 'duplicate'])->name('admin.orcamentos.duplicate');
-    Route::patch('/admin/orcamentos/{orcamento}/status', [OrcamentoController::class, 'changeStatus'])->name('admin.orcamentos.change-status');
+
     
     // Usuários
     Route::resource('admin/users', UserController::class, [
@@ -146,6 +134,19 @@ Route::middleware(['admin.auth'])->group(function () {
     ]);
     Route::patch('/admin/impostos/{imposto}/status', [ImpostoController::class, 'toggleStatus'])->name('admin.impostos.toggle-status');
     
+    // Orçamentos
+    Route::resource('admin/orcamentos', OrcamentoController::class, [
+        'names' => [
+            'index' => 'admin.orcamentos.index',
+            'create' => 'admin.orcamentos.create',
+            'store' => 'admin.orcamentos.store',
+            'show' => 'admin.orcamentos.show',
+            'edit' => 'admin.orcamentos.edit',
+            'update' => 'admin.orcamentos.update',
+            'destroy' => 'admin.orcamentos.destroy'
+        ]
+    ]);    Route::patch('/admin/orcamentos/{orcamento}/status', [OrcamentoController::class, 'updateStatus'])->name('admin.orcamentos.update-status');    Route::get('/admin/orcamentos/{orcamento}/pdf', [OrcamentoController::class, 'gerarPdf'])->name('admin.orcamentos.pdf');
+    
     // Configurações
     Route::put('/admin/settings/omie', [SettingsController::class, 'updateOmie'])->name('admin.settings.omie.update');
     Route::post('/admin/settings/omie/test', [SettingsController::class, 'testOmieConnection'])->name('admin.settings.omie.test');
@@ -168,7 +169,9 @@ Route::prefix('api/omie')->name('api.omie.')->group(function () {
     Route::get('/clientes/{omieId}', [\App\Http\Controllers\Api\OmieClienteController::class, 'show'])->name('clientes.show');
     Route::post('/clientes/clear-cache', [\App\Http\Controllers\Api\OmieClienteController::class, 'clearCache'])->name('clientes.clear-cache');
     
+    Route::get('/fornecedores/search', [\App\Http\Controllers\Api\OmieFornecedorController::class, 'search'])->name('fornecedores.search');
     Route::get('/fornecedores/{omieId}', [\App\Http\Controllers\Api\OmieFornecedorController::class, 'show'])->name('fornecedores.show');
+
 });
 
 // Rota de fallback para usuários autenticados que acessam a raiz

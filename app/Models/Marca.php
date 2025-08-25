@@ -48,13 +48,7 @@ class Marca extends Model
         'updated_at' => 'datetime'
     ];
 
-    /**
-     * Orçamentos de prestador que usam esta marca
-     */
-    public function orcamentosPrestador(): HasMany
-    {
-        return $this->hasMany(OrcamentoPrestador::class);
-    }
+
 
     /**
      * Scope para marcas ativas

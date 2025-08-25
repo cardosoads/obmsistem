@@ -94,21 +94,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'user_roles');
     }
 
-    /**
-     * Orçamentos criados pelo usuário
-     */
-    public function orcamentos(): HasMany
-    {
-        return $this->hasMany(Orcamento::class);
-    }
 
-    /**
-     * Histórico de ações do usuário
-     */
-    public function historicoAcoes(): HasMany
-    {
-        return $this->hasMany(OrcamentoHistorico::class);
-    }
 
     /**
      * Verifica se o usuário tem uma permissão específica

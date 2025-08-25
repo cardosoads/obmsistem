@@ -32,21 +32,7 @@ class Base extends Model
         'updated_at' => 'datetime'
     ];
 
-    /**
-     * Orçamentos que têm esta base como origem
-     */
-    public function orcamentosOrigem(): HasMany
-    {
-        return $this->hasMany(Orcamento::class, 'base_origem_id');
-    }
 
-    /**
-     * Orçamentos que têm esta base como destino
-     */
-    public function orcamentosDestino(): HasMany
-    {
-        return $this->hasMany(Orcamento::class, 'base_destino_id');
-    }
 
     /**
      * Scope para bases ativas

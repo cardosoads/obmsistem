@@ -29,13 +29,7 @@ class Cliente extends Model
         return $query->where('active', true);
     }
 
-    /**
-     * Orçamentos deste cliente
-     */
-    public function orcamentos(): HasMany
-    {
-        return $this->hasMany(Orcamento::class);
-    }
+
 
     /**
      * Accessor para tipo de documento
