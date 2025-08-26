@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Criar usuário admin se não existir
+        // Criar apenas o usuário administrador
         User::firstOrCreate(
             ['email' => 'admin@obmsistem.com'],
             [
@@ -22,30 +22,6 @@ class AdminUserSeeder extends Seeder
                 'email' => 'admin@obmsistem.com',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
-                'email_verified_at' => now(),
-            ]
-        );
-
-        // Criar usuário manager de teste
-        User::firstOrCreate(
-            ['email' => 'manager@obmsistem.com'],
-            [
-                'name' => 'Gerente Teste',
-                'email' => 'manager@obmsistem.com',
-                'password' => Hash::make('manager123'),
-                'role' => 'manager',
-                'email_verified_at' => now(),
-            ]
-        );
-
-        // Criar usuário comum de teste
-        User::firstOrCreate(
-            ['email' => 'user@obmsistem.com'],
-            [
-                'name' => 'Usuário Teste',
-                'email' => 'user@obmsistem.com',
-                'password' => Hash::make('user123'),
-                'role' => 'user',
                 'email_verified_at' => now(),
             ]
         );

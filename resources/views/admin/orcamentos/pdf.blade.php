@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orçamento #{{ $orcamento->numero_orcamento }}</title>
     <style>
+        @page {
+            margin: 15mm;
+            size: A4;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,221 +17,208 @@
         }
         
         body {
-            font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 11px;
-            line-height: 1.5;
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 12pt;
+            line-height: 1em;
             color: #2d3748;
-            background: #ffffff;
+            background: #fff;
         }
         
         .container {
-            max-width: 100%;
-            margin: 0;
-            padding: 25px;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 30mm 30mm 20mm 30mm;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            margin: -25px -25px 30px -25px;
             text-align: center;
-            position: relative;
-        }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 10px solid #764ba2;
+            margin-bottom: 30pt;
+            padding: 24pt;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 3pt;
+            page-break-after: avoid;
         }
         
         .header h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-size: 18pt;
+            font-weight: 600;
+            margin-bottom: 12pt;
+            color: #2d3748;
+            line-height: 1em;
         }
         
         .header p {
-            font-size: 12px;
-            opacity: 0.9;
+            font-size: 12pt;
+            color: #718096;
+            line-height: 1em;
         }
         
         .company-info {
+            background: #f7fafc;
+            padding: 18pt;
+            border: 1px solid #e2e8f0;
+            border-radius: 3pt;
+            margin-bottom: 24pt;
             text-align: center;
-            margin-bottom: 25px;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            page-break-after: avoid;
         }
         
         .company-name {
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 14pt;
+            font-weight: 600;
             color: #2d3748;
-            margin-bottom: 5px;
+            margin-bottom: 12pt;
+            line-height: 1em;
         }
         
         .company-details {
-            font-size: 10px;
+            font-size: 11pt;
             color: #718096;
+            line-height: 1em;
         }
         
         .status-badge {
             display: inline-block;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 11px;
-            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 500;
             text-transform: uppercase;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            border: 1px solid;
         }
         
         .status-rascunho { 
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); 
-            color: #4a5568; 
-            border: 1px solid #cbd5e0;
+            background: #fffaf0;
+            color: #744210;
+            border-color: #f6ad55;
         }
         .status-enviado { 
-            background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%); 
-            color: #2b6cb0; 
-            border: 1px solid #90cdf4;
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border-color: #90cdf4;
         }
         .status-aprovado { 
-            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%); 
-            color: #22543d; 
-            border: 1px solid #9ae6b4;
+            background: #f0fff4;
+            color: #22543d;
+            border-color: #68d391;
         }
         .status-rejeitado { 
-            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); 
-            color: #742a2a; 
-            border: 1px solid #fc8181;
+            background: #fff5f5;
+            color: #742a2a;
+            border-color: #fc8181;
         }
         .status-cancelado { 
-            background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%); 
-            color: #744210; 
-            border: 1px solid #f6ad55;
+            background: #fffaf0;
+            color: #744210;
+            border-color: #f6ad55;
         }
         
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 18pt;
             page-break-inside: avoid;
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: #fff;
             border: 1px solid #e2e8f0;
+            border-radius: 3pt;
+            padding: 12pt;
         }
         
         .section-title {
-            font-size: 16px;
+            background: #f7fafc;
+            padding: 10px 15px;
+            font-size: 14pt;
             font-weight: bold;
             color: #2d3748;
-            margin-bottom: 18px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #667eea;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 30px;
-            height: 2px;
-            background: #764ba2;
+            border-bottom: 2px solid #3b82f6;
+            margin: 0 0 12pt 0;
+            line-height: 1em;
         }
         
         .info-grid {
+            padding: 0;
             display: table;
             width: 100%;
-            margin-bottom: 15px;
         }
         
         .info-row {
             display: table-row;
+            margin-bottom: 6pt;
         }
         
-        .info-row:nth-child(even) {
-            background: #f8fafc;
+        .info-row:last-child {
+            border-bottom: none;
         }
         
         .info-label {
             display: table-cell;
-            font-weight: 600;
+            font-weight: bold;
             color: #4a5568;
-            padding: 12px 20px 12px 0;
-            width: 35%;
+            padding: 4pt 12pt 4pt 0;
+            width: 40%;
             vertical-align: top;
-            border-bottom: 1px solid #e2e8f0;
+            line-height: 1em;
         }
         
         .info-value {
             display: table-cell;
             color: #2d3748;
-            padding: 12px 0;
+            padding: 4pt 0;
             vertical-align: top;
-            border-bottom: 1px solid #e2e8f0;
-            font-weight: 500;
+            line-height: 1em;
         }
         
         .financial-summary {
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border: 2px solid #667eea;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #f7fafc;
+            padding: 12pt;
+            border: 1px solid #e2e8f0;
+            border-radius: 3pt;
+            margin-top: 18pt;
+            page-break-inside: avoid;
         }
         
         .financial-summary h4 {
             color: #2d3748;
-            font-size: 14px;
+            font-size: 11px;
             margin-bottom: 15px;
             text-align: center;
             padding-bottom: 10px;
-            border-bottom: 1px solid #cbd5e0;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
         }
         
         .financial-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            align-items: center;
+            padding: 6pt 0;
             border-bottom: 1px solid #e2e8f0;
+            line-height: 1em;
         }
         
         .financial-row:last-child {
             border-bottom: none;
-            font-weight: bold;
-            font-size: 13px;
-            margin-top: 15px;
-            padding: 15px 0 0 0;
-            border-top: 2px solid #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2d3748;
             color: white;
-            border-radius: 8px;
             padding: 12px 15px;
+            margin: 10px -15px -15px -15px;
+            border-radius: 0 0 4px 4px;
+            font-weight: 600;
+            border: 2px solid #2d3748;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .financial-label {
             font-weight: 600;
             color: #4a5568;
+            line-height: 1em;
         }
         
         .financial-value {
             color: #2d3748;
-            font-weight: 600;
+            font-weight: bold;
+            font-size: 14pt;
+            line-height: 1em;
         }
         
         .financial-row:last-child .financial-label,
@@ -235,36 +227,41 @@
         }
         
         .observacoes {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border-left: 5px solid #f59e0b;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 25px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #fffaf0;
+            border: 1px solid #f6ad55;
+            border-radius: 3pt;
+            padding: 18pt;
+            margin-top: 24pt;
+            page-break-inside: avoid;
         }
         
         .observacoes h4 {
-            color: #92400e;
-            margin-bottom: 12px;
-            font-size: 14px;
-            font-weight: bold;
+            color: #744210;
+            margin-bottom: 12pt;
+            font-size: 12pt;
+            font-weight: 600;
+            line-height: 1em;
         }
         
         .observacoes p {
-            color: #78350f;
-            line-height: 1.6;
-            font-weight: 500;
+            color: #744210;
+            line-height: 1em;
+            font-size: 12pt;
         }
         
         .footer {
-            margin-top: 50px;
-            padding: 20px;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border-radius: 8px;
+            margin-top: 36pt;
+            padding: 18pt;
+            border-top: 1px solid #e2e8f0;
             text-align: center;
-            color: #4a5568;
-            font-size: 10px;
-            border-top: 3px solid #667eea;
+            color: #718096;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+        
+        .footer p {
+            margin-bottom: 6pt;
+            line-height: 1em;
         }
         
         .page-break {
@@ -287,26 +284,47 @@
              page-break-after: avoid;
          }
          
+         /* Controle inteligente de quebras de página */
+         .section:nth-child(n+3) {
+             page-break-before: auto;
+         }
+         
+         .financial-summary {
+             page-break-before: avoid;
+         }
+         
          @media print {
              body { 
                  margin: 0;
-                 font-size: 12px;
-                 line-height: 1.4;
+                 font-size: 12pt;
+                 line-height: 1em;
              }
              .container { 
-                 padding: 15px;
+                 padding: 30mm 30mm 20mm 30mm;
                  max-width: 100%;
              }
              .section { 
                  box-shadow: none;
                  border: 1px solid #e2e8f0;
-                 margin-bottom: 15px;
+                 margin-bottom: 18pt;
              }
              .header {
-                 margin-bottom: 20px;
+                 margin-bottom: 24pt;
              }
              .company-info {
-                 margin-bottom: 15px;
+                 margin-bottom: 18pt;
+             }
+             .page-break {
+                 page-break-before: always;
+             }
+             
+             /* Evita quebras órfãs e viúvas */
+             h1, h2, h3, h4 {
+                 page-break-after: avoid;
+             }
+             
+             .info-row {
+                 page-break-inside: avoid;
              }
          }
     </style>
@@ -340,15 +358,15 @@
             <div class="info-grid">
                 <div class="info-row">
                     <div class="info-label">Data da Solicitação:</div>
-                    <div class="info-value">{{ $orcamento->data_solicitacao->format('d/m/Y') }}</div>
+                    <div class="info-value">{{ \Carbon\Carbon::parse($orcamento->data_solicitacao)->format('d/m/Y') }}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Data do Orçamento:</div>
-                    <div class="info-value">{{ $orcamento->data_orcamento->format('d/m/Y') }}</div>
+                    <div class="info-value">{{ \Carbon\Carbon::parse($orcamento->data_orcamento)->format('d/m/Y') }}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Centro de Custo:</div>
-                    <div class="info-value">{{ $orcamento->centroCusto->name }}</div>
+                    <div class="info-value">{{ $orcamento->centroCusto->name ?? 'N/A' }}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Tipo de Orçamento:</div>
@@ -363,12 +381,22 @@
                             @case('proprio_nova_rota')
                                 Próprio Nova Rota
                                 @break
+                            @default
+                                {{ $orcamento->tipo_orcamento }}
                         @endswitch
                     </div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Responsável:</div>
                     <div class="info-value">{{ $orcamento->user->name }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Criado em:</div>
+                    <div class="info-value">{{ $orcamento->created_at->format('d/m/Y H:i:s') }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Última Atualização:</div>
+                    <div class="info-value">{{ $orcamento->updated_at->format('d/m/Y H:i:s') }}</div>
                 </div>
             </div>
         </div>
@@ -440,6 +468,30 @@
                     <div class="info-value">{{ $orcamento->orcamentoPrestador->fornecedor_omie_id }}</div>
                 </div>
                 @endif
+                @if($orcamento->orcamentoPrestador->fornecedor_cnpj)
+                <div class="info-row">
+                    <div class="info-label">CNPJ:</div>
+                    <div class="info-value">{{ $orcamento->orcamentoPrestador->fornecedor_cnpj }}</div>
+                </div>
+                @endif
+                @if($orcamento->orcamentoPrestador->fornecedor_endereco)
+                <div class="info-row">
+                    <div class="info-label">Endereço:</div>
+                    <div class="info-value">{{ $orcamento->orcamentoPrestador->fornecedor_endereco }}</div>
+                </div>
+                @endif
+                @if($orcamento->orcamentoPrestador->fornecedor_telefone)
+                <div class="info-row">
+                    <div class="info-label">Telefone:</div>
+                    <div class="info-value">{{ $orcamento->orcamentoPrestador->fornecedor_telefone }}</div>
+                </div>
+                @endif
+                @if($orcamento->orcamentoPrestador->fornecedor_email)
+                <div class="info-row">
+                    <div class="info-label">E-mail:</div>
+                    <div class="info-value">{{ $orcamento->orcamentoPrestador->fornecedor_email }}</div>
+                </div>
+                @endif
                 @if($orcamento->orcamentoPrestador->valor_referencia)
                 <div class="info-row">
                     <div class="info-label">Valor de Referência:</div>
@@ -450,6 +502,18 @@
                 <div class="info-row">
                     <div class="info-label">Quantidade de Dias:</div>
                     <div class="info-value">{{ $orcamento->orcamentoPrestador->qtd_dias }} dias</div>
+                </div>
+                @endif
+                @if($orcamento->orcamentoPrestador->percentual_lucro)
+                <div class="info-row">
+                    <div class="info-label">Percentual de Lucro:</div>
+                    <div class="info-value">{{ number_format($orcamento->orcamentoPrestador->percentual_lucro, 2, ',', '.') }}%</div>
+                </div>
+                @endif
+                @if($orcamento->orcamentoPrestador->percentual_impostos)
+                <div class="info-row">
+                    <div class="info-label">Percentual de Impostos:</div>
+                    <div class="info-value">{{ number_format($orcamento->orcamentoPrestador->percentual_impostos, 2, ',', '.') }}%</div>
                 </div>
                 @endif
             </div>
@@ -476,7 +540,7 @@
                 </div>
                 @endif
                 @if($orcamento->orcamentoPrestador->valor_total)
-                <div class="financial-row">
+                <div class="financial-row total-highlight">
                     <span class="financial-label">Valor Total:</span>
                     <span class="financial-value">R$ {{ number_format($orcamento->orcamentoPrestador->valor_total, 2, ',', '.') }}</span>
                 </div>
@@ -488,7 +552,7 @@
         <!-- Dados Específicos do Aumento de KM -->
         @if($orcamento->tipo_orcamento === 'aumento_km' && $orcamento->orcamentoAumentoKm)
         <div class="section page-break">
-            <h3 class="section-title">Dados do Aumento de KM</h3>
+            <h3 class="section-title">Dados Operacionais</h3>
             <div class="info-grid">
                 @if($orcamento->orcamentoAumentoKm->km_dia)
                 <div class="info-row">
@@ -502,6 +566,19 @@
                     <div class="info-value">{{ $orcamento->orcamentoAumentoKm->qtd_dias }} dias</div>
                 </div>
                 @endif
+                @php
+                    $kmTotal = ($orcamento->orcamentoAumentoKm->km_dia ?? 0) * ($orcamento->orcamentoAumentoKm->qtd_dias ?? 0);
+                @endphp
+                <div class="info-row">
+                    <div class="info-label">KM Total/Mês:</div>
+                    <div class="info-value">{{ number_format($kmTotal, 0, ',', '.') }} km</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3 class="section-title">Cálculos de Combustível</h3>
+            <div class="info-grid">
                 @if($orcamento->orcamentoAumentoKm->combustivel_km_litro)
                 <div class="info-row">
                     <div class="info-label">Consumo (KM/L):</div>
@@ -514,19 +591,42 @@
                     <div class="info-value">R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_combustivel, 2, ',', '.') }}/litro</div>
                 </div>
                 @endif
+                @php
+                    $consumo = $orcamento->orcamentoAumentoKm->combustivel_km_litro ?? 1;
+                    $totalCombustivel = $consumo > 0 ? $kmTotal / $consumo : 0;
+                    $custoTotalCombustivel = $totalCombustivel * ($orcamento->orcamentoAumentoKm->valor_combustivel ?? 0);
+                @endphp
+                <div class="info-row">
+                    <div class="info-label">Total Combustível:</div>
+                    <div class="info-value">{{ number_format($totalCombustivel, 2, ',', '.') }} litros</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Custo Total Combustível:</div>
+                    <div class="info-value">R$ {{ number_format($custoTotalCombustivel, 2, ',', '.') }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3 class="section-title">Hora Extra</h3>
+            <div class="info-grid">
                 @if($orcamento->orcamentoAumentoKm->hora_extra)
                 <div class="info-row">
-                    <div class="info-label">Hora Extra:</div>
+                    <div class="info-label">Valor Hora Extra:</div>
                     <div class="info-value">R$ {{ number_format($orcamento->orcamentoAumentoKm->hora_extra, 2, ',', '.') }}</div>
                 </div>
                 @endif
+                <div class="info-row">
+                    <div class="info-label">Custo Total (Combustível + HE):</div>
+                    <div class="info-value">R$ {{ number_format($custoTotalCombustivel + ($orcamento->orcamentoAumentoKm->hora_extra ?? 0), 2, ',', '.') }}</div>
+                </div>
             </div>
             
             <!-- Resumo Financeiro Aumento KM -->
             @if($orcamento->orcamentoAumentoKm->valor_total)
             <div class="financial-summary">
-                <h4 style="margin-bottom: 10px; color: #374151;">Resumo Financeiro</h4>
-                <div class="financial-row">
+                <h4 style="margin-bottom: 10px; color: #2d3748;">Resumo Financeiro</h4>
+                <div class="financial-row total-highlight">
                     <span class="financial-label">Valor Total:</span>
                     <span class="financial-value">R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_total, 2, ',', '.') }}</span>
                 </div>
@@ -575,8 +675,8 @@
             <!-- Resumo Financeiro Nova Rota -->
             @if($orcamento->orcamentoProprioNovaRota->valor_total)
             <div class="financial-summary">
-                <h4 style="margin-bottom: 10px; color: #374151;">Resumo Financeiro</h4>
-                <div class="financial-row">
+                <h4 style="margin-bottom: 10px; color: #2d3748;">Resumo Financeiro</h4>
+                <div class="financial-row total-highlight">
                     <span class="financial-label">Valor Total:</span>
                     <span class="financial-value">R$ {{ number_format($orcamento->orcamentoProprioNovaRota->valor_total, 2, ',', '.') }}</span>
                 </div>
@@ -585,7 +685,20 @@
         </div>
         @endif
 
-        <!-- Observações -->
+        <!-- Observações do Aumento de KM -->
+        @if($orcamento->tipo_orcamento === 'aumento_km' && $orcamento->orcamentoAumentoKm && $orcamento->orcamentoAumentoKm->observacoes)
+        <div class="section">
+            <h3 class="section-title">Observações do Aumento de KM</h3>
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">Observações:</div>
+                    <div class="info-value">{{ $orcamento->orcamentoAumentoKm->observacoes }}</div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Observações Gerais -->
         @if($orcamento->observacoes)
         <div class="observacoes">
             <h4>Observações</h4>
@@ -593,9 +706,25 @@
         </div>
         @endif
 
+        <!-- Informações do Sistema -->
+        <div class="section">
+            <h3 class="section-title">Informações do Sistema</h3>
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">Documento Gerado em:</div>
+                    <div class="info-value">{{ now()->format('d/m/Y H:i:s') }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Versão do Sistema:</div>
+                    <div class="info-value">OBM Logística v1.0</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <p>Este documento foi gerado automaticamente pelo Sistema de Orçamentos em {{ now()->format('d/m/Y H:i:s') }}</p>
+            <p>OBM Logística e Transportes - Todos os direitos reservados</p>
         </div>
     </div>
 </body>

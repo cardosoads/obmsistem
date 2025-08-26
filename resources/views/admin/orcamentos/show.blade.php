@@ -105,7 +105,7 @@
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Centro de Custo</label>
-                                <p class="text-sm text-gray-900">{{ $orcamento->centroCusto->nome ?? 'N/A' }}</p>
+                                <p class="text-sm text-gray-900">{{ $orcamento->centroCusto->name ?? 'N/A' }}</p>
                             </div>
                         </div>
                     </div>

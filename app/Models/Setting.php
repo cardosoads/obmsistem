@@ -36,10 +36,15 @@ class Setting extends Model
             }
             
             if ($setting->is_encrypted) {
-                $value = Crypt::decryptString($setting->value);
-                // Se o valor ainda estiver serializado, deserializar
-                if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
-                    $value = unserialize($value);
+                try {
+                    $value = Crypt::decryptString($setting->value);
+                    // Se o valor ainda estiver serializado, deserializar
+                    if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
+                        $value = unserialize($value);
+                    }
+                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    // Se não conseguir descriptografar, retorna o valor padrão
+                    return $default;
                 }
             } else {
                 $value = $setting->value;
@@ -101,10 +106,15 @@ class Setting extends Model
     {
         return static::where('group', $group)->get()->mapWithKeys(function ($setting) {
             if ($setting->is_encrypted) {
-                $value = Crypt::decryptString($setting->value);
-                // Se o valor ainda estiver serializado, deserializar
-                if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
-                    $value = unserialize($value);
+                try {
+                    $value = Crypt::decryptString($setting->value);
+                    // Se o valor ainda estiver serializado, deserializar
+                    if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
+                        $value = unserialize($value);
+                    }
+                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    // Se não conseguir descriptografar, pula esta configuração
+                    return [];
                 }
             } else {
                 $value = $setting->value;

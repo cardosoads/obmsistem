@@ -86,7 +86,7 @@
                                 <button onclick="toggleStatus({{ $marca->id }}, {{ $marca->active ? 'false' : 'true' }})" 
                                         class="{{ $marca->active ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }} transition duration-200" 
                                         title="{{ $marca->active ? 'Desativar' : 'Ativar' }}">
-                                    <i class="fas fa-{{ $marca->active ? 'times-circle' : 'check-circle' }}"></i>
+                                    <i class="fas fa-toggle-on"></i>
                                 </button>
                                 <button onclick="deleteMarca({{ $marca->id }})" 
                                         class="text-red-600 hover:text-red-900 transition duration-200" 
@@ -118,7 +118,7 @@
 <script>
 function toggleStatus(id, status) {
     if (confirm('Tem certeza que deseja alterar o status desta marca?')) {
-        fetch(`/admin/marcas/${id}/toggle-status`, {
+        fetch(`/admin/marcas/${id}/status`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

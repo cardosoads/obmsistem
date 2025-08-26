@@ -57,7 +57,7 @@ class GrupoImpostoController extends Controller
      */
     public function create(): View
     {
-        $impostos = Imposto::ativo()->orderBy('nome')->get();
+        $impostos = Imposto::ativos()->orderBy('nome')->get();
         return view('admin.grupos-impostos.create', compact('impostos'));
     }
 
@@ -107,9 +107,10 @@ class GrupoImpostoController extends Controller
      */
     public function edit(GrupoImposto $gruposImposto): View
     {
-        $impostos = Imposto::ativo()->orderBy('nome')->get();
+        $impostos = Imposto::ativos()->orderBy('nome')->get();
         $gruposImposto->load('impostos');
-        return view('admin.grupos-impostos.edit', compact('gruposImposto', 'impostos'));
+        $grupoImposto = $gruposImposto; // Alias para manter consistência com a view
+        return view('admin.grupos-impostos.edit', compact('grupoImposto', 'impostos'));
     }
 
     /**

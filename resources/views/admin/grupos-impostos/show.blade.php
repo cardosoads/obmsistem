@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-800">{{ $grupoImposto->nome }}</h1>
             <div class="flex items-center mt-2">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $grupoImposto->status_class == 'badge-success' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                    <i class="fas {{ $grupoImposto->ativo ? 'fa-check-circle' : 'fa-times-circle' }} mr-1"></i>
+                    <i class="fas fa-toggle-on mr-1"></i>
                     {{ $grupoImposto->status }}
                 </span>
                 <span class="ml-3 text-sm text-gray-500">
@@ -52,7 +52,7 @@
                         <label class="block text-sm font-medium text-gray-700">Status</label>
                         <p class="mt-1">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $grupoImposto->status_class == 'badge-success' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                <i class="fas {{ $grupoImposto->ativo ? 'fa-check-circle' : 'fa-times-circle' }} mr-1"></i>
+                                <i class="fas fa-toggle-on mr-1"></i>
                                 {{ $grupoImposto->status }}
                             </span>
                         </p>

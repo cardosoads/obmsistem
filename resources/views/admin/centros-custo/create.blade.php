@@ -66,36 +66,49 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Cliente (OMIE)</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="cliente_omie_id" class="block text-sm font-medium text-gray-700 mb-2">ID Cliente OMIE</label>
+                    <label for="cliente_omie_search" class="block text-sm font-medium text-gray-700 mb-2">Buscar Cliente</label>
                     <div class="relative">
                         <input type="text" 
+                               id="cliente_omie_search" 
+                               placeholder="Digite o nome do cliente para buscar..."
+                               value="{{ old('cliente_nome') }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               autocomplete="off">
+                        <input type="hidden" 
                                id="cliente_omie_id" 
                                name="cliente_omie_id" 
-                               value="{{ old('cliente_omie_id') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cliente_omie_id') border-red-500 @enderror"
-                               placeholder="Digite o ID do cliente OMIE">
-                        <div id="cliente-loading" class="absolute right-3 top-3 hidden">
-                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                               value="{{ old('cliente_omie_id') }}">
+                        <input type="hidden" 
+                               id="cliente_nome" 
+                               name="cliente_nome" 
+                               value="{{ old('cliente_nome') }}">
+                        
+                        <!-- Dropdown de resultados -->
+                        <div id="cliente_dropdown" 
+                             class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto hidden">
+                            <div id="cliente_loading" class="p-3 text-center text-gray-500 hidden">
+                                <i class="fas fa-spinner fa-spin"></i> Buscando clientes...
+                            </div>
+                            <div id="cliente_results"></div>
+                            <div id="cliente_no_results" class="p-3 text-center text-gray-500 hidden">
+                                Nenhum cliente encontrado
+                            </div>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1">ID do cliente na API OMIE - o nome será preenchido automaticamente</p>
+                    <p class="text-xs text-gray-500 mt-1">Cliente selecionado será buscado da API OMIE</p>
                     @error('cliente_omie_id')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="cliente_nome" class="block text-sm font-medium text-gray-700 mb-2">Nome do Cliente</label>
+                    <label for="cliente_omie_id_display" class="block text-sm font-medium text-gray-700 mb-2">ID Cliente OMIE</label>
                     <input type="text" 
-                           id="cliente_nome" 
-                           name="cliente_nome" 
-                           value="{{ old('cliente_nome') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cliente_nome') border-red-500 @enderror"
+                           id="cliente_omie_id_display" 
+                           value="{{ old('cliente_omie_id') }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                            readonly>
-                    <p class="text-xs text-gray-500 mt-1">Nome do cliente preenchido automaticamente pela API OMIE</p>
-                    @error('cliente_nome')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                    <p class="text-xs text-gray-500 mt-1">ID do cliente selecionado</p>
                 </div>
             </div>
         </div>
@@ -251,9 +264,116 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const clienteOmieIdInput = document.getElementById('cliente_omie_id');
     const clienteNomeInput = document.getElementById('cliente_nome');
-    const clienteLoading = document.getElementById('cliente-loading');
+    const clienteLoading = document.getElementById('cliente_loading');
     
     let clienteTimeout;
+
+    // Busca de clientes OMIE
+    const clienteSearchInput = document.getElementById('cliente_omie_search');
+    const clienteOmieIdDisplay = document.getElementById('cliente_omie_id_display');
+    const clienteDropdown = document.getElementById('cliente_dropdown');
+    const clienteResults = document.getElementById('cliente_results');
+    const clienteNoResults = document.getElementById('cliente_no_results');
+    
+    let clienteSearchTimeout;
+    
+    if (clienteSearchInput) {
+        clienteSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.trim();
+            
+            clearTimeout(clienteSearchTimeout);
+            
+            if (searchTerm.length >= 2) {
+                clienteSearchTimeout = setTimeout(() => {
+                    searchClientes(searchTerm);
+                }, 300);
+            } else {
+                hideClienteDropdown();
+            }
+        });
+        
+        // Esconder dropdown quando clicar fora
+        document.addEventListener('click', function(e) {
+            if (!clienteSearchInput.contains(e.target) && !clienteDropdown.contains(e.target)) {
+                hideClienteDropdown();
+            }
+        });
+    }
+    
+    function searchClientes(searchTerm) {
+        showClienteLoading();
+        
+        fetch(`/api/omie/clientes/search?q=${encodeURIComponent(searchTerm)}`)
+            .then(response => response.json())
+            .then(data => {
+                hideClienteLoading();
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    showClienteResults(data.data);
+                } else {
+                    showClienteNoResults();
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar clientes:', error);
+                hideClienteLoading();
+                showClienteNoResults();
+            });
+    }
+    
+    function showClienteResults(clientes) {
+        clienteResults.innerHTML = '';
+        
+        clientes.forEach(cliente => {
+            const item = document.createElement('div');
+            item.className = 'p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0';
+            item.innerHTML = `
+                <div class="font-medium text-gray-900">${cliente.nome}</div>
+                <div class="text-sm text-gray-500">ID: ${cliente.id}</div>
+            `;
+            
+            item.addEventListener('click', function() {
+                selectCliente(cliente);
+            });
+            
+            clienteResults.appendChild(item);
+        });
+        
+        clienteDropdown.classList.remove('hidden');
+        clienteNoResults.classList.add('hidden');
+    }
+    
+    function selectCliente(cliente) {
+        clienteSearchInput.value = cliente.nome;
+        clienteOmieIdInput.value = cliente.id;
+        clienteNomeInput.value = cliente.nome;
+        clienteOmieIdDisplay.value = cliente.id;
+        
+        hideClienteDropdown();
+    }
+    
+    function showClienteLoading() {
+        clienteLoading.classList.remove('hidden');
+        clienteResults.innerHTML = '';
+        clienteNoResults.classList.add('hidden');
+        clienteDropdown.classList.remove('hidden');
+    }
+    
+    function hideClienteLoading() {
+        clienteLoading.classList.add('hidden');
+    }
+    
+    function showClienteNoResults() {
+        clienteNoResults.classList.remove('hidden');
+        clienteResults.innerHTML = '';
+        clienteDropdown.classList.remove('hidden');
+    }
+    
+    function hideClienteDropdown() {
+        clienteDropdown.classList.add('hidden');
+        clienteLoading.classList.add('hidden');
+        clienteNoResults.classList.add('hidden');
+    }
 
     // Preenchimento automático da base
     baseSelect.addEventListener('change', function() {
@@ -288,74 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Preenchimento automático do cliente OMIE
-    clienteOmieIdInput.addEventListener('input', function() {
-        const omieId = this.value.trim();
-        
-        // Limpar timeout anterior
-        if (clienteTimeout) {
-            clearTimeout(clienteTimeout);
-        }
-        
-        // Limpar nome do cliente se ID estiver vazio
-        if (!omieId) {
-            clienteNomeInput.value = '';
-            return;
-        }
-        
-        // Aguardar 500ms após parar de digitar para fazer a busca
-        clienteTimeout = setTimeout(() => {
-            buscarClienteOmie(omieId);
-        }, 500);
-    });
-    
-    function buscarClienteOmie(omieId) {
-        // Mostrar loading
-        clienteLoading.classList.remove('hidden');
-        
-        // Fazer requisição para buscar dados do cliente
-        fetch(`{{ url('/api/omie/clientes') }}/${omieId}`)
-            .then(response => response.json())
-            .then(data => {
-                clienteLoading.classList.add('hidden');
-                
-                if (data.success && data.data) {
-                    clienteNomeInput.value = data.data.nome || data.data.razao_social || '';
-                    
-                    // Feedback visual de sucesso
-                    clienteOmieIdInput.classList.remove('border-red-500');
-                    clienteOmieIdInput.classList.add('border-green-500');
-                    
-                    setTimeout(() => {
-                        clienteOmieIdInput.classList.remove('border-green-500');
-                    }, 2000);
-                } else {
-                    // Cliente não encontrado
-                    clienteNomeInput.value = '';
-                    
-                    // Feedback visual de erro
-                    clienteOmieIdInput.classList.remove('border-green-500');
-                    clienteOmieIdInput.classList.add('border-red-500');
-                    
-                    setTimeout(() => {
-                        clienteOmieIdInput.classList.remove('border-red-500');
-                    }, 2000);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao buscar cliente OMIE:', error);
-                clienteLoading.classList.add('hidden');
-                clienteNomeInput.value = '';
-                
-                // Feedback visual de erro
-                clienteOmieIdInput.classList.remove('border-green-500');
-                clienteOmieIdInput.classList.add('border-red-500');
-                
-                setTimeout(() => {
-                    clienteOmieIdInput.classList.remove('border-red-500');
-                }, 2000);
-            });
-    }
+
 });
 </script>
 @endpush

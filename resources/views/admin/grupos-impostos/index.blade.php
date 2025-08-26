@@ -108,7 +108,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {{ $grupo->ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                <i class="fas {{ $grupo->ativo ? 'fa-check-circle' : 'fa-times-circle' }} mr-1"></i>
+                                <i class="fas fa-toggle-on mr-1"></i>
                                 {{ $grupo->ativo ? 'Ativo' : 'Inativo' }}
                             </span>
                         </td>
@@ -125,7 +125,7 @@
                                 <button onclick="toggleStatus({{ $grupo->id }})" 
                                         class="{{ $grupo->ativo ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }}" 
                                         title="{{ $grupo->ativo ? 'Desativar' : 'Ativar' }}">
-                                    <i class="fas {{ $grupo->ativo ? 'fa-times-circle' : 'fa-check-circle' }}"></i>
+                                    <i class="fas fa-toggle-on"></i>
                                 </button>
                                 <button onclick="deleteGrupo({{ $grupo->id }})" 
                                         class="text-red-600 hover:text-red-900" title="Excluir">
@@ -165,8 +165,8 @@
 // Alternar status do grupo
 function toggleStatus(id) {
     if (confirm('Tem certeza que deseja alterar o status deste grupo?')) {
-        fetch(`/admin/grupos-impostos/${id}/toggle-status`, {
-            method: 'POST',
+        fetch(`/admin/grupos-impostos/${id}/status`, {
+            method: 'PATCH',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 'Content-Type': 'application/json'
