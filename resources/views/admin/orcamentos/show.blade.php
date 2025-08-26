@@ -413,23 +413,7 @@
                                     <span class="text-lg font-semibold text-gray-900">R$ {{ number_format($orcamento->orcamentoAumentoKm->custo_total_combustivel_he, 2, ',', '.') }}</span>
                                 </div>
                                 
-                                <!-- Lucro -->
-                                <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                                    <div class="flex flex-col">
-                                        <span class="text-gray-700 font-medium">Lucro</span>
-                                        <span class="text-sm text-gray-500">({{ number_format($orcamento->orcamentoAumentoKm->lucro_percentual, 2, ',', '.') }}%)</span>
-                                    </div>
-                                    <span class="text-lg font-semibold text-blue-600">R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_lucro, 2, ',', '.') }}</span>
-                                </div>
-                                
-                                <!-- Impostos -->
-                                <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                                    <div class="flex flex-col">
-                                        <span class="text-gray-700 font-medium">Impostos</span>
-                                        <span class="text-sm text-gray-500">({{ number_format($orcamento->orcamentoAumentoKm->impostos_percentual, 2, ',', '.') }}%)</span>
-                                    </div>
-                                    <span class="text-lg font-semibold text-red-600">R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_impostos, 2, ',', '.') }}</span>
-                                </div>
+
                                 
                                 <!-- Total -->
                                 <div class="flex justify-between items-center py-4 bg-green-100 rounded-lg px-4 mt-4">

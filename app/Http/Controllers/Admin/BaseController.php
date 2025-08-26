@@ -20,7 +20,7 @@ class BaseController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('city', 'like', "%{$search}%")
+                $q->where('name', 'like', "%{$search}%")
                   ->orWhere('uf', 'like', "%{$search}%")
                   ->orWhere('regional', 'like', "%{$search}%")
                   ->orWhere('sigla', 'like', "%{$search}%")
@@ -56,7 +56,7 @@ class BaseController extends Controller
     {
         $validated = $request->validate([
             'uf' => 'required|string|size:2',
-            'city' => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'regional' => 'required|string|max:50',
             'sigla' => 'nullable|string|max:3|regex:/^[A-Z0-9\s]+$/',
             'supervisor' => 'nullable|string|max:255',
@@ -64,7 +64,7 @@ class BaseController extends Controller
         ], [
             'uf.required' => 'O campo UF é obrigatório.',
             'uf.size' => 'O campo UF deve ter exatamente 2 caracteres.',
-            'city.required' => 'O campo cidade é obrigatório.',
+            'name.required' => 'O campo nome é obrigatório.',
             'regional.required' => 'O campo regional é obrigatório.',
             'sigla.regex' => 'A sigla deve conter apenas letras maiúsculas, números e espaços.'
         ]);
@@ -105,7 +105,7 @@ class BaseController extends Controller
     {
         $validated = $request->validate([
             'uf' => 'required|string|size:2',
-            'city' => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'regional' => 'required|string|max:50',
             'sigla' => 'nullable|string|max:3|regex:/^[A-Z0-9\s]+$/',
             'supervisor' => 'nullable|string|max:255',
@@ -113,7 +113,7 @@ class BaseController extends Controller
         ], [
             'uf.required' => 'O campo UF é obrigatório.',
             'uf.size' => 'O campo UF deve ter exatamente 2 caracteres.',
-            'city.required' => 'O campo cidade é obrigatório.',
+            'name.required' => 'O campo nome é obrigatório.',
             'regional.required' => 'O campo regional é obrigatório.',
             'sigla.regex' => 'A sigla deve conter apenas letras maiúsculas, números e espaços.'
         ]);

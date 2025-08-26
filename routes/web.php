@@ -11,10 +11,12 @@ use App\Http\Controllers\Admin\OmiePessoaController;
 use App\Http\Controllers\Admin\BaseController;
 use App\Http\Controllers\Admin\MarcaController;
 use App\Http\Controllers\Admin\CentroCustoController;
-use App\Http\Controllers\Admin\ImpostoController;
+
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\OrcamentoController;
+use App\Http\Controllers\Admin\ImpostoController;
+use App\Http\Controllers\Admin\GrupoImpostoController;
 
 // Rota de login (página inicial)
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -87,6 +89,9 @@ Route::middleware(['admin.auth'])->group(function () {
             'edit' => 'admin.bases.edit',
             'update' => 'admin.bases.update',
             'destroy' => 'admin.bases.destroy'
+        ],
+        'parameters' => [
+            'bases' => 'base'
         ]
     ]);
     Route::patch('/admin/bases/{base}/status', [BaseController::class, 'toggleStatus'])->name('admin.bases.toggle-status');
@@ -133,7 +138,27 @@ Route::middleware(['admin.auth'])->group(function () {
         ]
     ]);
     Route::patch('/admin/impostos/{imposto}/status', [ImpostoController::class, 'toggleStatus'])->name('admin.impostos.toggle-status');
+    Route::post('/admin/impostos/calcular', [ImpostoController::class, 'calcular'])->name('admin.impostos.calcular');
+    Route::get('/admin/impostos/search', [ImpostoController::class, 'search'])->name('admin.impostos.search');
     
+    // Grupos de Impostos
+    Route::resource('admin/grupos-impostos', GrupoImpostoController::class, [
+        'names' => [
+            'index' => 'admin.grupos-impostos.index',
+            'create' => 'admin.grupos-impostos.create',
+            'store' => 'admin.grupos-impostos.store',
+            'show' => 'admin.grupos-impostos.show',
+            'edit' => 'admin.grupos-impostos.edit',
+            'update' => 'admin.grupos-impostos.update',
+            'destroy' => 'admin.grupos-impostos.destroy'
+        ]
+    ]);
+    Route::patch('/admin/grupos-impostos/{gruposImposto}/status', [GrupoImpostoController::class, 'toggleStatus'])->name('admin.grupos-impostos.toggle-status');
+    Route::post('/admin/grupos-impostos/calcular', [GrupoImpostoController::class, 'calcular'])->name('admin.grupos-impostos.calcular');
+    Route::get('/admin/grupos-impostos/{gruposImposto}/breakdown', [GrupoImpostoController::class, 'breakdown'])->name('admin.grupos-impostos.breakdown');
+    Route::get('/admin/grupos-impostos/search', [GrupoImpostoController::class, 'search'])->name('admin.grupos-impostos.search');
+    Route::get('/admin/grupos-impostos/impostos-disponiveis', [GrupoImpostoController::class, 'impostosDisponiveis'])->name('admin.grupos-impostos.impostos-disponiveis');
+
     // Orçamentos
     Route::resource('admin/orcamentos', OrcamentoController::class, [
         'names' => [
@@ -145,7 +170,7 @@ Route::middleware(['admin.auth'])->group(function () {
             'update' => 'admin.orcamentos.update',
             'destroy' => 'admin.orcamentos.destroy'
         ]
-    ]);    Route::patch('/admin/orcamentos/{orcamento}/status', [OrcamentoController::class, 'updateStatus'])->name('admin.orcamentos.update-status');    Route::get('/admin/orcamentos/{orcamento}/pdf', [OrcamentoController::class, 'gerarPdf'])->name('admin.orcamentos.pdf');
+    ]);    Route::patch('/admin/orcamentos/{orcamento}/status', [OrcamentoController::class, 'updateStatus'])->name('admin.orcamentos.update-status');    Route::get('/admin/orcamentos/{orcamento}/pdf', [OrcamentoController::class, 'gerarPdf'])->name('admin.orcamentos.pdf');    Route::post('/admin/orcamentos/buscar-percentual-grupo-imposto', [OrcamentoController::class, 'buscarPercentualGrupoImposto'])->name('admin.orcamentos.buscar-percentual-grupo-imposto');
     
     // Configurações
     Route::put('/admin/settings/omie', [SettingsController::class, 'updateOmie'])->name('admin.settings.omie.update');

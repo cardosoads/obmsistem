@@ -13,65 +13,139 @@
         
         body {
             font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #333;
-            background: #fff;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #2d3748;
+            background: #ffffff;
         }
         
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 100%;
+            margin: 0;
+            padding: 25px;
         }
         
         .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            margin: -25px -25px 30px -25px;
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 20px;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 10px solid #764ba2;
         }
         
         .header h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
-            color: #6b7280;
-            font-size: 11px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .company-info {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .company-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .company-details {
+            font-size: 10px;
+            color: #718096;
         }
         
         .status-badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 10px;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: 0.5px;
         }
         
-        .status-rascunho { background: #f3f4f6; color: #374151; }
-        .status-enviado { background: #dbeafe; color: #1e40af; }
-        .status-aprovado { background: #d1fae5; color: #065f46; }
-        .status-rejeitado { background: #fee2e2; color: #991b1b; }
-        .status-cancelado { background: #fef3c7; color: #92400e; }
+        .status-rascunho { 
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); 
+            color: #4a5568; 
+            border: 1px solid #cbd5e0;
+        }
+        .status-enviado { 
+            background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%); 
+            color: #2b6cb0; 
+            border: 1px solid #90cdf4;
+        }
+        .status-aprovado { 
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%); 
+            color: #22543d; 
+            border: 1px solid #9ae6b4;
+        }
+        .status-rejeitado { 
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); 
+            color: #742a2a; 
+            border: 1px solid #fc8181;
+        }
+        .status-cancelado { 
+            background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%); 
+            color: #744210; 
+            border: 1px solid #f6ad55;
+        }
         
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             page-break-inside: avoid;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
         }
         
         .section-title {
             font-size: 16px;
             font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #e5e7eb;
+            color: #2d3748;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: #764ba2;
         }
         
         .info-grid {
@@ -84,87 +158,157 @@
             display: table-row;
         }
         
+        .info-row:nth-child(even) {
+            background: #f8fafc;
+        }
+        
         .info-label {
             display: table-cell;
-            font-weight: bold;
-            color: #374151;
-            padding: 5px 15px 5px 0;
-            width: 30%;
+            font-weight: 600;
+            color: #4a5568;
+            padding: 12px 20px 12px 0;
+            width: 35%;
             vertical-align: top;
+            border-bottom: 1px solid #e2e8f0;
         }
         
         .info-value {
             display: table-cell;
-            color: #6b7280;
-            padding: 5px 0;
+            color: #2d3748;
+            padding: 12px 0;
             vertical-align: top;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 500;
         }
         
         .financial-summary {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .financial-summary h4 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #cbd5e0;
         }
         
         .financial-row {
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
         }
         
         .financial-row:last-child {
             border-bottom: none;
             font-weight: bold;
-            font-size: 14px;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 2px solid #374151;
+            font-size: 13px;
+            margin-top: 15px;
+            padding: 15px 0 0 0;
+            border-top: 2px solid #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 12px 15px;
         }
         
         .financial-label {
             font-weight: 600;
-            color: #374151;
+            color: #4a5568;
         }
         
         .financial-value {
-            color: #1f2937;
-            font-weight: 500;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .financial-row:last-child .financial-label,
+        .financial-row:last-child .financial-value {
+            color: white;
         }
         
         .observacoes {
-            background: #fffbeb;
-            border-left: 4px solid #f59e0b;
-            padding: 15px;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 5px solid #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .observacoes h4 {
             color: #92400e;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-size: 14px;
+            font-weight: bold;
         }
         
         .observacoes p {
             color: #78350f;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-weight: 500;
         }
         
         .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
+            margin-top: 50px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 8px;
             text-align: center;
-            color: #6b7280;
+            color: #4a5568;
             font-size: 10px;
+            border-top: 3px solid #667eea;
         }
         
-        @media print {
-            body { margin: 0; }
-            .container { padding: 10px; }
-        }
+        .page-break {
+             page-break-before: always;
+         }
+         
+         .avoid-break {
+             page-break-inside: avoid;
+         }
+         
+         .financial-summary {
+             page-break-inside: avoid;
+         }
+         
+         .info-grid {
+             page-break-inside: avoid;
+         }
+         
+         h3.section-title {
+             page-break-after: avoid;
+         }
+         
+         @media print {
+             body { 
+                 margin: 0;
+                 font-size: 12px;
+                 line-height: 1.4;
+             }
+             .container { 
+                 padding: 15px;
+                 max-width: 100%;
+             }
+             .section { 
+                 box-shadow: none;
+                 border: 1px solid #e2e8f0;
+                 margin-bottom: 15px;
+             }
+             .header {
+                 margin-bottom: 20px;
+             }
+             .company-info {
+                 margin-bottom: 15px;
+             }
+         }
     </style>
 </head>
 <body>
@@ -175,8 +319,16 @@
             <p>Gerado em {{ now()->format('d/m/Y H:i') }}</p>
         </div>
 
+        <!-- Company Info -->
+        <div class="company-info">
+            <div class="company-name">OBM Logística e Transportes</div>
+            <div class="company-details">
+                CNPJ: 00.000.000/0001-00 | Telefone: (11) 0000-0000 | Email: contato@obmlogistica.com.br
+            </div>
+        </div>
+
         <!-- Status -->
-        <div class="text-center">
+        <div style="text-align: center;">
             <span class="status-badge status-{{ $orcamento->status }}">
                 {{ ucfirst($orcamento->status) }}
             </span>
@@ -273,7 +425,7 @@
 
         <!-- Dados Específicos do Prestador -->
         @if($orcamento->tipo_orcamento === 'prestador' && $orcamento->orcamentoPrestador)
-        <div class="section">
+        <div class="section page-break">
             <h3 class="section-title">Dados do Prestador</h3>
             <div class="info-grid">
                 @if($orcamento->orcamentoPrestador->fornecedor_nome)
@@ -335,7 +487,7 @@
 
         <!-- Dados Específicos do Aumento de KM -->
         @if($orcamento->tipo_orcamento === 'aumento_km' && $orcamento->orcamentoAumentoKm)
-        <div class="section">
+        <div class="section page-break">
             <h3 class="section-title">Dados do Aumento de KM</h3>
             <div class="info-grid">
                 @if($orcamento->orcamentoAumentoKm->km_dia)
@@ -385,7 +537,7 @@
 
         <!-- Dados Específicos do Próprio Nova Rota -->
         @if($orcamento->tipo_orcamento === 'proprio_nova_rota' && $orcamento->orcamentoProprioNovaRota)
-        <div class="section">
+        <div class="section page-break">
             <h3 class="section-title">Dados da Nova Rota Própria</h3>
             <div class="info-grid">
                 @if($orcamento->orcamentoProprioNovaRota->nova_origem)

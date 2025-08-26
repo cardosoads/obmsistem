@@ -1,238 +1,362 @@
 @extends('layouts.admin')
 
-@section('title', 'Detalhes do Imposto')
+@section('title', 'Visualizar Imposto')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Detalhes do Imposto</h1>
-        <div class="flex space-x-2">
-            <a href="{{ route('admin.impostos.edit', $imposto->id) }}" 
-               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-200">
-                <i class="fas fa-edit mr-2"></i>Editar
-            </a>
-            <button onclick="toggleStatus({{ $imposto->id }}, {{ $imposto->ativo ? 'false' : 'true' }})" 
-                    class="{{ $imposto->ativo ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600' }} text-white px-4 py-2 rounded-lg transition duration-200">
-                <i class="fas {{ $imposto->ativo ? 'fa-times-circle' : 'fa-check-circle' }} mr-2"></i>
-                {{ $imposto->ativo ? 'Desativar' : 'Ativar' }}
-            </button>
-            <a href="{{ route('admin.impostos.index') }}" 
-               class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
-                <i class="fas fa-arrow-left mr-2"></i>Voltar
-            </a>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Informações Básicas -->
-        <div class="lg:col-span-2">
-            <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Informações Básicas</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Detalhes do Imposto: {{ $imposto->nome }}</h3>
                     <div>
-                        <label class="block text-sm font-medium text-gray-500">Nome</label>
-                        <p class="text-lg font-semibold text-gray-900">{{ $imposto->nome }}</p>
+                        <a href="{{ route('admin.impostos.edit', $imposto) }}" class="btn btn-warning mr-2">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{{ route('admin.impostos.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Informações Básicas -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-info-circle"></i> Informações Básicas
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Nome:</strong></td>
+                                            <td>{{ $imposto->nome }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Percentual:</strong></td>
+                                            <td>
+                                                <span class="badge badge-primary badge-lg">
+                                                    {{ $imposto->percentual_formatado }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Status:</strong></td>
+                                            <td>
+                                                <span class="badge badge-{{ $imposto->ativo ? 'success' : 'danger' }}">
+                                                    {{ $imposto->status_formatado }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Descrição:</strong></td>
+                                            <td>
+                                                @if($imposto->descricao)
+                                                    {{ $imposto->descricao }}
+                                                @else
+                                                    <em class="text-muted">Nenhuma descrição informada</em>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Informações do Sistema -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-clock"></i> Informações do Sistema
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Criado em:</strong></td>
+                                            <td>{{ $imposto->created_at->format('d/m/Y H:i:s') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Atualizado em:</strong></td>
+                                            <td>{{ $imposto->updated_at->format('d/m/Y H:i:s') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>ID:</strong></td>
+                                            <td><code>{{ $imposto->id }}</code></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Status</label>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium mt-1
-                            {{ $imposto->ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            <i class="fas {{ $imposto->ativo ? 'fa-check-circle' : 'fa-times-circle' }} mr-1"></i>
-                            {{ $imposto->ativo ? 'Ativo' : 'Inativo' }}
-                        </span>
+                    <!-- Grupos de Impostos -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-layer-group"></i> Grupos de Impostos
+                                        <span class="badge badge-info ml-2">{{ $imposto->gruposImpostos->count() }}</span>
+                                    </h5>
+                                    @if($imposto->gruposImpostos->count() > 0)
+                                        <small class="text-muted">
+                                            Total combinado: {{ number_format($imposto->gruposImpostos->sum('percentual_total'), 2, ',', '.') }}%
+                                        </small>
+                                    @endif
+                                </div>
+                                <div class="card-body">
+                                    @if($imposto->gruposImpostos->count() > 0)
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nome do Grupo</th>
+                                                        <th>Descrição</th>
+                                                        <th>Total do Grupo</th>
+                                                        <th>Status</th>
+                                                        <th>Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($imposto->gruposImpostos as $grupo)
+                                                        <tr>
+                                                            <td>
+                                                                <strong>{{ $grupo->nome }}</strong>
+                                                            </td>
+                                                            <td>
+                                                                @if($grupo->descricao)
+                                                                    {{ Str::limit($grupo->descricao, 50) }}
+                                                                @else
+                                                                    <em class="text-muted">Sem descrição</em>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge badge-secondary">
+                                                                    {{ number_format($grupo->percentual_total, 2, ',', '.') }}%
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge badge-{{ $grupo->ativo ? 'success' : 'danger' }}">
+                                                                    {{ $grupo->ativo ? 'Ativo' : 'Inativo' }}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <a href="{{ route('admin.grupos-impostos.show', $grupo) }}" 
+                                                                   class="btn btn-sm btn-outline-info" 
+                                                                   title="Visualizar grupo">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @else
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted mb-3">Este imposto não está associado a nenhum grupo.</p>
+                                            <a href="{{ route('admin.impostos.edit', $imposto) }}" class="btn btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Editar e Associar a Grupos
+                                            </a>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Tipo</label>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium mt-1
-                            {{ $imposto->tipo === 'percentual' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                            <i class="fas {{ $imposto->tipo === 'percentual' ? 'fa-percentage' : 'fa-dollar-sign' }} mr-1"></i>
-                            {{ $imposto->tipo === 'percentual' ? 'Percentual' : 'Valor Fixo' }}
-                        </span>
+                    <!-- Calculadora de Teste -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="fas fa-calculator"></i> Calculadora de Teste
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="valor_teste">Valor Base (R$)</label>
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       id="valor_teste" 
+                                                       placeholder="1000.00" 
+                                                       step="0.01" 
+                                                       min="0"
+                                                       value="1000">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Percentual do Imposto</label>
+                                                <div class="form-control-plaintext font-weight-bold text-primary">
+                                                    {{ $imposto->percentual_formatado }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Valor do Imposto</label>
+                                                <div class="form-control-plaintext font-weight-bold text-success" id="valor_imposto">
+                                                    R$ {{ number_format(($imposto->percentual * 1000) / 100, 2, ',', '.') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Total com Imposto</label>
+                                                <div class="form-control-plaintext font-weight-bold text-info" id="valor_total">
+                                                    R$ {{ number_format(1000 + (($imposto->percentual * 1000) / 100), 2, ',', '.') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> 
+                                                Altere o valor base acima para ver o cálculo em tempo real
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Valor</label>
-                        <p class="text-lg font-semibold text-gray-900">
-                            @if($imposto->tipo === 'percentual')
-                                {{ number_format($imposto->valor, 2, ',', '.') }}%
+                </div>
+                
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="{{ route('admin.impostos.edit', $imposto) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            
+                            @if($imposto->ativo)
+                                <button type="button" class="btn btn-outline-secondary ml-2" onclick="toggleStatus({{ $imposto->id }})">
+                                    <i class="fas fa-eye-slash"></i> Desativar
+                                </button>
                             @else
-                                R$ {{ number_format($imposto->valor, 2, ',', '.') }}
+                                <button type="button" class="btn btn-outline-success ml-2" onclick="toggleStatus({{ $imposto->id }})">
+                                    <i class="fas fa-eye"></i> Ativar
+                                </button>
                             @endif
-                        </p>
-                    </div>
-                </div>
-                
-                @if($imposto->descricao)
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-500">Descrição</label>
-                        <p class="text-gray-900 mt-1">{{ $imposto->descricao }}</p>
-                    </div>
-                @endif
-            </div>
-            
-            <!-- Datas -->
-            <div class="bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Informações do Sistema</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Criado em</label>
-                        <p class="text-gray-900">{{ $imposto->created_at->format('d/m/Y H:i:s') }}</p>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Última atualização</label>
-                        <p class="text-gray-900">{{ $imposto->updated_at->format('d/m/Y H:i:s') }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Estatísticas -->
-        <div>
-            <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Estatísticas</h3>
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-lg border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Orçamentos</p>
-                                <p class="text-2xl font-bold text-blue-600">{{ $imposto->orcamentos_count ?? 0 }}</p>
-                            </div>
-                            <div class="p-3 bg-blue-100 rounded-full">
-                                <i class="fas fa-file-invoice text-blue-600"></i>
-                            </div>
+                            
+                            <button type="button" class="btn btn-outline-danger ml-2" onclick="confirmDelete({{ $imposto->id }})">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                            
+                            <a href="{{ route('admin.impostos.index') }}" class="btn btn-secondary ml-2">
+                                <i class="fas fa-arrow-left"></i> Voltar à Lista
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="bg-white p-4 rounded-lg border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Orçamentos Ativos</p>
-                                <p class="text-2xl font-bold text-green-600">{{ $imposto->orcamentos_ativos_count ?? 0 }}</p>
-                            </div>
-                            <div class="p-3 bg-green-100 rounded-full">
-                                <i class="fas fa-check-circle text-green-600"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    @if($imposto->valor_total_aplicado)
-                        <div class="bg-white p-4 rounded-lg border">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-500">Valor Total Aplicado</p>
-                                    <p class="text-lg font-bold text-purple-600">R$ {{ number_format($imposto->valor_total_aplicado, 2, ',', '.') }}</p>
-                                </div>
-                                <div class="p-3 bg-purple-100 rounded-full">
-                                    <i class="fas fa-calculator text-purple-600"></i>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Orçamentos Relacionados -->
-    @if(isset($orcamentos) && $orcamentos->count() > 0)
-        <div class="mt-6">
-            <div class="bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Orçamentos que Utilizam este Imposto</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full table-auto">
-                        <thead class="bg-white">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Número</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Valor Base</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Valor Imposto</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($orcamentos as $orcamento)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-2 text-sm font-medium text-gray-900">
-                                        #{{ str_pad($orcamento->id, 6, '0', STR_PAD_LEFT) }}
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-900">
-                                        {{ $orcamento->cliente_nome ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-900">
-                                        R$ {{ number_format($orcamento->valor_base ?? 0, 2, ',', '.') }}
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-900">
-                                        @php
-                                            $valorImposto = 0;
-                                            if($imposto->tipo === 'percentual') {
-                                                $valorImposto = ($orcamento->valor_base ?? 0) * ($imposto->valor / 100);
-                                            } else {
-                                                $valorImposto = $imposto->valor;
-                                            }
-                                        @endphp
-                                        R$ {{ number_format($valorImposto, 2, ',', '.') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            {{ $orcamento->status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ ucfirst($orcamento->status ?? 'pendente') }}
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-500">
-                                        {{ $orcamento->created_at->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        <a href="{{ route('admin.orcamentos.show', $orcamento->id) }}" 
-                                           class="text-blue-600 hover:text-blue-900 text-sm" 
-                                           title="Ver detalhes">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                
-                @if($orcamentos->hasPages())
-                    <div class="mt-4">
-                        {{ $orcamentos->links() }}
-                    </div>
-                @endif
-            </div>
-        </div>
-    @endif
 </div>
 
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o imposto <strong>{{ $imposto->nome }}</strong>?</p>
+                <p class="text-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta ação não pode ser desfeita.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Excluir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
 <script>
-function toggleStatus(id, newStatus) {
-    if (confirm('Tem certeza que deseja alterar o status deste imposto?')) {
-        fetch(`/admin/impostos/${id}/toggle-status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ ativo: newStatus })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+$(document).ready(function() {
+    // Calculadora de teste
+    $('#valor_teste').on('input', function() {
+        calcularTeste();
+    });
+    
+    // Calcular com valor inicial
+    calcularTeste();
+    
+    function calcularTeste() {
+        const percentual = {{ $imposto->percentual }};
+        const valorBase = parseFloat($('#valor_teste').val()) || 0;
+        
+        if (valorBase > 0) {
+            const valorImposto = (valorBase * percentual) / 100;
+            const valorTotal = valorBase + valorImposto;
+            
+            $('#valor_imposto').text('R$ ' + valorImposto.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }));
+            
+            $('#valor_total').text('R$ ' + valorTotal.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }));
+        } else {
+            $('#valor_imposto').text('R$ 0,00');
+            $('#valor_total').text('R$ 0,00');
+        }
+    }
+});
+
+// Função para alternar status
+function toggleStatus(id) {
+    $.ajax({
+        url: `/admin/impostos/${id}/toggle-status`,
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+            if (response.success) {
                 location.reload();
             } else {
-                alert('Erro ao alterar status: ' + (data.message || 'Erro desconhecido'));
+                alert('Erro ao alterar status: ' + response.message);
             }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao alterar status');
-        });
-    }
+        },
+        error: function() {
+            alert('Erro ao alterar status do imposto.');
+        }
+    });
+}
+
+// Função para confirmar exclusão
+function confirmDelete(id) {
+    $('#deleteForm').attr('action', `/admin/impostos/${id}`);
+    $('#deleteModal').modal('show');
 }
 </script>
-@endsection
+@endpush

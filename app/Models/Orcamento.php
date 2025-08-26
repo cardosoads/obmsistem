@@ -127,8 +127,14 @@ class Orcamento extends Model
 
         // Atualizar valor_final automaticamente ao salvar
         static::saving(function ($orcamento) {
-            if ($orcamento->valor_total !== null && $orcamento->valor_impostos !== null) {
-                $orcamento->valor_final = $orcamento->valor_total + $orcamento->valor_impostos;
+            if ($orcamento->valor_total !== null) {
+                // Para orçamentos do tipo prestador, somar impostos ao valor total
+                if ($orcamento->tipo_orcamento === 'prestador' && $orcamento->valor_impostos !== null) {
+                    $orcamento->valor_final = $orcamento->valor_total + $orcamento->valor_impostos;
+                } else {
+                    // Para outros tipos de orçamento, valor_final é igual ao valor_total
+                    $orcamento->valor_final = $orcamento->valor_total;
+                }
             }
         });
     }

@@ -11,10 +11,14 @@
                class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition duration-200">
                 <i class="fas fa-edit mr-2"></i>Editar
             </a>
-            <button onclick="toggleStatus({{ $base->id }}, {{ $base->ativo ? 'false' : 'true' }})" 
-                    class="{{ $base->ativo ? 'bg-orange-600 hover:bg-orange-700' : 'bg-green-600 hover:bg-green-700' }} text-white px-4 py-2 rounded-lg transition duration-200">
-                <i class="fas {{ $base->ativo ? 'fa-toggle-on' : 'fa-toggle-off' }} mr-2"></i>
-                {{ $base->ativo ? 'Desativar' : 'Ativar' }}
+            <button onclick="toggleStatus({{ $base->id }}, {{ $base->active ? 'false' : 'true' }})" 
+                    class="{{ $base->active ? 'bg-orange-600 hover:bg-orange-700' : 'bg-green-600 hover:bg-green-700' }} text-white px-4 py-2 rounded-lg transition duration-200">
+                <i class="fas {{ $base->active ? 'fa-toggle-on' : 'fa-toggle-off' }} mr-2"></i>
+                {{ $base->active ? 'Desativar' : 'Ativar' }}
+            </button>
+            <button onclick="deleteBase({{ $base->id }})" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                <i class="fas fa-trash mr-2"></i>Excluir
             </button>
             <a href="{{ route('admin.bases.index') }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
@@ -31,12 +35,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-500">Base (Cidade)</label>
-                        <p class="text-gray-900 font-medium">{{ $base->city ?? $base->nome }}</p>
+                        <p class="text-gray-900 font-medium">{{ $base->name }}</p>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-500">UF</label>
-                        <p class="text-gray-900 font-mono">{{ $base->uf ?? $base->estado }}</p>
+                        <p class="text-gray-900 font-mono">{{ $base->uf }}</p>
                     </div>
                     
                     <div>
@@ -87,56 +91,24 @@
                 </div>
             </div>
 
-            <!-- Orçamentos Associados -->
+            <!-- Informações Adicionais -->
             <div class="bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Orçamentos Associados</h3>
-                
-                @if($base->orcamentos->count() > 0)
-                    <div class="space-y-2">
-                        @foreach($base->orcamentos->take(5) as $orcamento)
-                            <div class="flex justify-between items-center p-2 bg-white rounded border">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">#{{ $orcamento->id }}</p>
-                                    <p class="text-xs text-gray-500">{{ $orcamento->created_at->format('d/m/Y') }}</p>
-                                </div>
-                                <a href="{{ route('admin.orcamentos.show', $orcamento->id) }}" 
-                                   class="text-blue-600 hover:text-blue-800 text-sm">
-                                    Ver detalhes
-                                </a>
-                            </div>
-                        @endforeach
-                        
-                        @if($base->orcamentos->count() > 5)
-                            <p class="text-sm text-gray-500 text-center mt-2">
-                                E mais {{ $base->orcamentos->count() - 5 }} orçamentos...
-                            </p>
-                        @endif
-                    </div>
-                @else
-                    <p class="text-gray-500 text-sm">Nenhum orçamento encontrado para esta base.</p>
-                @endif
-            </div>
-
-            <!-- Estatísticas -->
-            <div class="bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Estatísticas</h3>
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Informações da Base</h3>
                 <div class="space-y-3">
                     <div class="flex justify-between">
-                        <span class="text-sm text-gray-600">Total de Orçamentos:</span>
-                        <span class="text-sm font-medium text-gray-900">{{ $base->orcamentos->count() }}</span>
+                        <span class="text-sm text-gray-600">Data de Criação:</span>
+                        <span class="text-sm font-medium text-gray-900">{{ $base->created_at->format('d/m/Y H:i') }}</span>
                     </div>
                     
                     <div class="flex justify-between">
-                        <span class="text-sm text-gray-600">Orçamentos Ativos:</span>
-                        <span class="text-sm font-medium text-green-600">
-                            {{ $base->orcamentos->where('ativo', true)->count() }}
-                        </span>
+                        <span class="text-sm text-gray-600">Última Atualização:</span>
+                        <span class="text-sm font-medium text-gray-900">{{ $base->updated_at->format('d/m/Y H:i') }}</span>
                     </div>
                     
                     <div class="flex justify-between">
-                        <span class="text-sm text-gray-600">Orçamentos Inativos:</span>
-                        <span class="text-sm font-medium text-red-600">
-                            {{ $base->orcamentos->where('ativo', false)->count() }}
+                        <span class="text-sm text-gray-600">Status:</span>
+                        <span class="text-sm font-medium {{ $base->active ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $base->active ? 'Ativa' : 'Inativa' }}
                         </span>
                     </div>
                 </div>
@@ -169,13 +141,13 @@
 <script>
 function toggleStatus(id, status) {
     if (confirm('Tem certeza que deseja alterar o status desta base?')) {
-        fetch(`/admin/bases/${id}/toggle-status`, {
-            method: 'POST',
+        fetch(`/admin/bases/${id}/status`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ ativo: status })
+            body: JSON.stringify({ active: status })
         })
         .then(response => response.json())
         .then(data => {
@@ -188,6 +160,30 @@ function toggleStatus(id, status) {
         .catch(error => {
             console.error('Erro:', error);
             alert('Erro ao alterar status da base.');
+        });
+    }
+}
+
+function deleteBase(id) {
+    if (confirm('Tem certeza que deseja excluir esta base? Esta ação não pode ser desfeita.')) {
+        fetch(`/admin/bases/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/admin/bases';
+            } else {
+                alert('Erro ao excluir base: ' + (data.message || 'Erro desconhecido'));
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao excluir base.');
         });
     }
 }

@@ -170,13 +170,7 @@
                                             </select>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            @if($orcamento->valor_final)
-                                                <strong>R$ {{ number_format($orcamento->valor_final, 2, ',', '.') }}</strong>
-                                            @elseif($orcamento->valor_total)
-                                                R$ {{ number_format($orcamento->valor_total, 2, ',', '.') }}
-                                            @else
-                                                <span class="text-gray-400">Não informado</span>
-                                            @endif
+                                            R$ {{ number_format($orcamento->valor_total ?? 0, 2, ',', '.') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $orcamento->user->name ?? 'N/A' }}
@@ -195,6 +189,11 @@
                                                    class="inline-flex items-center px-2 py-1 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:bg-yellow-700 active:bg-yellow-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150" 
                                                    title="Editar">
                                                     <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{{ route('admin.orcamentos.pdf', $orcamento) }}" 
+                                                   class="inline-flex items-center px-2 py-1 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150" 
+                                                   title="Gerar PDF">
+                                                    <i class="fas fa-file-pdf"></i>
                                                 </a>
                                                 <button type="button" 
                                                         class="inline-flex items-center px-2 py-1 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" 

@@ -77,10 +77,10 @@
                 @forelse($bases as $base)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ $base->city ?? $base->nome }}</div>
+                            <div class="text-sm font-medium text-gray-900">{{ $base->name }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900 font-mono">{{ $base->uf ?? $base->estado }}</div>
+                            <div class="text-sm text-gray-900 font-mono">{{ $base->uf }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $base->regional ?? '-' }}</div>
@@ -93,8 +93,8 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                {{ $base->active ?? $base->ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ $base->active ?? $base->ativo ? 'Ativo' : 'Inativo' }}
+                                {{ $base->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $base->active ? 'Ativo' : 'Inativo' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -111,10 +111,10 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 
-                                <button onclick="toggleStatus({{ $base->id }}, {{ $base->ativo ? 'false' : 'true' }})" 
-                                        class="{{ $base->ativo ? 'text-orange-600 hover:text-orange-900' : 'text-green-600 hover:text-green-900' }}" 
-                                        title="{{ $base->ativo ? 'Desativar' : 'Ativar' }}">
-                                    <i class="fas {{ $base->ativo ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
+                                <button onclick="toggleStatus({{ $base->id }}, {{ $base->active ? 'false' : 'true' }})" 
+                                        class="{{ $base->active ? 'text-orange-600 hover:text-orange-900' : 'text-green-600 hover:text-green-900' }}" 
+                                        title="{{ $base->active ? 'Desativar' : 'Ativar' }}">
+                                    <i class="fas {{ $base->active ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
                                 </button>
                                 
                                 <button onclick="deleteBase({{ $base->id }})" 
@@ -151,13 +151,13 @@
 <script>
 function toggleStatus(id, status) {
     if (confirm('Tem certeza que deseja alterar o status desta base?')) {
-        fetch(`/admin/bases/${id}/toggle-status`, {
-            method: 'POST',
+        fetch(`/admin/bases/${id}/status`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ ativo: status })
+            body: JSON.stringify({ active: status })
         })
         .then(response => response.json())
         .then(data => {

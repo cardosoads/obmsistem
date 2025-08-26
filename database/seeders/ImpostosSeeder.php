@@ -14,111 +14,113 @@ class ImpostosSeeder extends Seeder
     public function run(): void
     {
         // Limpar tabela antes de inserir
-        DB::table('impostos')->truncate();
+        // Primeiro limpar a tabela pivô para evitar problemas de chave estrangeira
+        DB::table('grupo_imposto_imposto')->delete();
+        DB::table('impostos')->delete();
 
         $impostos = [
             // Impostos básicos do Lucro Presumido
             [
-                'name' => 'ISS',
+                'nome' => 'ISS',
                 'percentual' => 5.00,
-                'description' => 'Imposto Sobre Serviços - Lucro Presumido',
-                'active' => true
+                'descricao' => 'Imposto Sobre Serviços - Lucro Presumido',
+                'ativo' => true
             ],
             [
-                'name' => 'PIS',
+                'nome' => 'PIS',
                 'percentual' => 0.65,
-                'description' => 'Programa de Integração Social - Lucro Presumido',
-                'active' => true
+                'descricao' => 'Programa de Integração Social - Lucro Presumido',
+                'ativo' => true
             ],
             [
-                'name' => 'COFINS',
+                'nome' => 'COFINS',
                 'percentual' => 3.00,
-                'description' => 'Contribuição para o Financiamento da Seguridade Social - Lucro Presumido',
-                'active' => true
+                'descricao' => 'Contribuição para o Financiamento da Seguridade Social - Lucro Presumido',
+                'ativo' => true
             ],
             [
-                'name' => 'CSLL',
+                'nome' => 'CSLL',
                 'percentual' => 1.44,
-                'description' => 'Contribuição Social sobre o Lucro Líquido - Lucro Presumido',
-                'active' => true
+                'descricao' => 'Contribuição Social sobre o Lucro Líquido - Lucro Presumido',
+                'ativo' => true
             ],
             [
-                'name' => 'IRPJ',
+                'nome' => 'IRPJ',
                 'percentual' => 2.40,
-                'description' => 'Imposto de Renda Pessoa Jurídica - Lucro Presumido',
-                'active' => true
+                'descricao' => 'Imposto de Renda Pessoa Jurídica - Lucro Presumido',
+                'ativo' => true
             ],
             [
-                'name' => 'AD IRPJ',
+                'nome' => 'AD IRPJ',
                 'percentual' => 0.80,
-                'description' => 'Adicional do Imposto de Renda Pessoa Jurídica - Lucro Presumido',
-                'active' => true
+                'descricao' => 'Adicional do Imposto de Renda Pessoa Jurídica - Lucro Presumido',
+                'ativo' => true
             ],
             
             // Desonerações por ano
             [
-                'name' => 'DESONERAÇÃO 2025',
+                'nome' => 'DESONERAÇÃO 2025',
                 'percentual' => -1.20,
-                'description' => 'Desoneração da folha de pagamento para 2025',
-                'active' => true
+                'descricao' => 'Desoneração da folha de pagamento para 2025',
+                'ativo' => true
             ],
             [
-                'name' => 'DESONERAÇÃO 2026',
+                'nome' => 'DESONERAÇÃO 2026',
                 'percentual' => -0.96,
-                'description' => 'Desoneração da folha de pagamento para 2026',
-                'active' => true
+                'descricao' => 'Desoneração da folha de pagamento para 2026',
+                'ativo' => true
             ],
             [
-                'name' => 'DESONERAÇÃO 2027',
+                'nome' => 'DESONERAÇÃO 2027',
                 'percentual' => -0.77,
-                'description' => 'Desoneração da folha de pagamento para 2027',
-                'active' => true
+                'descricao' => 'Desoneração da folha de pagamento para 2027',
+                'ativo' => true
             ],
             [
-                'name' => 'DESONERAÇÃO 2028',
+                'nome' => 'DESONERAÇÃO 2028',
                 'percentual' => -0.61,
-                'description' => 'Desoneração da folha de pagamento para 2028',
-                'active' => true
+                'descricao' => 'Desoneração da folha de pagamento para 2028',
+                'ativo' => true
             ],
             
             // Imposto específico para transporte
             [
-                'name' => 'TRANSPORTE (exceto carga)',
+                'nome' => 'TRANSPORTE (exceto carga)',
                 'percentual' => 16.00,
-                'description' => '16% para Transporte (exceto carga)',
-                'active' => true
+                'descricao' => '16% para Transporte (exceto carga)',
+                'ativo' => true
             ],
             
             // Impostos totais por ano (calculados)
             [
-                'name' => 'IMPOSTO TOTAL 2025',
+                'nome' => 'IMPOSTO TOTAL 2025',
                 'percentual' => 12.09,
-                'description' => 'Imposto total calculado para 2025 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2025)',
-                'active' => true
+                'descricao' => 'Imposto total calculado para 2025 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2025)',
+                'ativo' => true
             ],
             [
-                'name' => 'IMPOSTO TOTAL 2026',
+                'nome' => 'IMPOSTO TOTAL 2026',
                 'percentual' => 12.33,
-                'description' => 'Imposto total calculado para 2026 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2026)',
-                'active' => true
+                'descricao' => 'Imposto total calculado para 2026 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2026)',
+                'ativo' => true
             ],
             [
-                'name' => 'IMPOSTO TOTAL 2027',
+                'nome' => 'IMPOSTO TOTAL 2027',
                 'percentual' => 12.52,
-                'description' => 'Imposto total calculado para 2027 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2027)',
-                'active' => true
+                'descricao' => 'Imposto total calculado para 2027 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2027)',
+                'ativo' => true
             ],
             [
-                'name' => 'IMPOSTO TOTAL 2028',
+                'nome' => 'IMPOSTO TOTAL 2028',
                 'percentual' => 12.68,
-                'description' => 'Imposto total calculado para 2028 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2028)',
-                'active' => true
+                'descricao' => 'Imposto total calculado para 2028 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ+DESONERAÇÃO 2028)',
+                'ativo' => true
             ],
             [
-                'name' => 'IMPOSTO TOTAL 2029',
+                'nome' => 'IMPOSTO TOTAL 2029',
                 'percentual' => 13.29,
-                'description' => 'Imposto total calculado para 2029 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ)',
-                'active' => true
+                'descricao' => 'Imposto total calculado para 2029 (ISS+PIS+COFINS+CSLL+IRPJ+AD IRPJ)',
+                'ativo' => true
             ]
         ];
 

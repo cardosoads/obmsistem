@@ -36,7 +36,7 @@
             <nav class="flex-1 overflow-y-auto py-6 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent" x-data="{ 
                 cadastrosOpen: {{ request()->routeIs('admin.bases*', 'admin.marcas*') ? 'true' : 'false' }},
                 omieOpen: {{ request()->routeIs('admin.omie*') ? 'true' : 'false' }},
-                financeirosOpen: {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*') ? 'true' : 'false' }}
+                financeirosOpen: {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*', 'admin.grupos-impostos*') ? 'true' : 'false' }}
             }">
                 <div class="px-4 space-y-3">
                     <!-- Dashboard -->
@@ -114,7 +114,7 @@
                     <!-- Financeiro -->
                     <div class="space-y-2">
                         <button @click="financeirosOpen = !financeirosOpen" 
-                                class="group w-full flex items-center justify-between px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-amber-600/20 hover:to-orange-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*') ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25' : '' }}">
+                                class="group w-full flex items-center justify-between px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-amber-600/20 hover:to-orange-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*', 'admin.grupos-impostos*') ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25' : '' }}">
                             <div class="flex items-center">
                                 <i class="fas fa-calculator w-5 h-5 mr-3"></i>
                                 <span class="font-medium">Financeiro</span>
@@ -139,6 +139,11 @@
                                class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-amber-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.impostos.index') ? 'bg-slate-700 text-amber-300 border-l-2 border-amber-500' : '' }}">
                                 <i class="fas fa-percentage w-4 h-4 mr-3 group-hover:text-amber-400"></i>
                                 <span>Impostos</span>
+                            </a>
+                            <a href="{{ route('admin.grupos-impostos.index') }}" 
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-amber-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.grupos-impostos*') ? 'bg-slate-700 text-amber-300 border-l-2 border-amber-500' : '' }}">
+                                <i class="fas fa-layer-group w-4 h-4 mr-3 group-hover:text-amber-400"></i>
+                                <span>Grupos de Impostos</span>
                             </a>
 
                         </div>

@@ -15,74 +15,32 @@ class MarcaSeeder extends Seeder
         // Limpa a tabela antes de inserir novos dados
         DB::table('marcas')->delete();
         
-        // Dados de exemplo para marcas
+        // Dados das marcas
         $marcas = [
             [
-                'name' => 'TOYOTA',
-                'mercado' => 'AUTOMOTIVO',
+                'name' => 'Lunav',
+                'mercado' => 'APOIO',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'FORD',
-                'mercado' => 'AUTOMOTIVO',
+                'name' => 'Santa Luzia',
+                'mercado' => 'PRIVADO',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'VOLKSWAGEN',
-                'mercado' => 'AUTOMOTIVO',
+                'name' => 'Ghanem',
+                'mercado' => 'PUBLICO',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'CHEVROLET',
-                'mercado' => 'AUTOMOTIVO',
-                'active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'HONDA',
-                'mercado' => 'AUTOMOTIVO',
-                'active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'HYUNDAI',
-                'mercado' => 'AUTOMOTIVO',
-                'active' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'NISSAN',
-                'mercado' => 'AUTOMOTIVO',
-                'active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'FIAT',
-                'mercado' => 'AUTOMOTIVO',
-                'active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'RENAULT',
-                'mercado' => 'AUTOMOTIVO',
-                'active' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'PEUGEOT',
-                'mercado' => 'AUTOMOTIVO',
+                'name' => 'Dasa',
+                'mercado' => 'APOIO',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),

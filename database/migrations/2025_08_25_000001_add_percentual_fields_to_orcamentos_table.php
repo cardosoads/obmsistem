@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orcamentos', function (Blueprint $table) {
-            $table->decimal('percentual_lucro', 5, 2)->default(0)->after('valor_final');
-            $table->decimal('percentual_impostos', 5, 2)->default(0)->after('percentual_lucro');
+            $table->decimal('percentual_lucro', 5, 2)->nullable()->comment('Percentual de lucro aplicado (apenas para prestador)')->after('valor_final');
+            $table->decimal('percentual_impostos', 5, 2)->nullable()->comment('Percentual de impostos aplicado (apenas para prestador)')->after('percentual_lucro');
         });
     }
 

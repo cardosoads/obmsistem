@@ -33,15 +33,15 @@
                 </div>
                 
                 <div>
-                    <label for="city" class="block text-sm font-medium text-gray-700 mb-2">BASE (Cidade) *</label>
-                    <select id="city" 
-                            name="city" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('city') border-red-500 @enderror" 
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">BASE (Cidade) *</label>
+                    <select id="name" 
+                            name="name" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror" 
                             required 
                             disabled>
                         <option value="">Primeiro selecione um estado</option>
                     </select>
-                    @error('city')
+                    @error('name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Carregar municípios quando UF for selecionada
     document.getElementById('uf').addEventListener('change', async function() {
         const uf = this.value;
-        const citySelect = document.getElementById('city');
+        const citySelect = document.getElementById('name');
         const regionalInput = document.getElementById('regional');
         
         if (uf) {
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function popularSelectCidades() {
-        const citySelect = document.getElementById('city');
+        const citySelect = document.getElementById('name');
         
         // Limpar e habilitar select
         citySelect.innerHTML = '<option value="">Selecione uma cidade</option>';

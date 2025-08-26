@@ -353,37 +353,59 @@
                             </div>
 
                             <!-- Percentual de Lucro -->
-                            <div>
-                                <label for="lucro_percentual" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Percentual de Lucro (%) *
-                                </label>
-                                <input type="number" 
-                                       id="lucro_percentual"
-                name="lucro_percentual"
-                value="{{ old('lucro_percentual', $orcamento->orcamentoPrestador->lucro_percentual ?? '') }}"
-                                       step="0.01" 
-                                       min="0" 
-                                       max="100"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('lucro_percentual') border-red-500 @enderror">
-                                @error('lucro_percentual')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+            <div>
+                <label for="percentual_lucro" class="block text-sm font-medium text-gray-700 mb-2">
+                    Percentual de Lucro (%) *
+                </label>
+                <input type="number" 
+                       id="percentual_lucro"
+name="percentual_lucro"
+value="{{ old('percentual_lucro', $orcamento->orcamentoPrestador->lucro_percentual ?? '') }}"
+                       step="0.01" 
+                       min="0" 
+                       max="100"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('percentual_lucro') border-red-500 @enderror">
+                @error('percentual_lucro')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Grupo de Impostos -->
+            <div>
+                <label for="grupo_imposto_id" class="block text-sm font-medium text-gray-700 mb-2">
+                    Grupo de Impostos
+                </label>
+                <select id="grupo_imposto_id" 
+                        name="grupo_imposto_id" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('grupo_imposto_id') border-red-500 @enderror">
+                    <option value="">Selecione um grupo de impostos</option>
+                    @foreach($gruposImpostos as $grupo)
+                        <option value="{{ $grupo->id }}" 
+                                data-percentual="{{ $grupo->percentual_total }}"
+                                {{ old('grupo_imposto_id', $orcamento->orcamentoPrestador->grupo_imposto_id ?? '') == $grupo->id ? 'selected' : '' }}>
+                            {{ $grupo->nome }} ({{ number_format($grupo->percentual_total, 2, ',', '.') }}%)
+                        </option>
+                    @endforeach
+                </select>
+                @error('grupo_imposto_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
                             <!-- Percentual de Impostos -->
                             <div>
-                                <label for="impostos_percentual" class="block text-sm font-medium text-gray-700 mb-2">
+                                <label for="percentual_impostos" class="block text-sm font-medium text-gray-700 mb-2">
                                     Percentual de Impostos (%) *
                                 </label>
                                 <input type="number" 
-                                       id="impostos_percentual"
-                name="impostos_percentual"
-                value="{{ old('impostos_percentual', $orcamento->orcamentoPrestador->impostos_percentual ?? '') }}"
+                                       id="percentual_impostos"
+name="percentual_impostos"
+value="{{ old('percentual_impostos', $orcamento->orcamentoPrestador->impostos_percentual ?? '') }}"
                                        step="0.01" 
                                        min="0" 
                                        max="100"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('impostos_percentual') border-red-500 @enderror">
-                                @error('impostos_percentual')
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('percentual_impostos') border-red-500 @enderror">
+                                @error('percentual_impostos')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -438,6 +460,10 @@
                             @enderror
                         </div>
                     </div>
+
+                    <!-- Campos Hidden para Valores Calculados -->
+                    <input type="hidden" id="valor_lucro_hidden" name="valor_lucro" value="{{ old('valor_lucro', $orcamento->orcamentoPrestador->valor_lucro ?? 0) }}">
+                    <input type="hidden" id="valor_impostos_hidden" name="valor_impostos" value="{{ old('valor_impostos', $orcamento->orcamentoPrestador->valor_impostos ?? 0) }}">
 
                     <!-- Botões de Ação -->
                     <div class="flex justify-end space-x-3 pt-6">
@@ -516,8 +542,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cálculos automáticos para prestador
     const valorReferenciaInput = document.getElementById('valor_referencia');
     const qtdDiasInput = document.getElementById('qtd_dias');
-    const percentualLucroInput = document.getElementById('lucro_percentual');
-        const percentualImpostosInput = document.getElementById('impostos_percentual');
+    const percentualLucroInput = document.getElementById('percentual_lucro');
+        const percentualImpostosInput = document.getElementById('percentual_impostos');
     
     function calcularValoresPrestador() {
         const valorReferencia = parseFloat(valorReferenciaInput.value) || 0;
@@ -546,6 +572,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'R$ ' + valorImpostos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('display_valor_total').textContent = 
             'R$ ' + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        
+        // Atualizar campos hidden para envio ao backend
+        const valorLucroHidden = document.getElementById('valor_lucro_hidden');
+        const valorImpostosHidden = document.getElementById('valor_impostos_hidden');
+        
+        if (valorLucroHidden) {
+            valorLucroHidden.value = valorLucro.toFixed(2);
+        }
+        
+        if (valorImpostosHidden) {
+            valorImpostosHidden.value = valorImpostos.toFixed(2);
+        }
     }
     
     // Adicionar event listeners para cálculos automáticos
@@ -553,6 +591,81 @@ document.addEventListener('DOMContentLoaded', function() {
     if (qtdDiasInput) qtdDiasInput.addEventListener('input', calcularValoresPrestador);
     if (percentualLucroInput) percentualLucroInput.addEventListener('input', calcularValoresPrestador);
     if (percentualImpostosInput) percentualImpostosInput.addEventListener('input', calcularValoresPrestador);
+    
+    // Integração com Grupos de Impostos
+    const grupoImpostoSelect = document.getElementById('grupo_imposto_id');
+    
+    if (grupoImpostoSelect) {
+        grupoImpostoSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            
+            if (selectedOption && selectedOption.value) {
+                // Buscar percentual via AJAX para obter dados mais detalhados
+                fetch('/admin/orcamentos/buscar-percentual-grupo-imposto', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        grupo_imposto_id: selectedOption.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && percentualImpostosInput) {
+                        percentualImpostosInput.value = data.percentual_total;
+                        calcularValoresPrestador();
+                        
+                        console.log('Grupo de impostos selecionado:', {
+                            nome: data.nome_grupo,
+                            percentual: data.percentual_total,
+                            impostos: data.impostos
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar percentual do grupo de impostos:', error);
+                    
+                    // Fallback: usar o percentual do data-attribute
+                    const percentual = selectedOption.getAttribute('data-percentual');
+                    if (percentual && percentualImpostosInput) {
+                        percentualImpostosInput.value = percentual;
+                        calcularValoresPrestador();
+                    }
+                });
+            } else {
+                // Limpar campo se nenhum grupo selecionado
+                if (percentualImpostosInput) {
+                    percentualImpostosInput.value = '';
+                    calcularValoresPrestador();
+                }
+            }
+        });
+    }
+    
+    // Função para calcular automaticamente a quantidade de dias baseado na frequência de atendimento
+    function calcularQuantidadeDias() {
+        const checkboxes = document.querySelectorAll('input[name="frequencia_atendimento[]"]:checked');
+        const qtdDiasInput = document.getElementById('qtd_dias');
+        
+        if (qtdDiasInput) {
+            qtdDiasInput.value = checkboxes.length;
+            // Recalcular valores se for orçamento de prestador
+            const tipoOrcamento = document.getElementById('tipo_orcamento');
+            if (tipoOrcamento && tipoOrcamento.value === 'prestador') {
+                calcularValoresPrestador();
+            }
+        }
+    }
+    
+    // Adicionar event listeners aos checkboxes de frequência de atendimento
+    document.querySelectorAll('input[name="frequencia_atendimento[]"]').forEach(checkbox => {
+        checkbox.addEventListener('change', calcularQuantidadeDias);
+    });
+    
+    // Calcular quantidade de dias inicial se houver checkboxes marcados
+    calcularQuantidadeDias();
     
     // Calcular valores iniciais se já existirem dados
     calcularValoresPrestador();

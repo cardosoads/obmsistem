@@ -21,6 +21,8 @@ class OrcamentoPrestador extends Model
         'impostos_percentual',
         'valor_impostos',
         'valor_total',
+        'grupo_imposto_id',
+        'observacoes'
     ];
 
     protected $casts = [
@@ -42,6 +44,11 @@ class OrcamentoPrestador extends Model
     public function orcamento(): BelongsTo
     {
         return $this->belongsTo(Orcamento::class);
+    }
+
+    public function grupoImposto(): BelongsTo
+    {
+        return $this->belongsTo(GrupoImposto::class);
     }
 
     /**
@@ -87,11 +94,68 @@ class OrcamentoPrestador extends Model
     /**
      * Atualiza todos os valores calculados
      */
-    public function atualizarCalculos(): void
+    public function atualizarCalculos()
     {
         $this->custo_fornecedor = $this->calcularCustoFornecedor();
         $this->valor_lucro = $this->calcularValorLucro();
         $this->valor_impostos = $this->calcularValorImpostos();
         $this->valor_total = $this->calcularValorTotal();
+        $this->save();
+    }
+
+    /**
+     * Atualiza apenas os valores calculados, preservando os percentuais
+     */
+    public function atualizarCalculosPreservandoPercentuais()
+    {
+        // Salva os percentuais atuais antes de recalcular, garantindo valores não-nulos
+        $percentualLucroAtual = $this->lucro_percentual ?? 0;
+        $percentualImpostosAtual = $this->impostos_percentual ?? 0;
+        
+        $this->custo_fornecedor = $this->calcularCustoFornecedor();
+        $this->valor_lucro = $this->calcularValorLucro();
+        $this->valor_impostos = $this->calcularValorImpostos();
+        $this->valor_total = $this->calcularValorTotal();
+        
+        // Restaura os percentuais originais, garantindo que não sejam NULL
+        $this->lucro_percentual = $percentualLucroAtual;
+        $this->impostos_percentual = $percentualImpostosAtual;
+        
+        $this->save();
+    }
+
+    /**
+     * Calcula a quantidade de dias baseada na frequência de atendimento do orçamento
+     */
+    public function calcularDiasFrequencia(): int
+    {
+        if (!$this->orcamento || !$this->orcamento->frequencia_atendimento) {
+            return 1; // Valor padrão
+        }
+
+        $frequencia = $this->orcamento->frequencia_atendimento;
+        
+        // Se for array, conta os dias selecionados
+        if (is_array($frequencia)) {
+            return count($frequencia);
+        }
+        
+        // Se for string, converte para array e conta
+        if (is_string($frequencia)) {
+            $dias = explode(',', $frequencia);
+            return count(array_filter($dias));
+        }
+        
+        return 1; // Valor padrão
+    }
+
+    /**
+     * Define a quantidade inicial de dias baseada na frequência de atendimento
+     */
+    public function definirDiasIniciais()
+    {
+        if (!$this->qtd_dias) {
+            $this->qtd_dias = $this->calcularDiasFrequencia();
+        }
     }
 }

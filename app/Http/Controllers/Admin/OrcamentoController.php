@@ -8,6 +8,7 @@ use App\Models\OrcamentoPrestador;
 use App\Models\OrcamentoAumentoKm;
 use App\Models\OrcamentoProprioNovaRota;
 use App\Models\CentroCusto;
+use App\Models\GrupoImposto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,8 +60,9 @@ class OrcamentoController extends Controller
     public function create()
     {
         $centrosCusto = CentroCusto::where('active', true)->get();
+        $gruposImpostos = GrupoImposto::where('ativo', true)->with('impostos')->get();
         
-        return view('admin.orcamentos.create', compact('centrosCusto'));
+        return view('admin.orcamentos.create', compact('centrosCusto', 'gruposImpostos'));
     }
 
     /**
@@ -68,6 +70,15 @@ class OrcamentoController extends Controller
      */
     public function store(Request $request)
     {
+        // Log temporário para debug - dados do request
+        \Log::info('Dados do request no store:', [
+            'valor_lucro' => $request->input('valor_lucro'),
+            'valor_impostos' => $request->input('valor_impostos'),
+            'percentual_lucro' => $request->input('percentual_lucro'),
+            'percentual_impostos' => $request->input('percentual_impostos'),
+            'all_request' => $request->all()
+        ]);
+        
         $validated = $request->validate([
             'data_solicitacao' => 'required|date',
             'centro_custo_id' => 'required|exists:centros_custo,id',
@@ -79,6 +90,7 @@ class OrcamentoController extends Controller
             'frequencia_atendimento' => 'nullable|array',
             'frequencia_atendimento.*' => 'string|in:segunda,terca,quarta,quinta,sexta,sabado,domingo',
             'tipo_orcamento' => 'required|in:prestador,aumento_km,proprio_nova_rota',
+            'status' => 'nullable|in:rascunho,enviado,aprovado,rejeitado,cancelado',
             'observacoes' => 'nullable|string',
             // Campos específicos do prestador
             'fornecedor_omie_id' => 'required_if:tipo_orcamento,prestador|nullable|integer',
@@ -91,6 +103,7 @@ class OrcamentoController extends Controller
             'percentual_impostos' => 'nullable|numeric|min:0|max:100',
             'valor_impostos' => 'nullable|numeric|min:0',
             'valor_total' => 'nullable|numeric|min:0',
+            'grupo_imposto_id' => 'nullable|exists:grupos_impostos,id',
             // Campos específicos do Aumento KM
             'km_dia' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
             'qtd_dias_aumento' => 'required_if:tipo_orcamento,aumento_km|nullable|integer|min:1',
@@ -123,7 +136,10 @@ class OrcamentoController extends Controller
             $validated['user_id'] = Auth::id();
             $validated['data_orcamento'] = now()->format('Y-m-d');
             
-            $orcamento = Orcamento::create($validated);
+            // Filtrar campos específicos baseado no tipo de orçamento
+            $orcamentoData = $this->filtrarCamposOrcamento($validated);
+            
+            $orcamento = Orcamento::create($orcamentoData);
 
             // Criar registro específico baseado no tipo de orçamento
             $this->criarRegistroEspecifico($orcamento, $validated);
@@ -155,8 +171,17 @@ class OrcamentoController extends Controller
     public function edit(Orcamento $orcamento)
     {
         $centrosCusto = CentroCusto::where('active', true)->get();
+        $gruposImpostos = GrupoImposto::where('ativo', true)->with('impostos')->get();
         
-        return view('admin.orcamentos.edit', compact('orcamento', 'centrosCusto'));
+        // Carregar relacionamentos específicos baseados no tipo
+        $orcamento->load([
+            'centroCusto',
+            'orcamentoPrestador.grupoImposto',
+            'orcamentoAumentoKm',
+            'orcamentoProprioNovaRota'
+        ]);
+        
+        return view('admin.orcamentos.edit', compact('orcamento', 'centrosCusto', 'gruposImpostos'));
     }
 
     /**
@@ -187,13 +212,17 @@ class OrcamentoController extends Controller
             'valor_lucro' => 'nullable|numeric|min:0',
             'percentual_impostos' => 'nullable|numeric|min:0|max:100',
             'valor_impostos' => 'nullable|numeric|min:0',
-            'valor_total' => 'nullable|numeric|min:0'
+            'valor_total' => 'nullable|numeric|min:0',
+            'grupo_imposto_id' => 'nullable|exists:grupos_impostos,id'
         ]);
 
         try {
             DB::beginTransaction();
             
-            $orcamento->update($validated);
+            // Filtrar campos específicos baseado no tipo de orçamento
+            $orcamentoData = $this->filtrarCamposOrcamento($validated);
+            
+            $orcamento->update($orcamentoData);
 
             // Atualizar ou criar registro específico baseado no tipo de orçamento
             $this->atualizarRegistroEspecifico($orcamento, $validated);
@@ -249,6 +278,47 @@ class OrcamentoController extends Controller
     }
 
     /**
+     * Filtrar campos do orçamento baseado no tipo
+     */
+    private function filtrarCamposOrcamento(array $validated)
+    {
+        // Campos que sempre devem ser incluídos
+        $camposPermitidos = [
+            'data_solicitacao',
+            'centro_custo_id',
+            'nome_rota',
+            'id_logcare',
+            'cliente_omie_id',
+            'cliente_nome',
+            'horario',
+            'frequencia_atendimento',
+            'tipo_orcamento',
+            'observacoes',
+            'user_id',
+            'data_orcamento',
+            'numero_orcamento',
+            'status'
+        ];
+        
+        // Adicionar campos específicos baseado no tipo
+        if ($validated['tipo_orcamento'] === 'prestador') {
+            $camposPermitidos = array_merge($camposPermitidos, [
+                'percentual_lucro',
+                'percentual_impostos',
+                'valor_impostos',
+                'valor_total'
+            ]);
+        } else {
+            // Para outros tipos, apenas valor_impostos com valor 0
+            $camposPermitidos[] = 'valor_impostos';
+            $validated['valor_impostos'] = 0;
+        }
+        
+        // Filtrar apenas os campos permitidos
+        return array_intersect_key($validated, array_flip($camposPermitidos));
+    }
+
+    /**
      * Criar registro específico baseado no tipo de orçamento
      */
     private function criarRegistroEspecifico(Orcamento $orcamento, array $validated)
@@ -271,6 +341,15 @@ class OrcamentoController extends Controller
      */
     private function criarOrcamentoPrestador(Orcamento $orcamento, array $validated)
     {
+        // Log temporário para debug
+        \Log::info('Dados recebidos no criarOrcamentoPrestador:', [
+            'valor_lucro' => $validated['valor_lucro'] ?? 'não definido',
+            'valor_impostos' => $validated['valor_impostos'] ?? 'não definido',
+            'percentual_lucro' => $validated['percentual_lucro'] ?? 'não definido',
+            'percentual_impostos' => $validated['percentual_impostos'] ?? 'não definido',
+            'all_validated' => $validated
+        ]);
+        
         $prestadorData = [
             'orcamento_id' => $orcamento->id,
             'fornecedor_omie_id' => $validated['fornecedor_omie_id'],
@@ -278,21 +357,59 @@ class OrcamentoController extends Controller
             'valor_referencia' => $validated['valor_referencia'] ?? 0,
             'qtd_dias' => $validated['qtd_dias'] ?? 1,
             'custo_fornecedor' => $validated['custo_fornecedor'] ?? 0,
-            'percentual_lucro' => $validated['percentual_lucro'] ?? 0,
+            'lucro_percentual' => $validated['percentual_lucro'] ?? 0,
             'valor_lucro' => $validated['valor_lucro'] ?? 0,
-            'percentual_impostos' => $validated['percentual_impostos'] ?? 0,
+            'impostos_percentual' => $validated['percentual_impostos'] ?? 0,
             'valor_impostos' => $validated['valor_impostos'] ?? 0,
-            'valor_total' => $validated['valor_total'] ?? 0
+            'valor_total' => $validated['valor_total'] ?? 0,
+            'grupo_imposto_id' => $validated['grupo_imposto_id'] ?? null,
+            'observacoes' => $validated['observacoes'] ?? null
         ];
 
         $orcamentoPrestador = OrcamentoPrestador::create($prestadorData);
         
-        // Atualizar cálculos automáticos
-        $orcamentoPrestador->atualizarCalculos();
-        $orcamentoPrestador->save();
+        // Definir dias iniciais baseados na frequência se não foi informado
+        if (!$validated['qtd_dias']) {
+            $orcamentoPrestador->definirDiasIniciais();
+        }
+        
+        // Atualizar cálculos automáticos preservando os percentuais enviados
+        $orcamentoPrestador->atualizarCalculosPreservandoPercentuais();
         
         // Atualizar valor total do orçamento principal
         $orcamento->update(['valor_total' => $orcamentoPrestador->valor_total]);
+    }
+
+    /**
+     * Buscar percentual de impostos do grupo selecionado
+     */
+    public function buscarPercentualGrupoImposto(Request $request)
+    {
+        $grupoImpostoId = $request->input('grupo_imposto_id');
+        
+        if (!$grupoImpostoId) {
+            return response()->json(['percentual' => 0]);
+        }
+        
+        $grupoImposto = GrupoImposto::with('impostos')->find($grupoImpostoId);
+        
+        if (!$grupoImposto) {
+            return response()->json(['percentual' => 0]);
+        }
+        
+        // Calcular percentual total dos impostos do grupo
+        $percentualTotal = $grupoImposto->impostos->sum('percentual');
+        
+        return response()->json([
+            'percentual' => $percentualTotal,
+            'nome' => $grupoImposto->nome,
+            'impostos' => $grupoImposto->impostos->map(function($imposto) {
+                return [
+                    'nome' => $imposto->nome,
+                    'percentual' => $imposto->percentual
+                ];
+            })
+        ]);
     }
 
     /**
@@ -369,34 +486,35 @@ class OrcamentoController extends Controller
       * Atualizar registro específico para orçamento de prestador
       */
      private function atualizarOrcamentoPrestador(Orcamento $orcamento, array $validated)
-     {
-         $prestadorData = [
-             'fornecedor_omie_id' => $validated['fornecedor_omie_id'],
-             'fornecedor_nome' => $validated['fornecedor_nome'],
-             'valor_referencia' => $validated['valor_referencia'] ?? 0,
-             'qtd_dias' => $validated['qtd_dias'] ?? 1,
-             'custo_fornecedor' => $validated['custo_fornecedor'] ?? 0,
-             'percentual_lucro' => $validated['percentual_lucro'] ?? 0,
-             'valor_lucro' => $validated['valor_lucro'] ?? 0,
-             'percentual_impostos' => $validated['percentual_impostos'] ?? 0,
-             'valor_impostos' => $validated['valor_impostos'] ?? 0,
-             'valor_total' => $validated['valor_total'] ?? 0
-         ];
+    {
+        $prestadorData = [
+            'fornecedor_omie_id' => $validated['fornecedor_omie_id'],
+            'fornecedor_nome' => $validated['fornecedor_nome'],
+            'valor_referencia' => $validated['valor_referencia'] ?? 0,
+            'qtd_dias' => $validated['qtd_dias'] ?? 1,
+            'custo_fornecedor' => $validated['custo_fornecedor'] ?? 0,
+            'lucro_percentual' => $validated['percentual_lucro'] ?? 0,
+            'valor_lucro' => $validated['valor_lucro'] ?? 0,
+            'impostos_percentual' => $validated['percentual_impostos'] ?? 0,
+            'valor_impostos' => $validated['valor_impostos'] ?? 0,
+            'valor_total' => $validated['valor_total'] ?? 0,
+            'grupo_imposto_id' => $validated['grupo_imposto_id'] ?? null,
+            'observacoes' => $validated['observacoes'] ?? null
+        ];
 
-         $orcamentoPrestador = $orcamento->orcamentoPrestador;
-         
-         if ($orcamentoPrestador) {
-             // Atualizar registro existente
-             $orcamentoPrestador->update($prestadorData);
-         } else {
-             // Criar novo registro
-             $prestadorData['orcamento_id'] = $orcamento->id;
-             $orcamentoPrestador = OrcamentoPrestador::create($prestadorData);
-         }
-         
-         // Atualizar cálculos automáticos
-         $orcamentoPrestador->atualizarCalculos();
-         $orcamentoPrestador->save();
+        $orcamentoPrestador = $orcamento->orcamentoPrestador;
+        
+        if ($orcamentoPrestador) {
+            // Atualizar registro existente
+            $orcamentoPrestador->update($prestadorData);
+        } else {
+            // Criar novo registro
+            $prestadorData['orcamento_id'] = $orcamento->id;
+            $orcamentoPrestador = OrcamentoPrestador::create($prestadorData);
+        }
+        
+        // Atualizar cálculos automáticos preservando os percentuais enviados
+        $orcamentoPrestador->atualizarCalculosPreservandoPercentuais();
          
          // Atualizar valor total do orçamento principal
          $orcamento->update(['valor_total' => $orcamentoPrestador->valor_total]);

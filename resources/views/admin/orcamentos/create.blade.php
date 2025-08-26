@@ -995,7 +995,7 @@
 
                                     <!-- Percentual de Lucro -->
                                     <div>
-                                        <label for="lucro_percentual" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <label for="percentual_lucro" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
                                             <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                             </svg>
@@ -1012,12 +1012,47 @@
                                                    min="0"
                                                    max="100"
                                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400" 
-                                                   id="lucro_percentual"
-                                name="lucro_percentual"
-                                value="{{ old('lucro_percentual') }}"
+                                                   id="percentual_lucro"
+                                           name="percentual_lucro"
+                                           value="{{ old('percentual_lucro') }}"
                                                    placeholder="0,00">
                                         </div>
-                                        @error('lucro_percentual')
+                                        @error('percentual_lucro')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Seletor de Grupo de Impostos -->
+                                    <div>
+                                        <label for="grupo_imposto_id" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-4H3m16 8H1m18 4H7"></path>
+                                            </svg>
+                                            Grupo de Impostos
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-4H3m16 8H1m18 4H7"></path>
+                                                </svg>
+                                            </div>
+                                            <select class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 bg-white" 
+                                                    id="grupo_imposto_id" 
+                                                    name="grupo_imposto_id">
+                                                <option value="">Selecione um grupo de impostos...</option>
+                                                @foreach($gruposImpostos as $grupo)
+                                                    <option value="{{ $grupo->id }}" data-percentual="{{ $grupo->percentual_total }}" {{ old('grupo_imposto_id') == $grupo->id ? 'selected' : '' }}>
+                                                        {{ $grupo->nome }} ({{ number_format($grupo->percentual_total, 2, ',', '.') }}%)
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @error('grupo_imposto_id')
                                             <div class="flex items-center mt-2 text-sm text-red-600">
                                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -1029,7 +1064,7 @@
 
                                     <!-- Percentual de Impostos -->
                                     <div>
-                                        <label for="impostos_percentual" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <label for="percentual_impostos" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
                                             <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                             </svg>
@@ -1046,12 +1081,12 @@
                                                    min="0"
                                                    max="100"
                                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400" 
-                                                   id="impostos_percentual"
-                                name="impostos_percentual"
-                                value="{{ old('impostos_percentual') }}"
+                                                   id="percentual_impostos"
+                                           name="percentual_impostos"
+                                           value="{{ old('percentual_impostos') }}"
                                                    placeholder="0,00">
                                         </div>
-                                        @error('impostos_percentual')
+                                        @error('percentual_impostos')
                                             <div class="flex items-center mt-2 text-sm text-red-600">
                                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -1143,6 +1178,10 @@
                                 @enderror
                             </div>
                         </div>
+                        
+                        <!-- Campos hidden para valores calculados -->
+                        <input type="hidden" id="valor_lucro_hidden" name="valor_lucro" value="0">
+                        <input type="hidden" id="valor_impostos_hidden" name="valor_impostos" value="0">
                     </div>
 
                     <div class="px-6 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 rounded-b-lg">
@@ -1331,14 +1370,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (aumentoKmSection) aumentoKmSection.style.display = 'none';
             if (proprioNovaRotaSection) proprioNovaRotaSection.style.display = 'none';
             
-            // Exibir seção correspondente ao tipo selecionado
+            // Desabilitar campos de todas as seções
+            const prestadorInputs = prestadorSection ? prestadorSection.querySelectorAll('input, select, textarea') : [];
+            const aumentoKmInputs = aumentoKmSection ? aumentoKmSection.querySelectorAll('input, select, textarea') : [];
+            const proprioNovaRotaInputs = proprioNovaRotaSection ? proprioNovaRotaSection.querySelectorAll('input, select, textarea') : [];
+            
+            [...prestadorInputs, ...aumentoKmInputs, ...proprioNovaRotaInputs].forEach(input => {
+                input.disabled = true;
+                // Limpar campos de percentual quando não são da seção ativa
+                if (input.name === 'percentual_lucro' || input.name === 'percentual_impostos') {
+                    input.value = '';
+                }
+            });
+            
+            // Exibir seção correspondente ao tipo selecionado e habilitar seus campos
             const tipoSelecionado = tipoOrcamentoSelect.value;
             if (tipoSelecionado === 'prestador' && prestadorSection) {
                 prestadorSection.style.display = 'block';
+                prestadorInputs.forEach(input => input.disabled = false);
             } else if (tipoSelecionado === 'aumento_km' && aumentoKmSection) {
                 aumentoKmSection.style.display = 'block';
+                aumentoKmInputs.forEach(input => input.disabled = false);
             } else if (tipoSelecionado === 'proprio_nova_rota' && proprioNovaRotaSection) {
                 proprioNovaRotaSection.style.display = 'block';
+                proprioNovaRotaInputs.forEach(input => input.disabled = false);
             }
         }
     }
@@ -1354,8 +1409,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cálculos automáticos do prestador
     const valorReferenciaInput = document.getElementById('valor_referencia');
     const qtdDiasInput = document.getElementById('qtd_dias');
-    const percentualLucroInput = document.getElementById('lucro_percentual');
-            const percentualImpostosInput = document.getElementById('impostos_percentual');
+    const percentualLucroInput = document.getElementById('percentual_lucro');
+                const percentualImpostosInput = document.getElementById('percentual_impostos');
     
     const custoFornecedorDisplay = document.getElementById('custo_fornecedor_display');
     const valorLucroDisplay = document.getElementById('valor_lucro_display');
@@ -1396,6 +1451,12 @@ document.addEventListener('DOMContentLoaded', function() {
         valorImpostosDisplay.textContent = formatarMoeda(valorImpostos);
         valorTotalDisplay.textContent = formatarMoeda(valorTotal);
         
+        // Atualizar campos hidden para envio ao backend
+        const valorLucroHidden = document.getElementById('valor_lucro_hidden');
+        const valorImpostosHidden = document.getElementById('valor_impostos_hidden');
+        if (valorLucroHidden) valorLucroHidden.value = valorLucro.toFixed(2);
+        if (valorImpostosHidden) valorImpostosHidden.value = valorImpostos.toFixed(2);
+        
         // Atualizar campo valor_total do orçamento principal se for prestador
         const valorTotalPrincipal = document.getElementById('valor_total');
         if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'prestador' && valorTotalPrincipal) {
@@ -1411,6 +1472,51 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Calcular valores iniciais se houver dados
     calcularValoresPrestador();
+    
+    // Integração com Grupos de Impostos
+    const grupoImpostoSelect = document.getElementById('grupo_imposto_id');
+    
+    if (grupoImpostoSelect) {
+        grupoImpostoSelect.addEventListener('change', function() {
+            const grupoId = this.value;
+            
+            if (grupoId) {
+                // Fazer requisição AJAX para buscar o percentual do grupo
+                fetch('/admin/orcamentos/buscar-percentual-grupo-imposto', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        grupo_imposto_id: grupoId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.percentual !== undefined && percentualImpostosInput) {
+                        percentualImpostosInput.value = data.percentual;
+                        calcularValoresPrestador();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar percentual do grupo de impostos:', error);
+                    // Fallback: usar o atributo data-percentual se disponível
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption && selectedOption.dataset.percentual && percentualImpostosInput) {
+                        percentualImpostosInput.value = selectedOption.dataset.percentual;
+                        calcularValoresPrestador();
+                    }
+                });
+            } else {
+                // Limpar o campo de percentual se nenhum grupo for selecionado
+                if (percentualImpostosInput) {
+                    percentualImpostosInput.value = '';
+                    calcularValoresPrestador();
+                }
+            }
+        });
+    }
     
     // Cálculos automáticos do Aumento KM
     const kmDiaInput = document.getElementById('km_dia');
@@ -1573,8 +1679,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Os checkboxes de frequência de atendimento agora funcionam diretamente como array
-    // Não é necessário JavaScript adicional para conversão
+    // Função para calcular automaticamente a quantidade de dias baseado na frequência de atendimento
+    function calcularQuantidadeDias() {
+        const checkboxes = document.querySelectorAll('input[name="frequencia_atendimento[]"]:checked');
+        const qtdDiasInput = document.getElementById('qtd_dias');
+        
+        if (qtdDiasInput) {
+            qtdDiasInput.value = checkboxes.length;
+            // Recalcular valores se for orçamento de prestador
+            const tipoOrcamento = document.getElementById('tipo_orcamento');
+            if (tipoOrcamento && tipoOrcamento.value === 'prestador') {
+                calcularValoresPrestador();
+            }
+        }
+    }
+    
+    // Adicionar event listeners aos checkboxes de frequência de atendimento
+    document.querySelectorAll('input[name="frequencia_atendimento[]"]').forEach(checkbox => {
+        checkbox.addEventListener('change', calcularQuantidadeDias);
+    });
+    
+    // Calcular quantidade de dias inicial se houver checkboxes marcados
+    calcularQuantidadeDias();
     
     // Busca de fornecedores OMIE - Funcionalidade igual à do cliente
     let fornecedorTimeoutId;

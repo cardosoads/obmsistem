@@ -11,12 +11,6 @@ class Base extends Model
 
     protected $fillable = [
         'name',
-        'address',
-        'city',
-        'state',
-        'zip_code',
-        'latitude',
-        'longitude',
         'uf',
         'regional',
         'sigla',

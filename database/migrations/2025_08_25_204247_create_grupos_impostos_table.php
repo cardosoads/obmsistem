@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('impostos', function (Blueprint $table) {
+        Schema::create('grupos_impostos', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
-            $table->decimal('percentual', 5, 2)->comment('Percentual do imposto (ex: 18.00 para 18%)');
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
+            $table->string('nome');
+            $table->text('descricao')->nullable();
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
+            
+            // Índices para otimização
+            $table->index('ativo');
+            $table->index('nome');
         });
     }
 
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('impostos');
+        Schema::dropIfExists('grupos_impostos');
     }
 };

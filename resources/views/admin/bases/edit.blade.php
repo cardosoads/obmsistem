@@ -6,7 +6,7 @@
 <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Editar Base</h1>
-        <a href="{{ route('admin.bases.show', $base->id) }}" 
+        <a href="{{ route('admin.bases.index') }}" 
            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
             <i class="fas fa-arrow-left mr-2"></i>Voltar
         </a>
@@ -21,28 +21,27 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Dados Básicos</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="city" class="block text-sm font-medium text-gray-700 mb-2">BASE (Cidade) *</label>
-                    <select id="city" 
-                            name="city" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('city') border-red-500 @enderror" 
+                    <label for="uf" class="block text-sm font-medium text-gray-700 mb-2">UF *</label>
+                    <select id="uf" 
+                            name="uf" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('uf') border-red-500 @enderror" 
                             required>
-                        <option value="">Selecione uma cidade</option>
+                        <option value="">Selecione um estado</option>
                     </select>
-                    @error('city')
+                    @error('uf')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="uf" class="block text-sm font-medium text-gray-700 mb-2">UF</label>
-                    <input type="text" 
-                           id="uf" 
-                           name="uf" 
-                           value="{{ old('uf', $base->uf) }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
-                           readonly>
-                    <p class="text-xs text-gray-500 mt-1">Preenchido automaticamente</p>
-                    @error('uf')
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">BASE (Cidade) *</label>
+                    <select id="name" 
+                            name="name" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror" 
+                            required>
+                        <option value="">Primeiro selecione um estado</option>
+                    </select>
+                    @error('name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -116,7 +115,7 @@
 
         <!-- Botões -->
         <div class="flex justify-end space-x-4">
-            <a href="{{ route('admin.bases.show', $base->id) }}" 
+            <a href="{{ route('admin.bases.index') }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-200">
                 Cancelar
             </a>
@@ -130,67 +129,168 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let cidadesBrasil = [];
+    let estados = [];
+    let municipios = [];
+    const baseAtual = {
+        uf: '{{ $base->uf }}',
+        name: '{{ $base->name }}',
+        regional: '{{ $base->regional }}'
+    };
     
-    // Carregar dados das cidades
-    fetch('/cidades-brasileiras.json')
-        .then(response => response.json())
-        .then(data => {
-            cidadesBrasil = data;
-            populateCitySelect();
-        })
-        .catch(error => {
-            console.error('Erro ao carregar cidades:', error);
-        });
+    // Carregar estados do IBGE
+    carregarEstados();
     
-    // Popular o select de cidades
-    function populateCitySelect() {
-        const citySelect = document.getElementById('city');
-        const allCities = [];
-        
-        // Coletar todas as cidades de todos os estados
-        Object.keys(cidadesBrasil).forEach(estado => {
-            cidadesBrasil[estado].cidades.forEach(cidade => {
-                allCities.push({
-                    nome: cidade,
-                    uf: estado,
-                    regiao: cidadesBrasil[estado].regiao
-                });
-            });
-        });
-        
-        // Ordenar cidades alfabeticamente
-        allCities.sort((a, b) => a.nome.localeCompare(b.nome));
-        
-        // Adicionar opções ao select
-        allCities.forEach(cidade => {
-            const option = document.createElement('option');
-            option.value = cidade.nome;
-            option.textContent = `${cidade.nome} - ${cidade.uf}`;
-            option.dataset.uf = cidade.uf;
-            option.dataset.regiao = cidade.regiao;
+    async function carregarEstados() {
+        try {
+            const response = await fetch('/admin/localidades/estados');
+            const data = await response.json();
             
-            // Selecionar a cidade atual se estiver editando
-            if (cidade.nome === '{{ old("city", $base->city ?? "") }}') {
+            if (data.success) {
+                estados = data.data;
+                popularSelectEstados();
+                
+                // Se há uma UF atual, carregar suas cidades
+                if (baseAtual.uf) {
+                    await carregarMunicipiosEdicao(baseAtual.uf);
+                }
+            } else {
+                console.error('Erro ao carregar estados:', data.message);
+                mostrarErro('Erro ao carregar estados. Tente recarregar a página.');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar estados:', error);
+            mostrarErro('Erro de conexão ao carregar estados.');
+        }
+    }
+    
+    function popularSelectEstados() {
+        const ufSelect = document.getElementById('uf');
+        
+        // Limpar opções existentes (exceto a primeira)
+        ufSelect.innerHTML = '<option value="">Selecione um estado</option>';
+        
+        // Adicionar estados
+        estados.forEach(estado => {
+            const option = document.createElement('option');
+            option.value = estado.sigla;
+            option.textContent = `${estado.nome} (${estado.sigla})`;
+            option.dataset.regiao = estado.regiao.nome;
+            
+            // Selecionar o estado atual
+            if (estado.sigla === baseAtual.uf) {
                 option.selected = true;
             }
             
+            ufSelect.appendChild(option);
+        });
+    }
+    
+    async function carregarMunicipiosEdicao(uf) {
+        const citySelect = document.getElementById('name');
+        const regionalInput = document.getElementById('regional');
+        
+        try {
+            const response = await fetch(`/admin/localidades/municipios/${uf}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                municipios = data.data;
+                popularSelectCidades();
+                
+                // Selecionar a cidade atual
+                if (baseAtual.name) {
+                    citySelect.value = baseAtual.name;
+                }
+                
+                // Atualizar regional
+                const selectedUfOption = document.querySelector(`#uf option[value="${uf}"]`);
+                if (selectedUfOption) {
+                    regionalInput.value = selectedUfOption.dataset.regiao || baseAtual.regional;
+                }
+            } else {
+                console.error('Erro ao carregar municípios:', data.message);
+                mostrarErro('Erro ao carregar cidades. Tente novamente.');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar municípios:', error);
+            mostrarErro('Erro de conexão ao carregar cidades.');
+        }
+    }
+    
+    // Carregar municípios quando UF for alterada
+    document.getElementById('uf').addEventListener('change', async function() {
+        const uf = this.value;
+        const citySelect = document.getElementById('name');
+        const regionalInput = document.getElementById('regional');
+        
+        if (uf) {
+            // Atualizar regional
+            const selectedOption = this.options[this.selectedIndex];
+            regionalInput.value = selectedOption.dataset.regiao || '';
+            
+            // Carregar municípios
+            citySelect.disabled = true;
+            citySelect.innerHTML = '<option value="">Carregando cidades...</option>';
+            
+            try {
+                const response = await fetch(`/admin/localidades/municipios/${uf}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    municipios = data.data;
+                    popularSelectCidades();
+                } else {
+                    console.error('Erro ao carregar municípios:', data.message);
+                    mostrarErro('Erro ao carregar cidades. Tente novamente.');
+                    citySelect.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar municípios:', error);
+                mostrarErro('Erro de conexão ao carregar cidades.');
+                citySelect.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+            }
+        } else {
+            // Limpar campos dependentes
+            citySelect.disabled = true;
+            citySelect.innerHTML = '<option value="">Primeiro selecione um estado</option>';
+            regionalInput.value = '';
+        }
+    });
+    
+    function popularSelectCidades() {
+        const citySelect = document.getElementById('name');
+        
+        // Limpar e habilitar select
+        citySelect.innerHTML = '<option value="">Selecione uma cidade</option>';
+        citySelect.disabled = false;
+        
+        // Adicionar municípios
+        municipios.forEach(municipio => {
+            const option = document.createElement('option');
+            option.value = municipio.nome;
+            option.textContent = municipio.nome;
             citySelect.appendChild(option);
         });
     }
     
-    // Atualizar UF e Regional quando cidade for selecionada
-    document.getElementById('city').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        
-        if (selectedOption.value) {
-            document.getElementById('uf').value = selectedOption.dataset.uf || '';
-            document.getElementById('regional').value = selectedOption.dataset.regiao || '';
-        } else {
-            document.getElementById('uf').value = '';
-            document.getElementById('regional').value = '';
+    function mostrarErro(mensagem) {
+        // Criar ou atualizar div de erro
+        let errorDiv = document.getElementById('localidades-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'localidades-error';
+            errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+            document.querySelector('form').insertBefore(errorDiv, document.querySelector('form').firstChild);
         }
-    });
+        errorDiv.textContent = mensagem;
+        
+        // Remover após 5 segundos
+        setTimeout(() => {
+            if (errorDiv.parentNode) {
+                errorDiv.parentNode.removeChild(errorDiv);
+            }
+        }, 5000);
+    }
     
     // Converter sigla para maiúsculo e remover acentos
     document.getElementById('sigla').addEventListener('input', function(e) {
