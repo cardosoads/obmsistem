@@ -40,13 +40,42 @@ class OrcamentoController extends Controller
             $query->whereDate('data_orcamento', '<=', $request->data_fim);
         }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('numero_orcamento', 'like', '%' . $search . '%')
-                  ->orWhere('nome_rota', 'like', '%' . $search . '%')
-                  ->orWhere('cliente_nome', 'like', '%' . $search . '%');
-            });
+        // Nova estrutura de busca com select de tipo
+        if ($request->filled('search_value') && $request->filled('search_type')) {
+            $searchValue = $request->search_value;
+            $searchType = $request->search_type;
+
+            switch ($searchType) {
+                case 'geral':
+                    $query->where(function($q) use ($searchValue) {
+                        $q->where('numero_orcamento', 'like', '%' . $searchValue . '%')
+                          ->orWhere('nome_rota', 'like', '%' . $searchValue . '%')
+                          ->orWhere('cliente_nome', 'like', '%' . $searchValue . '%')
+                          ->orWhere('id_protocolo', 'like', '%' . $searchValue . '%')
+                          ->orWhere('cliente_omie_id', 'like', '%' . $searchValue . '%')
+                          ->orWhere('id_logcare', 'like', '%' . $searchValue . '%')
+                          ->orWhereHas('centroCusto', function($q) use ($searchValue) {
+                              $q->where('codigo', 'like', '%' . $searchValue . '%')
+                                ->orWhere('name', 'like', '%' . $searchValue . '%');
+                          });
+                    });
+                    break;
+                case 'id_protocolo':
+                    $query->where('id_protocolo', 'like', '%' . $searchValue . '%');
+                    break;
+                case 'cliente_omie_id':
+                    $query->where('cliente_omie_id', 'like', '%' . $searchValue . '%');
+                    break;
+                case 'id_logcare':
+                    $query->where('id_logcare', 'like', '%' . $searchValue . '%');
+                    break;
+                case 'centro_custo_codigo':
+                    $query->whereHas('centroCusto', function($q) use ($searchValue) {
+                        $q->where('codigo', 'like', '%' . $searchValue . '%')
+                          ->orWhere('name', 'like', '%' . $searchValue . '%');
+                    });
+                    break;
+            }
         }
 
         $orcamentos = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -82,6 +111,7 @@ class OrcamentoController extends Controller
         $validated = $request->validate([
             'data_solicitacao' => 'required|date',
             'centro_custo_id' => 'required|exists:centros_custo,id',
+            'id_protocolo' => 'required|string|max:255',
             'nome_rota' => 'required|string|max:255',
             'id_logcare' => 'nullable|string|max:255',
             'cliente_omie_id' => 'nullable|string|max:255',
@@ -90,7 +120,7 @@ class OrcamentoController extends Controller
             'frequencia_atendimento' => 'nullable|array',
             'frequencia_atendimento.*' => 'string|in:segunda,terca,quarta,quinta,sexta,sabado,domingo',
             'tipo_orcamento' => 'required|in:prestador,aumento_km,proprio_nova_rota',
-            'status' => 'nullable|in:rascunho,enviado,aprovado,rejeitado,cancelado',
+            'status' => 'nullable|in:em_andamento,enviado,aprovado,rejeitado,cancelado',
             'observacoes' => 'nullable|string',
             // Campos específicos do prestador
             'fornecedor_omie_id' => 'required_if:tipo_orcamento,prestador|nullable|integer',
@@ -110,18 +140,8 @@ class OrcamentoController extends Controller
             'combustivel_km_litro' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
             'valor_combustivel' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
             'hora_extra' => 'nullable|numeric|min:0',
-            // Campos específicos do Próprio Nova Rota
-            'nova_origem' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
-            'novo_destino' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
-            'km_nova_rota' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|numeric|min:0',
-            'valor_km_nova_rota' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|numeric|min:0',
-            'motivo_alteracao' => 'nullable|string|max:500',
-            // Campos específicos do Aumento KM
-            'km_dia' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
-            'qtd_dias_aumento' => 'required_if:tipo_orcamento,aumento_km|nullable|integer|min:1',
-            'combustivel_km_litro' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
-            'valor_combustivel' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
-            'hora_extra' => 'nullable|numeric|min:0',
+            'pedagio' => 'nullable|numeric|min:0',
+            'grupo_imposto_id_aumento' => 'nullable|exists:grupos_impostos,id',
             // Campos específicos do Próprio Nova Rota
             'nova_origem' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
             'novo_destino' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
@@ -192,6 +212,7 @@ class OrcamentoController extends Controller
         $validated = $request->validate([
             'data_solicitacao' => 'required|date',
             'centro_custo_id' => 'required|exists:centros_custo,id',
+            'id_protocolo' => 'nullable|string|max:255',
             'nome_rota' => 'required|string|max:255',
             'id_logcare' => 'nullable|string|max:255',
             'cliente_omie_id' => 'nullable|string|max:255',
@@ -200,7 +221,7 @@ class OrcamentoController extends Controller
             'frequencia_atendimento' => 'nullable|array',
             'frequencia_atendimento.*' => 'string|in:segunda,terca,quarta,quinta,sexta,sabado,domingo',
             'tipo_orcamento' => 'required|in:prestador,aumento_km,proprio_nova_rota',
-            'status' => 'required|in:rascunho,enviado,aprovado,rejeitado,cancelado',
+            'status' => 'required|in:em_andamento,enviado,aprovado,rejeitado,cancelado',
             'observacoes' => 'nullable|string',
             // Campos específicos do prestador
             'fornecedor_omie_id' => 'required_if:tipo_orcamento,prestador|nullable|integer',
@@ -259,7 +280,7 @@ class OrcamentoController extends Controller
     public function updateStatus(Request $request, Orcamento $orcamento)
     {
         $validated = $request->validate([
-            'status' => 'required|in:rascunho,enviado,aprovado,rejeitado,cancelado'
+            'status' => 'required|in:em_andamento,enviado,aprovado,rejeitado,cancelado'
         ]);
 
         try {
@@ -424,8 +445,10 @@ class OrcamentoController extends Controller
             'combustivel_km_litro' => $validated['combustivel_km_litro'] ?? 0,
             'valor_combustivel' => $validated['valor_combustivel'] ?? 0,
             'hora_extra' => $validated['hora_extra'] ?? 0,
+            'pedagio' => $validated['pedagio'] ?? 0,
             'lucro_percentual' => $validated['percentual_lucro'] ?? 0,
             'impostos_percentual' => $validated['percentual_impostos'] ?? 0,
+            'grupo_imposto_id' => $validated['grupo_imposto_id_aumento'] ?? null,
             'observacoes' => $validated['observacoes'] ?? null
         ];
 
@@ -531,8 +554,10 @@ class OrcamentoController extends Controller
              'combustivel_km_litro' => $validated['combustivel_km_litro'] ?? 0,
              'valor_combustivel' => $validated['valor_combustivel'] ?? 0,
              'hora_extra' => $validated['hora_extra'] ?? 0,
+             'pedagio' => $validated['pedagio'] ?? 0,
              'lucro_percentual' => $validated['percentual_lucro'] ?? 0,
              'impostos_percentual' => $validated['percentual_impostos'] ?? 0,
+             'grupo_imposto_id' => $validated['grupo_imposto_id_aumento'] ?? null,
              'observacoes' => $validated['observacoes'] ?? null
          ];
 

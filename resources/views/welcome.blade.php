@@ -161,16 +161,6 @@
                 </button>
             </form>
         </div>
-
-        <!-- Footer -->
-        <div class="text-center mt-8">
-            <p class="text-sm text-slate-500">
-                Não tem uma conta? 
-                <a href="#" class="text-slate-700 hover:text-slate-900 font-medium transition-colors duration-200">
-                    Cadastre-se
-                </a>
-            </p>
-        </div>
     </div>
 
     <!-- Background Pattern -->

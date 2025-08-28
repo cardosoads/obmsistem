@@ -89,7 +89,7 @@
             border: 1px solid;
         }
         
-        .status-rascunho { 
+        .status-em_andamento { 
             background: #fffaf0;
             color: #744210;
             border-color: #f6ad55;
@@ -616,9 +616,15 @@
                     <div class="info-value">R$ {{ number_format($orcamento->orcamentoAumentoKm->hora_extra, 2, ',', '.') }}</div>
                 </div>
                 @endif
+                @if($orcamento->orcamentoAumentoKm->pedagio)
                 <div class="info-row">
-                    <div class="info-label">Custo Total (Combustível + HE):</div>
-                    <div class="info-value">R$ {{ number_format($custoTotalCombustivel + ($orcamento->orcamentoAumentoKm->hora_extra ?? 0), 2, ',', '.') }}</div>
+                    <div class="info-label">Valor Pedágio:</div>
+                    <div class="info-value">R$ {{ number_format($orcamento->orcamentoAumentoKm->pedagio, 2, ',', '.') }}</div>
+                </div>
+                @endif
+                <div class="info-row">
+                    <div class="info-label">Custo Total (Combustível + HE + Pedágio):</div>
+                    <div class="info-value">R$ {{ number_format($custoTotalCombustivel + ($orcamento->orcamentoAumentoKm->hora_extra ?? 0) + ($orcamento->orcamentoAumentoKm->pedagio ?? 0), 2, ',', '.') }}</div>
                 </div>
             </div>
             

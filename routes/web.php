@@ -120,10 +120,14 @@ Route::middleware(['admin.auth'])->group(function () {
             'edit' => 'admin.centros-custo.edit',
             'update' => 'admin.centros-custo.update',
             'destroy' => 'admin.centros-custo.destroy'
+        ],
+        'parameters' => [
+            'centros-custo' => 'centroCusto'
         ]
     ]);
     Route::patch('/admin/centros-custo/{centroCusto}/status', [CentroCustoController::class, 'toggleStatus'])->name('admin.centros-custo.toggle-status');
     Route::get('/admin/centros-custo/base/{base}/data', [CentroCustoController::class, 'getBaseData'])->name('admin.centros-custo.base-data');
+    Route::post('/admin/centros-custo/sincronizar', [CentroCustoController::class, 'sincronizar'])->name('admin.centros-custo.sincronizar');
     
     // Impostos
     Route::resource('admin/impostos', ImpostoController::class, [
@@ -185,6 +189,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/omie/pessoas', [OmiePessoaController::class, 'index'])->name('admin.omie.pessoas');
     Route::get('/admin/omie/pessoas/{omieId}', [OmiePessoaController::class, 'show'])->name('admin.omie.pessoas.show');
     
+
 
 });
 

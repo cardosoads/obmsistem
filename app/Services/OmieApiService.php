@@ -148,4 +148,47 @@ class OmieApiService
             Cache::forget(str_replace(config('cache.prefix') . ':', '', $key));
         }
     }
+
+    /**
+     * Método genérico para fazer requisições à API Omie
+     */
+    public function makeRequest(string $endpoint, string $method, array $params = []): array
+    {
+        // Verifica se as chaves estão configuradas
+        if (empty($this->appKey) || empty($this->appSecret)) {
+            throw new \Exception('Chaves da API Omie não configuradas');
+        }
+
+        try {
+            $response = Http::timeout(30)->post($this->baseUrl . $endpoint, [
+                'call' => $method,
+                'app_key' => $this->appKey,
+                'app_secret' => $this->appSecret,
+                'param' => $params
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::error('Erro na API OMIE', [
+                'endpoint' => $endpoint,
+                'method' => $method,
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
+
+            throw new \Exception('Erro na API Omie: ' . $response->status() . ' - ' . $response->body());
+
+        } catch (\Exception $e) {
+            Log::error('Exceção na API OMIE', [
+                'endpoint' => $endpoint,
+                'method' => $method,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
+        }
+    }
 }

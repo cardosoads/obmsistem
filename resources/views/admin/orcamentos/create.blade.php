@@ -97,7 +97,7 @@
 
                             <!-- Centro de Custo -->
                             <div class="group">
-                                <label for="centro_custo_id" class="block text-sm font-semibold text-slate-700 mb-3">
+                                <label for="centro_custo_search" class="block text-sm font-semibold text-slate-700 mb-3">
                                     <span class="flex items-center">
                                         <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -106,19 +106,72 @@
                                         <span class="text-red-500 ml-1">*</span>
                                     </span>
                                 </label>
-                                <select class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('centro_custo_id') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
-                                        id="centro_custo_id" 
-                                        name="centro_custo_id" 
-                                        required>
-                                    <option value="" class="text-slate-400">Selecione o centro de custo</option>
-                                    @foreach($centrosCusto as $centro)
-                                        <option value="{{ $centro->id }}" 
-                                                {{ old('centro_custo_id') == $centro->id ? 'selected' : '' }}>
-                                            {{ $centro->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="relative">
+                                    <input type="text" 
+                                           class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('centro_custo_id') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                           id="centro_custo_search" 
+                                           placeholder="Digite o código ou nome do centro de custo..." 
+                                           autocomplete="off">
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <!-- Dropdown de sugestões -->
+                                    <div id="centro_custo_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-slate-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
+                                        <div id="centro_custo_results"></div>
+                                        <div id="centro_custo_no_results" class="px-4 py-3 text-sm text-slate-500 hidden">
+                                            Nenhum centro de custo encontrado
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Campo hidden para armazenar o ID selecionado -->
+                                <input type="hidden" id="centro_custo_id" name="centro_custo_id" value="{{ old('centro_custo_id') }}" required>
+                                
+                                <!-- Exibir centro de custo selecionado -->
+                                <div id="centro_custo_selecionado" class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium text-blue-800">Centro de Custo Selecionado:</span>
+                                            <div class="text-blue-700" id="nome_centro_custo_selecionado"></div>
+                                        </div>
+                                        <button type="button" onclick="limparCentroCusto()" class="text-blue-600 hover:text-blue-800">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
                                 @error('centro_custo_id')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- ID de Protocolo -->
+                            <div class="group">
+                                <label for="id_protocolo" class="block text-sm font-semibold text-slate-700 mb-3">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        ID de Protocolo
+                                    </span>
+                                </label>
+                                <input type="text" 
+                                       class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-slate-300 @error('id_protocolo') border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/10 @enderror" 
+                                       id="id_protocolo" 
+                                       name="id_protocolo" 
+                                       value="{{ old('id_protocolo') }}" 
+                                       placeholder="Ex: PROT-2025-001">
+                                @error('id_protocolo')
                                     <p class="mt-2 text-sm text-red-600 flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -417,7 +470,7 @@
                                             name="status" 
                                             required>
                                         <option value="">Selecione o status</option>
-                                        <option value="rascunho" {{ old('status', 'rascunho') == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                                        <option value="em_andamento" {{ old('status', 'em_andamento') == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
                                         <option value="enviado" {{ old('status') == 'enviado' ? 'selected' : '' }}>Enviado</option>
                                         <option value="aprovado" {{ old('status') == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
                                         <option value="rejeitado" {{ old('status') == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
@@ -610,6 +663,137 @@
                                                    placeholder="0,00">
                                         </div>
                                         @error('hora_extra')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Pedágio -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v2a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                            </svg>
+                                            Pedágio
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">R$</span>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0"
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('pedagio') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="pedagio" 
+                                                   name="pedagio" 
+                                                   value="{{ old('pedagio') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('pedagio')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Percentual de Lucro -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                            </svg>
+                                            Percentual de Lucro (%)
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">%</span>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0" 
+                                                   max="100"
+                                                   class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('lucro_percentual_aumento') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="lucro_percentual_aumento" 
+                                                   name="lucro_percentual_aumento" 
+                                                   value="{{ old('lucro_percentual_aumento') }}"
+                                                   placeholder="0,00">
+                                        </div>
+                                        @error('lucro_percentual_aumento')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Grupo de Imposto -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Grupo de Imposto
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <select class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 bg-white @error('grupo_imposto_id_aumento') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                    id="grupo_imposto_id_aumento" 
+                                                    name="grupo_imposto_id_aumento">
+                                                <option value="">Selecione um grupo de impostos...</option>
+                                                @foreach($gruposImpostos as $grupo)
+                                                    <option value="{{ $grupo->id }}" data-percentual="{{ $grupo->percentual_total }}" {{ old('grupo_imposto_id_aumento') == $grupo->id ? 'selected' : '' }}>
+                                                        {{ $grupo->nome }} ({{ number_format($grupo->percentual_total, 2, ',', '.') }}%)
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        @error('grupo_imposto_id_aumento')
+                                            <div class="flex items-center mt-2 text-sm text-red-600">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Percentual de Impostos -->
+                                    <div>
+                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                            <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Percentual de Impostos (%)
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">%</span>
+                                            </div>
+                                            <input type="number" 
+                                                   step="0.01" 
+                                                   min="0" 
+                                                   max="100"
+                                                   class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('impostos_percentual_aumento') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                   id="impostos_percentual_aumento" 
+                                                   name="impostos_percentual_aumento" 
+                                                   value="{{ old('impostos_percentual_aumento') }}"
+                                                   placeholder="0,00" 
+                                                   readonly>
+                                        </div>
+                                        @error('impostos_percentual_aumento')
                                             <div class="flex items-center mt-2 text-sm text-red-600">
                                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -1464,11 +1648,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Função para formatar percentual com 2 casas decimais
+    function formatarPercentual(input) {
+        let valor = input.value;
+        
+        // Remove caracteres não numéricos exceto ponto e vírgula
+        valor = valor.replace(/[^0-9.,]/g, '');
+        
+        // Substitui vírgula por ponto
+        valor = valor.replace(',', '.');
+        
+        // Verifica se há mais de um ponto
+        const pontos = valor.split('.');
+        if (pontos.length > 2) {
+            valor = pontos[0] + '.' + pontos.slice(1).join('');
+        }
+        
+        // Limita a 2 casas decimais
+        if (pontos.length === 2 && pontos[1].length > 2) {
+            valor = pontos[0] + '.' + pontos[1].substring(0, 2);
+        }
+        
+        // Limita o valor máximo a 100
+        const numeroValor = parseFloat(valor);
+        if (numeroValor > 100) {
+            valor = '100.00';
+        }
+        
+        input.value = valor;
+    }
+    
     // Event listeners para cálculos automáticos
     if (valorReferenciaInput) valorReferenciaInput.addEventListener('input', calcularValoresPrestador);
     if (qtdDiasInput) qtdDiasInput.addEventListener('input', calcularValoresPrestador);
-    if (percentualLucroInput) percentualLucroInput.addEventListener('input', calcularValoresPrestador);
-    if (percentualImpostosInput) percentualImpostosInput.addEventListener('input', calcularValoresPrestador);
+    if (percentualLucroInput) {
+        percentualLucroInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresPrestador();
+        });
+    }
+    if (percentualImpostosInput) {
+        percentualImpostosInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresPrestador();
+        });
+    }
     
     // Calcular valores iniciais se houver dados
     calcularValoresPrestador();
@@ -1496,6 +1720,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.percentual !== undefined && percentualImpostosInput) {
                         percentualImpostosInput.value = data.percentual;
+                        formatarPercentual(percentualImpostosInput);
                         calcularValoresPrestador();
                     }
                 })
@@ -1505,6 +1730,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const selectedOption = this.options[this.selectedIndex];
                     if (selectedOption && selectedOption.dataset.percentual && percentualImpostosInput) {
                         percentualImpostosInput.value = selectedOption.dataset.percentual;
+                        formatarPercentual(percentualImpostosInput);
                         calcularValoresPrestador();
                     }
                 });
@@ -1524,7 +1750,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const combustivelKmLitroInput = document.getElementById('combustivel_km_litro');
     const valorCombustivelInput = document.getElementById('valor_combustivel');
     const horaExtraInput = document.getElementById('hora_extra');
+    const pedagioInput = document.getElementById('pedagio');
+    const lucroPercentualAumentoInput = document.getElementById('lucro_percentual_aumento');
+    const grupoImpostoIdAumentoSelect = document.getElementById('grupo_imposto_id_aumento');
+    const impostosPercentualAumentoInput = document.getElementById('impostos_percentual_aumento');
     const valorTotalAumentoKmDisplay = document.getElementById('valor_total_aumento_km');
+    
+    // Função para atualizar percentual de impostos baseado no grupo selecionado (Aumento KM)
+    if (grupoImpostoIdAumentoSelect) {
+        grupoImpostoIdAumentoSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.dataset.percentual && impostosPercentualAumentoInput) {
+                const percentual = parseFloat(selectedOption.dataset.percentual) || 0;
+                impostosPercentualAumentoInput.value = percentual.toFixed(2);
+                formatarPercentual(impostosPercentualAumentoInput);
+                calcularValoresAumentoKm();
+            } else if (impostosPercentualAumentoInput) {
+                impostosPercentualAumentoInput.value = '';
+                calcularValoresAumentoKm();
+            }
+        });
+    }
     
     function calcularValoresAumentoKm() {
         const kmDia = parseFloat(kmDiaInput?.value) || 0;
@@ -1532,6 +1778,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const combustivelKmLitro = parseFloat(combustivelKmLitroInput?.value) || 0;
         const valorCombustivel = parseFloat(valorCombustivelInput?.value) || 0;
         const horaExtra = parseFloat(horaExtraInput?.value) || 0;
+        const pedagio = parseFloat(pedagioInput?.value) || 0;
+        const lucroPercentual = parseFloat(lucroPercentualAumentoInput?.value) || 0;
+        const impostosPercentual = parseFloat(impostosPercentualAumentoInput?.value) || 0;
         
         // Cálculo básico: KM total do mês
         const kmTotalMes = kmDia * qtdDiasAumento;
@@ -1539,11 +1788,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // Cálculo do combustível total
         const totalCombustivel = combustivelKmLitro > 0 ? kmTotalMes / combustivelKmLitro : 0;
         
-        // Custo total combustível + hora extra
-        const custoTotalCombustivelHe = (totalCombustivel * valorCombustivel) + horaExtra;
+        // Custo total combustível + hora extra + pedágio
+        const custoTotalCombustivelHe = (totalCombustivel * valorCombustivel) + horaExtra + pedagio;
         
-        // Para simplificar, vamos mostrar apenas o custo básico no display
-        const valorTotal = custoTotalCombustivelHe;
+        // Calcular lucro
+        const valorLucro = custoTotalCombustivelHe * (lucroPercentual / 100);
+        
+        // Subtotal com lucro
+        const subtotalComLucro = custoTotalCombustivelHe + valorLucro;
+        
+        // Calcular impostos
+        const valorImpostos = subtotalComLucro * (impostosPercentual / 100);
+        
+        // Valor total final
+        const valorTotal = subtotalComLucro + valorImpostos;
         
         // Atualizar display
         if (valorTotalAumentoKmDisplay) {
@@ -1563,6 +1821,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (combustivelKmLitroInput) combustivelKmLitroInput.addEventListener('input', calcularValoresAumentoKm);
     if (valorCombustivelInput) valorCombustivelInput.addEventListener('input', calcularValoresAumentoKm);
     if (horaExtraInput) horaExtraInput.addEventListener('input', calcularValoresAumentoKm);
+    if (pedagioInput) pedagioInput.addEventListener('input', calcularValoresAumentoKm);
+    if (lucroPercentualAumentoInput) {
+        lucroPercentualAumentoInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresAumentoKm();
+        });
+    }
+    if (impostosPercentualAumentoInput) {
+        impostosPercentualAumentoInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresAumentoKm();
+        });
+    }
     
     // Calcular valores iniciais do Aumento KM
     calcularValoresAumentoKm();
@@ -1683,13 +1954,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function calcularQuantidadeDias() {
         const checkboxes = document.querySelectorAll('input[name="frequencia_atendimento[]"]:checked');
         const qtdDiasInput = document.getElementById('qtd_dias');
+        const qtdDiasAumentoInput = document.getElementById('qtd_dias_aumento');
+        const tipoOrcamento = document.getElementById('tipo_orcamento');
         
+        // Valor calculado
+        const diasSelecionados = checkboxes.length;
+        
+        // Atualiza campo do Prestador
         if (qtdDiasInput) {
-            qtdDiasInput.value = checkboxes.length;
-            // Recalcular valores se for orçamento de prestador
-            const tipoOrcamento = document.getElementById('tipo_orcamento');
+            qtdDiasInput.value = diasSelecionados;
             if (tipoOrcamento && tipoOrcamento.value === 'prestador') {
                 calcularValoresPrestador();
+            }
+        }
+        // Atualiza campo do Aumento KM
+        if (qtdDiasAumentoInput) {
+            qtdDiasAumentoInput.value = diasSelecionados;
+            if (tipoOrcamento && tipoOrcamento.value === 'aumento_km') {
+                calcularValoresAumentoKm();
             }
         }
     }
@@ -1890,17 +2172,197 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // ===== FUNCIONALIDADE CENTRO DE CUSTO =====
+    const centroCustoSearch = document.getElementById('centro_custo_search');
+    const centroCustoId = document.getElementById('centro_custo_id');
+    const centroCustoDropdown = document.getElementById('centro_custo_dropdown');
+    const centroCustoResults = document.getElementById('centro_custo_results');
+    const centroCustoNoResults = document.getElementById('centro_custo_no_results');
+    const centroCustoSelecionado = document.getElementById('centro_custo_selecionado');
+    const nomeCentroCustoSelecionado = document.getElementById('nome_centro_custo_selecionado');
+    
+    let centroCustoTimeoutId;
+    let centroCustoCurrentResults = [];
+    let centroCustoSelectedIndex = -1;
+    
+    // Dados dos centros de custo (passados do backend)
+    const centrosCustoData = @json($centrosCusto);
+    
+    function buscarCentrosCusto(termo) {
+        if (!termo || termo.length < 1) {
+            hideCentroCustoDropdown();
+            return;
+        }
+        
+        const termoLower = termo.toLowerCase();
+        const resultados = centrosCustoData.filter(centro => {
+            const codigo = centro.codigo ? centro.codigo.toLowerCase() : '';
+            const nome = centro.name ? centro.name.toLowerCase() : '';
+            
+            return codigo.includes(termoLower) || nome.includes(termoLower);
+        });
+        
+        displayCentroCustoResults(resultados);
+    }
+    
+    function displayCentroCustoResults(centros) {
+        centroCustoCurrentResults = centros;
+        centroCustoSelectedIndex = -1;
+        
+        if (centros.length === 0) {
+            if (centroCustoResults) centroCustoResults.innerHTML = '';
+            if (centroCustoNoResults) centroCustoNoResults.classList.remove('hidden');
+            showCentroCustoDropdown();
+            return;
+        }
+        
+        if (centroCustoNoResults) centroCustoNoResults.classList.add('hidden');
+        
+        const html = centros.map((centro, index) => `
+            <div class="centro-custo-item px-4 py-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0" 
+                 data-index="${index}">
+                <div class="font-medium text-gray-900">${centro.name}</div>
+                <div class="text-sm text-gray-500">
+                    Código: ${centro.codigo || 'N/A'}
+                </div>
+            </div>
+        `).join('');
+        
+        if (centroCustoResults) {
+            centroCustoResults.innerHTML = html;
+            
+            // Adicionar event listeners para clique
+            centroCustoResults.querySelectorAll('.centro-custo-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    selecionarCentroCusto(centros[index]);
+                });
+                
+                item.addEventListener('mouseenter', () => {
+                    centroCustoSelectedIndex = index;
+                    updateCentroCustoSelection();
+                });
+            });
+        }
+        
+        showCentroCustoDropdown();
+    }
+    
+    function updateCentroCustoSelection() {
+        if (!centroCustoResults) return;
+        
+        const items = centroCustoResults.querySelectorAll('.centro-custo-item');
+        items.forEach((item, index) => {
+            if (index === centroCustoSelectedIndex) {
+                item.classList.add('bg-blue-50');
+            } else {
+                item.classList.remove('bg-blue-50');
+            }
+        });
+    }
+    
+    function selecionarCentroCusto(centro) {
+        if (centroCustoId) centroCustoId.value = centro.id;
+        if (centroCustoSearch) centroCustoSearch.value = `${centro.codigo} - ${centro.name}`;
+        if (nomeCentroCustoSelecionado) nomeCentroCustoSelecionado.innerHTML = `<strong>${centro.codigo}</strong> - ${centro.name}`;
+        if (centroCustoSelecionado) centroCustoSelecionado.classList.remove('hidden');
+        hideCentroCustoDropdown();
+        
+        console.log('Centro de custo selecionado:', {
+            id: centro.id,
+            codigo: centro.codigo,
+            nome: centro.name
+        });
+    }
+    
+    function limparCentroCusto() {
+        if (centroCustoId) centroCustoId.value = '';
+        if (centroCustoSearch) centroCustoSearch.value = '';
+        if (centroCustoSelecionado) centroCustoSelecionado.classList.add('hidden');
+        if (centroCustoSearch) centroCustoSearch.focus();
+    }
+    
+    function showCentroCustoDropdown() {
+        if (centroCustoDropdown) centroCustoDropdown.classList.remove('hidden');
+    }
+    
+    function hideCentroCustoDropdown() {
+        if (centroCustoDropdown) centroCustoDropdown.classList.add('hidden');
+        centroCustoSelectedIndex = -1;
+    }
+    
+    // Event listeners para centro de custo
+    if (centroCustoSearch) {
+        centroCustoSearch.addEventListener('input', function() {
+            clearTimeout(centroCustoTimeoutId);
+            const termo = this.value.trim();
+            
+            centroCustoTimeoutId = setTimeout(() => {
+                buscarCentrosCusto(termo);
+            }, 300);
+        });
+        
+        // Navegação por teclado
+        centroCustoSearch.addEventListener('keydown', function(e) {
+            if (centroCustoDropdown && !centroCustoDropdown.classList.contains('hidden')) {
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        centroCustoSelectedIndex = Math.min(centroCustoSelectedIndex + 1, centroCustoCurrentResults.length - 1);
+                        updateCentroCustoSelection();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        centroCustoSelectedIndex = Math.max(centroCustoSelectedIndex - 1, -1);
+                        updateCentroCustoSelection();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (centroCustoSelectedIndex >= 0 && centroCustoCurrentResults[centroCustoSelectedIndex]) {
+                            selecionarCentroCusto(centroCustoCurrentResults[centroCustoSelectedIndex]);
+                        }
+                        break;
+                    case 'Escape':
+                        hideCentroCustoDropdown();
+                        break;
+                }
+            }
+        });
+    }
+    
+    // Fechar dropdown ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#centro_custo_search') && !e.target.closest('#centro_custo_dropdown')) {
+            hideCentroCustoDropdown();
+        }
+    });
+    
+    // Carregar centro de custo selecionado se houver valor antigo
+    if (centroCustoId && centroCustoId.value) {
+        const centroSelecionado = centrosCustoData.find(centro => centro.id == centroCustoId.value);
+        if (centroSelecionado) {
+            selecionarCentroCusto(centroSelecionado);
+        }
+    }
+    
     // Validação do formulário
     if (orcamentoForm) {
         orcamentoForm.addEventListener('submit', function(e) {
             const clienteId = clienteOmieId ? clienteOmieId.value : '';
             const fornecedorId = fornecedorOmieId ? fornecedorOmieId.value : '';
             const tipoOrcamento = tipoOrcamentoSelect ? tipoOrcamentoSelect.value : '';
+            const centroCustoIdValue = centroCustoId ? centroCustoId.value : '';
             
             if (!clienteId) {
                 e.preventDefault();
                 alert('Por favor, selecione um cliente válido.');
                 if (clienteSearch) clienteSearch.focus();
+                return false;
+            }
+            
+            if (!centroCustoIdValue) {
+                e.preventDefault();
+                alert('Por favor, selecione um centro de custo válido.');
+                if (centroCustoSearch) centroCustoSearch.focus();
                 return false;
             }
             

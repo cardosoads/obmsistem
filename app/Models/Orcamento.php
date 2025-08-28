@@ -12,6 +12,7 @@ class Orcamento extends Model
     protected $fillable = [
         'data_solicitacao',
         'centro_custo_id',
+        'id_protocolo',
         'numero_orcamento',
         'nome_rota',
         'id_logcare',
@@ -70,9 +71,9 @@ class Orcamento extends Model
     }
 
     // Scopes
-    public function scopeRascunho($query)
+    public function scopeEmAndamento($query)
     {
-        return $query->where('status', 'rascunho');
+        return $query->where('status', 'em_andamento');
     }
 
     public function scopeEnviado($query)
@@ -95,7 +96,7 @@ class Orcamento extends Model
     public function getStatusFormattedAttribute(): string
     {
         $statusMap = [
-            'rascunho' => 'Rascunho',
+            'em_andamento' => 'Em Andamento',
             'enviado' => 'Enviado',
             'aprovado' => 'Aprovado',
             'rejeitado' => 'Rejeitado',

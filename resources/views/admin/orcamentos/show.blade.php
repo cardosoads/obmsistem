@@ -44,12 +44,12 @@
                 <!-- Status Badge -->
                 <div class="mb-6">
                     @switch($orcamento->status)
-                        @case('rascunho')
+                        @case('em_andamento')
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4z" clip-rule="evenodd"></path>
                                 </svg>
-                                Rascunho
+                                Em Andamento
                             </span>
                             @break
                         @case('enviado')
@@ -107,6 +107,12 @@
                                 <label class="block text-sm font-medium text-gray-700">Centro de Custo</label>
                                 <p class="text-sm text-gray-900">{{ $orcamento->centroCusto->name ?? 'N/A' }}</p>
                             </div>
+                            @if($orcamento->id_protocolo)
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">ID de Protocolo</label>
+                                <p class="text-sm text-gray-900">{{ $orcamento->id_protocolo }}</p>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -395,6 +401,12 @@
                                     <div class="bg-white rounded-lg p-4 shadow-sm">
                                         <div class="text-xl font-bold text-green-600">R$ {{ number_format($orcamento->orcamentoAumentoKm->hora_extra, 2, ',', '.') }}</div>
                                         <div class="text-sm text-gray-600 mt-1">Hora Extra</div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                                        <div class="text-xl font-bold text-green-600">R$ {{ number_format($orcamento->orcamentoAumentoKm->pedagio ?? 0, 2, ',', '.') }}</div>
+                                        <div class="text-sm text-gray-600 mt-1">Pedágio</div>
                                     </div>
                                 </div>
                             </div>

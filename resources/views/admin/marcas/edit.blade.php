@@ -27,7 +27,7 @@
                            name="name" 
                            value="{{ old('name', $marca->name) }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror" 
-                           placeholder="Ex: TOYOTA, FORD, VOLKSWAGEN"
+                           placeholder=""
                            style="text-transform: uppercase;"
                            required>
                     <p class="text-xs text-gray-500 mt-1">Apenas letras maiúsculas, números e espaços. Sem acentuação.</p>
@@ -43,7 +43,7 @@
                            name="mercado" 
                            value="{{ old('mercado', $marca->mercado) }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('mercado') border-red-500 @enderror" 
-                           placeholder="Ex: NACIONAL, IMPORTADO, PREMIUM"
+                           placeholder=""
                            style="text-transform: uppercase;"
                            required>
                     <p class="text-xs text-gray-500 mt-1">Apenas letras maiúsculas, números e espaços. Sem acentuação.</p>

@@ -7,8 +7,8 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Detalhes do Centro de Custo</h1>
         <div class="flex space-x-2">
-            <a href="{{ route('admin.centros-custo.edit', $centroCusto->id) }}" 
-               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-200">
+            <a href="{{ route('admin.centros-custo.edit', $centroCusto) }}" 
+               class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">
                 <i class="fas fa-edit mr-2"></i>Editar
             </a>
             <button onclick="toggleStatus({{ $centroCusto->id }}, {{ $centroCusto->active ? 'false' : 'true' }})" 
@@ -31,7 +31,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-500 mb-1">Código</label>
-                        <p class="text-gray-900 font-medium">{{ $centroCusto->codigo }}</p>
+                        <p class="text-gray-900 font-medium bg-gray-100 px-3 py-2 rounded-md border">{{ $centroCusto->codigo }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Código único para identificação (somente leitura)</p>
                     </div>
                     
                     <div>
@@ -115,6 +116,55 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Dados da API Omie -->
+            @if($centroCusto->omie_codigo || $centroCusto->omie_estrutura || $centroCusto->sincronizado_em)
+            <div class="bg-blue-50 p-6 rounded-lg mb-6 border border-blue-200">
+                <h3 class="text-lg font-semibold text-blue-700 mb-4">
+                    <i class="fas fa-sync-alt mr-2"></i>Dados da API Omie
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Código Omie</label>
+                        <p class="text-gray-900 font-medium">{{ $centroCusto->omie_codigo ?? 'Não sincronizado' }}</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Estrutura Omie</label>
+                        <p class="text-gray-900">{{ $centroCusto->omie_estrutura ?? 'Não sincronizado' }}</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Status Omie</label>
+                        <div class="flex items-center space-x-2">
+                            @if($centroCusto->omie_inativo === null)
+                                <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                                    Não sincronizado
+                                </span>
+                            @elseif($centroCusto->omie_inativo === 'S')
+                                <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-600 rounded-full">
+                                    <i class="fas fa-times-circle mr-1"></i>Inativo Omie
+                                </span>
+                            @else
+                                <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-600 rounded-full">
+                                    <i class="fas fa-check-circle mr-1"></i>Ativo Omie
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    @if($centroCusto->sincronizado_em)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Última Sincronização</label>
+                        <p class="text-blue-600 font-medium">
+                            <i class="fas fa-clock mr-1"></i>
+                            {{ $centroCusto->sincronizado_em->format('d/m/Y H:i:s') }}
+                        </p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
 
             <!-- Datas -->
             <div class="bg-gray-50 p-6 rounded-lg">

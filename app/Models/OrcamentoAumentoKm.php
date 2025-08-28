@@ -20,11 +20,13 @@ class OrcamentoAumentoKm extends Model
         'total_combustivel',
         'valor_combustivel',
         'hora_extra',
+        'pedagio',
         'custo_total_combustivel_he',
         'lucro_percentual',
         'valor_lucro',
         'impostos_percentual',
         'valor_impostos',
+        'grupo_imposto_id',
         'valor_total',
         'observacoes'
     ];
@@ -37,6 +39,7 @@ class OrcamentoAumentoKm extends Model
         'total_combustivel' => 'decimal:2',
         'valor_combustivel' => 'decimal:2',
         'hora_extra' => 'decimal:2',
+        'pedagio' => 'decimal:2',
         'custo_total_combustivel_he' => 'decimal:2',
         'lucro_percentual' => 'decimal:2',
         'valor_lucro' => 'decimal:2',
@@ -51,6 +54,14 @@ class OrcamentoAumentoKm extends Model
     public function orcamento()
     {
         return $this->belongsTo(Orcamento::class);
+    }
+
+    /**
+     * Relacionamento com GrupoImposto
+     */
+    public function grupoImposto()
+    {
+        return $this->belongsTo(GrupoImposto::class);
     }
 
     /**
@@ -109,11 +120,11 @@ class OrcamentoAumentoKm extends Model
     }
 
     /**
-     * Calcula o custo total de combustível + hora extra
+     * Calcula o custo total de combustível + hora extra + pedágio
      */
     public function calcularCustoTotalCombustivelHe(): float
     {
-        return ($this->total_combustivel * $this->valor_combustivel) + $this->hora_extra;
+        return ($this->total_combustivel * $this->valor_combustivel) + $this->hora_extra + $this->pedagio;
     }
 
     /**
@@ -137,7 +148,15 @@ class OrcamentoAumentoKm extends Model
      */
     public function calcularValorImpostos(): float
     {
-        return $this->calcularSubtotal() * ($this->impostos_percentual / 100);
+        $subtotal = $this->calcularSubtotal();
+        
+        // Se há um grupo de imposto selecionado, usa o percentual do grupo
+        if ($this->grupo_imposto_id && $this->grupoImposto) {
+            return $this->grupoImposto->calcularValorTotal($subtotal);
+        }
+        
+        // Caso contrário, usa o percentual direto
+        return $subtotal * ($this->impostos_percentual / 100);
     }
 
     /**

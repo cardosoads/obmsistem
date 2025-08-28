@@ -28,8 +28,7 @@ return new class extends Migration
             $table->decimal('valor_total', 10, 2)->default(0);
             $table->decimal('valor_impostos', 10, 2)->default(0);
             $table->decimal('valor_final', 10, 2)->default(0);
-            $table->enum('status', ['rascunho', 'enviado', 'aprovado', 'rejeitado', 'cancelado'])->default('rascunho');
-            $table->text('observacoes')->nullable();
+            $table->enum('status', ['em_andamento', 'enviado', 'aprovado', 'rejeitado', 'cancelado'])->default('em_andamento');
             $table->timestamps();
 
             // Índices para performance

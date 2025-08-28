@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\CentroCusto;
 use App\Models\Base;
 use App\Models\Marca;
+use App\Services\OmieApiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
 
 class CentroCustoController extends Controller
@@ -25,7 +27,9 @@ class CentroCustoController extends Controller
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('codigo', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('cliente_nome', 'like', "%{$search}%");
+                  ->orWhere('cliente_nome', 'like', "%{$search}%")
+                  ->orWhere('omie_codigo', 'like', "%{$search}%")
+                  ->orWhere('omie_estrutura', 'like', "%{$search}%");
             });
         }
         
@@ -37,7 +41,32 @@ class CentroCustoController extends Controller
             }
         }
         
-        $centrosCusto = $query->latest()->paginate(15);
+        // Filtro de sincronização
+        if ($request->filled('sync_status')) {
+            if ($request->sync_status === 'sincronizado') {
+                $query->sincronizados();
+            } elseif ($request->sync_status === 'nao_sincronizado') {
+                $query->naoSincronizados();
+            } elseif ($request->sync_status === 'precisa_preenchimento') {
+                $query->sincronizados()->where(function($q) {
+                    $q->whereNull('name')
+                      ->orWhereNull('description')
+                      ->orWhereNull('base_id')
+                      ->orWhereNull('marca_id');
+                });
+            }
+        }
+        
+        // Filtro de status Omie
+        if ($request->filled('omie_status')) {
+            if ($request->omie_status === 'ativo_omie') {
+                $query->ativosOmie();
+            } elseif ($request->omie_status === 'inativo_omie') {
+                $query->inativosOmie();
+            }
+        }
+        
+        $centrosCusto = $query->latest('sincronizado_em')->paginate(15);
         
         return view('admin.centros-custo.index', compact('centrosCusto'));
     }
@@ -71,7 +100,11 @@ class CentroCustoController extends Controller
             'supervisor' => 'nullable|string|max:255',
             'marca_id' => 'nullable|exists:marcas,id',
             'mercado' => 'nullable|string|max:255',
-            'active' => 'boolean'
+            'active' => 'boolean',
+            // Campos da API Omie (somente leitura via interface)
+            'omie_codigo' => 'nullable|string|max:50',
+            'omie_estrutura' => 'nullable|string|max:100',
+            'omie_inativo' => 'boolean'
         ]);
         
         try {
@@ -131,6 +164,10 @@ class CentroCustoController extends Controller
             'mercado' => 'nullable|string|max:255',
             'active' => 'boolean'
         ]);
+        
+        // Remove campos da API Omie da validação para update
+        // Estes campos só podem ser atualizados via sincronização
+        unset($validated['omie_codigo'], $validated['omie_estrutura'], $validated['omie_inativo']);
         
         try {
             $centroCusto->update($validated);
@@ -214,6 +251,43 @@ class CentroCustoController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao buscar dados da base: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Executa a sincronização com a API Omie via interface web
+     */
+    public function sincronizar()
+    {
+        try {
+            // Executa o comando de sincronização
+            Artisan::call('omie:sync-centros-custo');
+            $output = Artisan::output();
+            
+            // Extrai estatísticas do output
+            preg_match('/Total processados: (\d+)/', $output, $totalMatches);
+            preg_match('/Novos: (\d+)/', $output, $novosMatches);
+            preg_match('/Atualizados: (\d+)/', $output, $atualizadosMatches);
+            
+            $total = $totalMatches[1] ?? 0;
+            $novos = $novosMatches[1] ?? 0;
+            $atualizados = $atualizadosMatches[1] ?? 0;
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Sincronização concluída com sucesso!',
+                'data' => [
+                    'total_processados' => $total,
+                    'novos' => $novos,
+                    'atualizados' => $atualizados
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro durante a sincronização: ' . $e->getMessage()
             ], 500);
         }
     }

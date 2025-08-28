@@ -23,13 +23,19 @@ class CentroCusto extends Model
         'uf',
         'supervisor',
         'marca_id',
-        'mercado'
+        'mercado',
+        // Campos da API Omie
+        'omie_codigo',
+        'omie_estrutura',
+        'omie_inativo',
+        'sincronizado_em'
     ];
 
     protected $casts = [
         'active' => 'boolean',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
+        'sincronizado_em' => 'datetime'
     ];
 
 
@@ -59,6 +65,38 @@ class CentroCusto extends Model
     }
 
     /**
+     * Scope para centros de custo sincronizados com a API Omie
+     */
+    public function scopeSincronizados($query)
+    {
+        return $query->whereNotNull('omie_codigo');
+    }
+
+    /**
+     * Scope para centros de custo não sincronizados
+     */
+    public function scopeNaoSincronizados($query)
+    {
+        return $query->whereNull('omie_codigo');
+    }
+
+    /**
+     * Scope para centros de custo ativos na Omie (apenas sincronizados)
+     */
+    public function scopeAtivosOmie($query)
+    {
+        return $query->whereNotNull('omie_codigo')->where('omie_inativo', 'N');
+    }
+
+    /**
+     * Scope para centros de custo inativos na Omie (apenas sincronizados)
+     */
+    public function scopeInativosOmie($query)
+    {
+        return $query->whereNotNull('omie_codigo')->where('omie_inativo', 'S');
+    }
+
+    /**
      * Accessor para nome completo (código + nome)
      */
     public function getFullNameAttribute(): string
@@ -85,5 +123,44 @@ class CentroCusto extends Model
             $this->uf = $this->base->uf;
             $this->supervisor = $this->base->supervisor;
         }
+    }
+
+    /**
+     * Verifica se o centro de custo foi sincronizado com a API Omie
+     */
+    public function isSincronizado(): bool
+    {
+        return !is_null($this->omie_codigo);
+    }
+
+    /**
+     * Verifica se o centro de custo está ativo na Omie
+     */
+    public function isAtivoOmie(): bool
+    {
+        return $this->omie_inativo === 'N';
+    }
+
+    /**
+     * Verifica se o centro de custo precisa de preenchimento de dados
+     */
+    public function precisaPreenchimento(): bool
+    {
+        return $this->isSincronizado() && (empty($this->name) || empty($this->description));
+    }
+
+    /**
+     * Atualiza dados vindos da API Omie
+     */
+    public function atualizarDadosOmie(array $dadosOmie): void
+    {
+        $this->update([
+            'omie_codigo' => $dadosOmie['codigo'],
+            'codigo' => $dadosOmie['descricao'], // descricao da API vira codigo local
+            'omie_estrutura' => $dadosOmie['estrutura'] ?? null,
+            'omie_inativo' => $dadosOmie['inativo'] ?? 'N',
+            'sincronizado_em' => now(),
+            'active' => ($dadosOmie['inativo'] ?? 'N') === 'N' // ativo se não estiver inativo na Omie
+        ]);
     }
 }

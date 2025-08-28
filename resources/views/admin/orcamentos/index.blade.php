@@ -19,21 +19,32 @@
         <!-- Filtros -->
         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
             <form method="GET" action="{{ route('admin.orcamentos.index') }}" class="mb-6" id="filters-form">
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                     <div class="md:col-span-2">
-                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
-                        <input type="text" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
-                               id="search" 
-                               name="search" 
-                               value="{{ request('search') }}" 
-                               placeholder="Número, cliente, rota...">
+                        <label for="search_type" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Busca</label>
+                        <div class="flex gap-2">
+                            <select class="w-1/3 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                                    id="search_type" 
+                                    name="search_type">
+                                <option value="geral" {{ request('search_type', 'geral') == 'geral' ? 'selected' : '' }}>Geral</option>
+                                <option value="id_protocolo" {{ request('search_type') == 'id_protocolo' ? 'selected' : '' }}>ID Protocolo</option>
+                                <option value="cliente_omie_id" {{ request('search_type') == 'cliente_omie_id' ? 'selected' : '' }}>ID Cliente</option>
+                                <option value="id_logcare" {{ request('search_type') == 'id_logcare' ? 'selected' : '' }}>Logcare</option>
+                                <option value="centro_custo_codigo" {{ request('search_type') == 'centro_custo_codigo' ? 'selected' : '' }}>Centro Custo</option>
+                            </select>
+                            <input type="text" 
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                                   id="search_value" 
+                                   name="search_value" 
+                                   value="{{ request('search_value') }}" 
+                                   placeholder="Digite o termo de busca...">
+                        </div>
                     </div>
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                         <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="status" name="status">
                             <option value="">Todos</option>
-                            <option value="rascunho" {{ request('status') == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                            <option value="em_andamento" {{ request('status') == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
                             <option value="enviado" {{ request('status') == 'enviado' ? 'selected' : '' }}>Enviado</option>
                             <option value="aprovado" {{ request('status') == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
                             <option value="rejeitado" {{ request('status') == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
@@ -111,9 +122,27 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Protocolo</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Solicitação</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rota</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <div class="flex items-center justify-between">
+                                            <span>Centro de Custo</span>
+                                            <button type="button" 
+                                                    id="toggleCentroCusto" 
+                                                    class="ml-2 text-gray-400 hover:text-gray-600 focus:outline-none" 
+                                                    title="Expandir/Contrair colunas do centro de custo">
+                                                <i class="fas fa-chevron-right transition-transform duration-200" id="chevronIcon"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <!-- Colunas expandidas do Centro de Custo -->
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider centro-custo-expanded-col hidden">Descrição</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider centro-custo-expanded-col hidden">Base</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider centro-custo-expanded-col hidden">Marca</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider centro-custo-expanded-col hidden">Cliente CC</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider centro-custo-expanded-col hidden">ID OMIE CC</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total</th>
@@ -126,6 +155,13 @@
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             <strong>{{ $orcamento->numero_orcamento }}</strong>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @if($orcamento->id_protocolo)
+                                                <span class="font-medium text-gray-900">{{ $orcamento->id_protocolo }}</span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $orcamento->data_solicitacao->format('d/m/Y') }}
@@ -143,7 +179,52 @@
                                                 <br><small class="text-gray-400">LOGCARE: {{ $orcamento->id_logcare }}</small>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                              @if($orcamento->centroCusto)
+                                                  <div class="font-medium text-gray-900">{{ $orcamento->centroCusto->name }}</div>
+                                                  <div class="text-xs text-gray-400">{{ $orcamento->centroCusto->codigo }}</div>
+                                              @else
+                                                  <span class="text-gray-400">-</span>
+                                              @endif
+                                          </td>
+                                          <!-- Colunas expandidas do Centro de Custo -->
+                                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 centro-custo-expanded-col hidden">
+                                              @if($orcamento->centroCusto && $orcamento->centroCusto->description)
+                                                  <div class="max-w-xs truncate" title="{{ $orcamento->centroCusto->description }}">{{ $orcamento->centroCusto->description }}</div>
+                                              @else
+                                                  <span class="text-gray-400">-</span>
+                                              @endif
+                                          </td>
+                                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 centro-custo-expanded-col hidden">
+                                              @if($orcamento->centroCusto && $orcamento->centroCusto->base)
+                                                  <div class="font-medium">{{ $orcamento->centroCusto->base->name }}</div>
+                                                  <div class="text-xs text-gray-400">{{ $orcamento->centroCusto->base->sigla }}</div>
+                                              @else
+                                                  <span class="text-gray-400">-</span>
+                                              @endif
+                                          </td>
+                                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 centro-custo-expanded-col hidden">
+                                              @if($orcamento->centroCusto && $orcamento->centroCusto->marca)
+                                                  {{ $orcamento->centroCusto->marca->name }}
+                                              @else
+                                                  <span class="text-gray-400">-</span>
+                                              @endif
+                                          </td>
+                                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 centro-custo-expanded-col hidden">
+                                              @if($orcamento->centroCusto && $orcamento->centroCusto->cliente_nome)
+                                                  {{ $orcamento->centroCusto->cliente_nome }}
+                                              @else
+                                                  <span class="text-gray-400">-</span>
+                                              @endif
+                                          </td>
+                                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 centro-custo-expanded-col hidden">
+                                              @if($orcamento->centroCusto && $orcamento->centroCusto->cliente_omie_id)
+                                                  {{ $orcamento->centroCusto->cliente_omie_id }}
+                                              @else
+                                                  <span class="text-gray-400">-</span>
+                                              @endif
+                                          </td>
+                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @switch($orcamento->tipo_orcamento)
                                                 @case('prestador')
                                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Prestador</span>
@@ -162,7 +243,7 @@
                                             <select class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 status-select bg-white" 
                                                     data-orcamento-id="{{ $orcamento->id }}" 
                                                     data-current-status="{{ $orcamento->status }}">
-                                                <option value="rascunho" {{ $orcamento->status == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                                                <option value="em_andamento" {{ $orcamento->status == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
                                                 <option value="enviado" {{ $orcamento->status == 'enviado' ? 'selected' : '' }}>Enviado</option>
                                                 <option value="aprovado" {{ $orcamento->status == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
                                                 <option value="rejeitado" {{ $orcamento->status == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
@@ -206,7 +287,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="px-6 py-4 text-center">
+                                        <td colspan="15" class="px-6 py-4 text-center">
                                             <div class="text-gray-500">
                                                 <i class="fas fa-inbox text-3xl mb-3"></i>
                                                 <h5 class="text-lg font-medium mb-2">Nenhum orçamento encontrado</h5>
@@ -326,6 +407,50 @@ document.getElementById('delete-modal')?.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeDeleteModal();
+    }
+});
+
+// Funcionalidade de expandir/contrair centro de custo
+document.getElementById('toggleCentroCusto')?.addEventListener('click', function() {
+    const expandedCols = document.querySelectorAll('.centro-custo-expanded-col');
+    const chevronIcon = document.getElementById('chevronIcon');
+    const isExpanded = !expandedCols[0]?.classList.contains('hidden');
+    
+    expandedCols.forEach(element => {
+        if (isExpanded) {
+            element.classList.add('hidden');
+        } else {
+            element.classList.remove('hidden');
+        }
+    });
+    
+    // Rotacionar o ícone
+    if (isExpanded) {
+        chevronIcon.classList.remove('rotate-90');
+        chevronIcon.classList.add('rotate-0');
+    } else {
+        chevronIcon.classList.remove('rotate-0');
+        chevronIcon.classList.add('rotate-90');
+    }
+    
+    // Salvar estado no localStorage
+    localStorage.setItem('centroCustoExpanded', !isExpanded);
+});
+
+// Restaurar estado salvo do localStorage
+document.addEventListener('DOMContentLoaded', function() {
+    const isExpanded = localStorage.getItem('centroCustoExpanded') === 'true';
+    
+    if (isExpanded) {
+        const expandedCols = document.querySelectorAll('.centro-custo-expanded-col');
+        const chevronIcon = document.getElementById('chevronIcon');
+        
+        expandedCols.forEach(element => {
+            element.classList.remove('hidden');
+        });
+        
+        chevronIcon?.classList.remove('rotate-0');
+        chevronIcon?.classList.add('rotate-90');
     }
 });
 </script>

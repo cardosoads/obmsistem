@@ -81,6 +81,22 @@
                                 @enderror
                             </div>
 
+                            <!-- ID de Protocolo -->
+                            <div>
+                                <label for="id_protocolo" class="block text-sm font-medium text-gray-700 mb-2">
+                                    ID de Protocolo
+                                </label>
+                                <input type="text" 
+                                       id="id_protocolo" 
+                                       name="id_protocolo" 
+                                       value="{{ old('id_protocolo', $orcamento->id_protocolo) }}"
+                                       placeholder="Digite o ID de protocolo"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('id_protocolo') border-red-500 @enderror">
+                                @error('id_protocolo')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- Status -->
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
@@ -90,7 +106,7 @@
                                         name="status" 
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('status') border-red-500 @enderror" 
                                         required>
-                                    <option value="rascunho" {{ old('status', $orcamento->status) == 'rascunho' ? 'selected' : '' }}>Rascunho</option>
+                                    <option value="em_andamento" {{ old('status', $orcamento->status) == 'em_andamento' ? 'selected' : '' }}>Em Andamento</option>
                                     <option value="enviado" {{ old('status', $orcamento->status) == 'enviado' ? 'selected' : '' }}>Enviado</option>
                                     <option value="aprovado" {{ old('status', $orcamento->status) == 'aprovado' ? 'selected' : '' }}>Aprovado</option>
                                     <option value="rejeitado" {{ old('status', $orcamento->status) == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
@@ -512,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Carregar valores existentes na edição
-    const frequenciaAtendimentoValue = '{{ old("frequencia_atendimento", is_array($orcamento->frequencia_atendimento) ? implode(",", $orcamento->frequencia_atendimento) : $orcamento->frequencia_atendimento) }}';
+    const frequenciaAtendimentoValue = '{{ old("frequencia_atendimento", is_array($orcamento->frequencia_atendimento) ? implode(",", $orcamento->frequencia_atendimento) : ($orcamento->frequencia_atendimento ?? "")) }}';
     if (frequenciaAtendimentoValue) {
         const diasSelecionados = frequenciaAtendimentoValue.split(',');
         frequenciaCheckboxes.forEach(checkbox => {
@@ -586,11 +602,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Função para formatar percentuais com 2 casas decimais e máximo 100
+    function formatarPercentual(input) {
+        let valor = parseFloat(input.value);
+        if (isNaN(valor)) {
+            valor = 0;
+        }
+        if (valor > 100) {
+            valor = 100;
+        }
+        input.value = valor.toFixed(2);
+    }
+    
     // Adicionar event listeners para cálculos automáticos
     if (valorReferenciaInput) valorReferenciaInput.addEventListener('input', calcularValoresPrestador);
     if (qtdDiasInput) qtdDiasInput.addEventListener('input', calcularValoresPrestador);
-    if (percentualLucroInput) percentualLucroInput.addEventListener('input', calcularValoresPrestador);
-    if (percentualImpostosInput) percentualImpostosInput.addEventListener('input', calcularValoresPrestador);
+    if (percentualLucroInput) {
+        percentualLucroInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresPrestador();
+        });
+    }
+    if (percentualImpostosInput) {
+        percentualImpostosInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresPrestador();
+        });
+    }
     
     // Integração com Grupos de Impostos
     const grupoImpostoSelect = document.getElementById('grupo_imposto_id');
@@ -615,6 +653,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success && percentualImpostosInput) {
                         percentualImpostosInput.value = data.percentual_total;
+                        formatarPercentual(percentualImpostosInput);
                         calcularValoresPrestador();
                         
                         console.log('Grupo de impostos selecionado:', {
@@ -631,6 +670,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const percentual = selectedOption.getAttribute('data-percentual');
                     if (percentual && percentualImpostosInput) {
                         percentualImpostosInput.value = percentual;
+                        formatarPercentual(percentualImpostosInput);
                         calcularValoresPrestador();
                     }
                 });
@@ -646,15 +686,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Função para calcular automaticamente a quantidade de dias baseado na frequência de atendimento
     function calcularQuantidadeDias() {
-        const checkboxes = document.querySelectorAll('input[name="frequencia_atendimento[]"]:checked');
+        const checkboxes = document.querySelectorAll('input[name=\"frequencia_atendimento[]\"]:checked');
         const qtdDiasInput = document.getElementById('qtd_dias');
-        
+        const qtdDiasAumentoInput = document.getElementById('qtd_dias_aumento');
+        const tipoOrcamento = document.getElementById('tipo_orcamento');
+
+        const diasSelecionados = checkboxes.length;
+
+        // Atualiza campo do Prestador
         if (qtdDiasInput) {
-            qtdDiasInput.value = checkboxes.length;
-            // Recalcular valores se for orçamento de prestador
-            const tipoOrcamento = document.getElementById('tipo_orcamento');
+            qtdDiasInput.value = diasSelecionados;
             if (tipoOrcamento && tipoOrcamento.value === 'prestador') {
                 calcularValoresPrestador();
+            }
+        }
+        // Atualiza campo do Aumento KM
+        if (qtdDiasAumentoInput) {
+            qtdDiasAumentoInput.value = diasSelecionados;
+            if (tipoOrcamento && tipoOrcamento.value === 'aumento_km') {
+                calcularValoresAumentoKm();
             }
         }
     }

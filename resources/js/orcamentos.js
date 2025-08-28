@@ -105,7 +105,7 @@ function updateStatusBadge(badge, status) {
     
     // Mapear status para cores
     const statusColors = {
-        'rascunho': 'bg-gray-100 text-gray-800',
+        'em_andamento': 'bg-gray-100 text-gray-800',
         'enviado': 'bg-blue-100 text-blue-800',
         'aguardando': 'bg-yellow-100 text-yellow-800',
         'aprovado': 'bg-green-100 text-green-800',
@@ -115,7 +115,7 @@ function updateStatusBadge(badge, status) {
     };
     
     const statusLabels = {
-        'rascunho': 'Rascunho',
+        'em_andamento': 'Em Andamento',
         'enviado': 'Enviado',
         'aguardando': 'Aguardando',
         'aprovado': 'Aprovado',

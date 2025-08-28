@@ -6,13 +6,13 @@
 <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Editar Centro de Custo</h1>
-        <a href="{{ route('admin.centros-custo.show', $centroCusto->id) }}" 
+        <a href="{{ route('admin.centros-custo.show', $centroCusto) }}" 
            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
             <i class="fas fa-arrow-left mr-2"></i>Voltar
         </a>
     </div>
 
-    <form action="{{ route('admin.centros-custo.update', $centroCusto->id) }}" method="POST" class="space-y-6">
+    <form action="{{ route('admin.centros-custo.update', $centroCusto) }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
         
@@ -26,9 +26,9 @@
                            id="codigo" 
                            name="codigo" 
                            value="{{ old('codigo', $centroCusto->codigo) }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('codigo') border-red-500 @enderror" 
-                           required>
-                    <p class="text-xs text-gray-500 mt-1">Código único para identificação (ex: CC001, ADM, VEN)</p>
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
+                           readonly>
+                    <p class="text-xs text-gray-500 mt-1">Código único para identificação (somente leitura)</p>
                     @error('codigo')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -87,13 +87,19 @@
                 
                 <div>
                     <label for="cliente_nome" class="block text-sm font-medium text-gray-700 mb-2">Nome do Cliente</label>
-                    <input type="text" 
-                           id="cliente_nome" 
-                           name="cliente_nome" 
-                           value="{{ old('cliente_nome', $centroCusto->cliente_nome) }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cliente_nome') border-red-500 @enderror"
-                           readonly>
-                    <p class="text-xs text-gray-500 mt-1">Nome do cliente preenchido automaticamente pela API OMIE</p>
+                    <div class="relative">
+                        <input type="text" 
+                               id="cliente_nome" 
+                               name="cliente_nome" 
+                               value="{{ old('cliente_nome', $centroCusto->cliente_nome) }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('cliente_nome') border-red-500 @enderror"
+                               placeholder="Digite o nome do cliente para buscar...">
+                        <div id="cliente_nome_suggestions" class="absolute z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto" style="display: none;"></div>
+                        <div id="cliente-nome-loading" class="absolute right-3 top-3 hidden">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Digite o nome do cliente para buscar ou será preenchido automaticamente pelo ID OMIE</p>
                     @error('cliente_nome')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -210,6 +216,63 @@
             </div>
         </div>
 
+        <!-- Dados da API Omie -->
+        @if($centroCusto->omie_codigo || $centroCusto->omie_estrutura || $centroCusto->sincronizado_em)
+        <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+            <h3 class="text-lg font-semibold text-blue-700 mb-4">
+                <i class="fas fa-sync-alt mr-2"></i>Dados da API Omie
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Código Omie</label>
+                    <input type="text" 
+                           value="{{ $centroCusto->omie_codigo ?? 'Não sincronizado' }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
+                           readonly>
+                    <p class="text-xs text-gray-500 mt-1">Código do departamento na API Omie</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Estrutura Omie</label>
+                    <input type="text" 
+                           value="{{ $centroCusto->omie_estrutura ?? 'Não sincronizado' }}"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
+                           readonly>
+                    <p class="text-xs text-gray-500 mt-1">Estrutura hierárquica na API Omie</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Omie</label>
+                    <div class="flex items-center space-x-2">
+                        @if($centroCusto->omie_inativo === null)
+                            <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                                Não sincronizado
+                            </span>
+                        @elseif($centroCusto->omie_inativo === 'S')
+                            <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-600 rounded-full">
+                                <i class="fas fa-times-circle mr-1"></i>Inativo Omie
+                            </span>
+                        @else
+                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-600 rounded-full">
+                                <i class="fas fa-check-circle mr-1"></i>Ativo Omie
+                            </span>
+                        @endif
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Status do departamento na API Omie</p>
+                </div>
+            </div>
+            
+            @if($centroCusto->sincronizado_em)
+            <div class="mt-4 pt-4 border-t border-blue-200">
+                <p class="text-sm text-blue-600">
+                    <i class="fas fa-clock mr-1"></i>
+                    Última sincronização: {{ $centroCusto->sincronizado_em->format('d/m/Y H:i:s') }}
+                </p>
+            </div>
+            @endif
+        </div>
+        @endif
+
         <!-- Status -->
         <div class="bg-gray-50 p-6 rounded-lg">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Status</h3>
@@ -229,7 +292,7 @@
 
         <!-- Botões -->
         <div class="flex justify-end space-x-4">
-            <a href="{{ route('admin.centros-custo.show', $centroCusto->id) }}" 
+            <a href="{{ route('admin.centros-custo.show', $centroCusto) }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-200">
                 Cancelar
             </a>
@@ -289,28 +352,60 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Preenchimento automático do cliente OMIE
+    // Buscar dados do cliente OMIE por ID e Nome (funcionalidade bidirecional)
+    let clienteOmieTimeout;
+    let clienteNomeTimeout;
+    let isUpdatingFromApi = false;
+
+    // Busca por ID Cliente OMIE
     clienteOmieIdInput.addEventListener('input', function() {
-        const omieId = this.value.trim();
+        if (isUpdatingFromApi) return;
         
-        // Limpar timeout anterior
-        if (clienteTimeout) {
-            clearTimeout(clienteTimeout);
+        clearTimeout(clienteOmieTimeout);
+        let omieId = this.value.trim();
+        
+        if (omieId && omieId.length > 0 && /^\d+$/.test(omieId)) {
+            clienteOmieTimeout = setTimeout(() => {
+                buscarClienteOmiePorId(omieId);
+            }, 500);
+        } else if (!omieId) {
+            // Limpar campo nome se ID for removido
+            if (clienteNomeInput && !isUpdatingFromApi) {
+                clienteNomeInput.value = '';
+            }
         }
+    });
+
+    // Busca por Nome do Cliente
+    let suggestionsList = document.getElementById('cliente_nome_suggestions');
+    let loadingIndicator = document.getElementById('cliente-nome-loading');
+    
+    clienteNomeInput.addEventListener('input', function() {
+        if (isUpdatingFromApi) return;
         
-        // Limpar nome do cliente se ID estiver vazio
-        if (!omieId) {
-            clienteNomeInput.value = '';
-            return;
+        clearTimeout(clienteNomeTimeout);
+        let nomeCliente = this.value.trim();
+        
+        if (nomeCliente && nomeCliente.length >= 3) {
+            clienteNomeTimeout = setTimeout(() => {
+                buscarClienteOmiePorNome(nomeCliente);
+            }, 500);
+        } else {
+            suggestionsList.style.display = 'none';
+            if (!nomeCliente && !isUpdatingFromApi) {
+                clienteOmieIdInput.value = '';
+            }
         }
-        
-        // Aguardar 500ms após parar de digitar para fazer a busca
-        clienteTimeout = setTimeout(() => {
-            buscarClienteOmie(omieId);
-        }, 500);
     });
     
-    function buscarClienteOmie(omieId) {
+    // Fechar sugestões ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!clienteNomeInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+            suggestionsList.style.display = 'none';
+        }
+    });
+    
+    function buscarClienteOmiePorId(omieId) {
         // Mostrar loading
         clienteLoading.classList.remove('hidden');
         
@@ -321,7 +416,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 clienteLoading.classList.add('hidden');
                 
                 if (data.success && data.data) {
+                    isUpdatingFromApi = true;
                     clienteNomeInput.value = data.data.nome || data.data.razao_social || '';
+                    isUpdatingFromApi = false;
                     
                     // Feedback visual de sucesso
                     clienteOmieIdInput.classList.remove('border-red-500');
@@ -332,7 +429,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 2000);
                 } else {
                     // Cliente não encontrado
+                    isUpdatingFromApi = true;
                     clienteNomeInput.value = '';
+                    isUpdatingFromApi = false;
                     
                     // Feedback visual de erro
                     clienteOmieIdInput.classList.remove('border-green-500');
@@ -346,7 +445,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Erro ao buscar cliente OMIE:', error);
                 clienteLoading.classList.add('hidden');
+                isUpdatingFromApi = true;
                 clienteNomeInput.value = '';
+                isUpdatingFromApi = false;
                 
                 // Feedback visual de erro
                 clienteOmieIdInput.classList.remove('border-green-500');
@@ -356,6 +457,73 @@ document.addEventListener('DOMContentLoaded', function() {
                     clienteOmieIdInput.classList.remove('border-red-500');
                 }, 2000);
             });
+    }
+    
+    function buscarClienteOmiePorNome(nomeCliente) {
+        // Mostrar loading
+        loadingIndicator.classList.remove('hidden');
+        
+        // Fazer requisição para buscar clientes por nome
+         fetch(`{{ url('/api/omie/clientes/search') }}?search=${encodeURIComponent(nomeCliente)}`)
+            .then(response => response.json())
+            .then(data => {
+                loadingIndicator.classList.add('hidden');
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    mostrarSugestoesClientes(data.data);
+                } else {
+                    suggestionsList.innerHTML = '<div class="p-3 text-gray-500 text-sm">Nenhum cliente encontrado</div>';
+                    suggestionsList.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar clientes OMIE:', error);
+                loadingIndicator.classList.add('hidden');
+                suggestionsList.innerHTML = '<div class="p-3 text-red-500 text-sm">Erro ao buscar clientes</div>';
+                suggestionsList.style.display = 'block';
+            });
+    }
+    
+    function mostrarSugestoesClientes(clientes) {
+        let html = '';
+        
+        clientes.forEach(cliente => {
+             html += `
+                 <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 cliente-suggestion" 
+                      data-id="${cliente.omie_id || cliente.id}" 
+                      data-nome="${cliente.nome || cliente.razao_social}">
+                     <div class="font-medium text-gray-900">${cliente.nome || cliente.razao_social}</div>
+                     <div class="text-sm text-gray-500">ID: ${cliente.omie_id || cliente.id}</div>
+                     ${cliente.documento ? `<div class="text-xs text-gray-400">${cliente.documento}</div>` : ''}
+                 </div>
+             `;
+         });
+        
+        suggestionsList.innerHTML = html;
+        suggestionsList.style.display = 'block';
+        
+        // Adicionar event listeners para as sugestões
+        document.querySelectorAll('.cliente-suggestion').forEach(suggestion => {
+            suggestion.addEventListener('click', function() {
+                const clienteId = this.getAttribute('data-id');
+                const clienteNome = this.getAttribute('data-nome');
+                
+                isUpdatingFromApi = true;
+                clienteOmieIdInput.value = clienteId;
+                clienteNomeInput.value = clienteNome;
+                isUpdatingFromApi = false;
+                
+                suggestionsList.style.display = 'none';
+                
+                // Feedback visual de sucesso
+                clienteNomeInput.classList.remove('border-red-500');
+                clienteNomeInput.classList.add('border-green-500');
+                
+                setTimeout(() => {
+                    clienteNomeInput.classList.remove('border-green-500');
+                }, 2000);
+            });
+        });
     }
 });
 </script>
