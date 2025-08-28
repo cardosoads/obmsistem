@@ -6,14 +6,7 @@
 <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Centros de Custo</h1>
-        <div class="flex space-x-3">
-            <button onclick="sincronizarOmie()" 
-                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200"
-                    id="btn-sincronizar">
-                <i class="fas fa-sync mr-2"></i>Sincronizar Omie
-            </button>
 
-        </div>
     </div>
 
     <!-- Filtros -->
@@ -231,50 +224,3 @@ function toggleStatus(id, status) {
 
 </script>
 @endsection
-
-@push('scripts')
-<script>
-function sincronizarOmie() {
-    // Mostrar loading
-    const btn = document.querySelector('button[onclick="sincronizarOmie()"]');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sincronizando...';
-    btn.disabled = true;
-
-    // Fazer requisição
-    fetch('{{ route("admin.centros-custo.sincronizar") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Mostrar mensagem de sucesso
-            const message = `Sincronização concluída!\n` +
-                          `Total processados: ${data.stats.total}\n` +
-                          `Novos: ${data.stats.novos}\n` +
-                          `Atualizados: ${data.stats.atualizados}`;
-            
-            alert(message);
-            
-            // Recarregar a página para mostrar os novos dados
-            window.location.reload();
-        } else {
-            alert('Erro na sincronização: ' + (data.message || 'Erro desconhecido'));
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        alert('Erro na sincronização. Verifique o console para mais detalhes.');
-    })
-    .finally(() => {
-        // Restaurar botão
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
-}
-</script>
-@endpush
