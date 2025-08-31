@@ -1,13 +1,14 @@
-Sun Aug 31 10:00:30 UTC 2025
+Sun Aug 31 10:09:12 UTC 2025
 🚀 Iniciando deploy...
 📥 Fazendo pull do repositório...
 From github.com:cardosoads/obmsistem
  * branch            main       -> FETCH_HEAD
-   934252c..d12b3ad  main       -> origin/main
-Updating 934252c..d12b3ad
+   d12b3ad..1240551  main       -> origin/main
+Updating d12b3ad..1240551
 Fast-forward
- ...01_27_000001_optimize_centros_custo_indexes.php | 27 +++++++++++++++++-----
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ bkp_orcamentos/Error.md                            | 376 +++++----------------
+ ...01_27_000001_optimize_centros_custo_indexes.php |  37 +-
+ 2 files changed, 108 insertions(+), 305 deletions(-)
 🧹 Limpando caches antigos...
 📦 Instalando dependências do Composer...
 Installing dependencies from lock file
@@ -87,23 +88,27 @@ transforming...
 ✓ 54 modules transformed.
 rendering chunks...
 computing gzip size...
-public/build/manifest.json             0.31 kB │ gzip:  0.16 kB
-public/build/assets/app-sCgacLrN.css  83.48 kB │ gzip: 12.16 kB
+public/build/manifest.json             0.31 kB │ gzip:  0.17 kB
+public/build/assets/app-DLjtT7B-.css  83.51 kB │ gzip: 12.16 kB
 public/build/assets/app-DlXmOVrS.js   40.05 kB │ gzip: 15.83 kB
-✓ built in 572ms
+✓ built in 571ms
 🔄 Executando migrações...
 
    INFO  Running migrations.  
 
-  2025_01_27_000001_optimize_centros_custo_indexes .............. 11.04ms FAIL
+  2025_01_27_000001_optimize_centros_custo_indexes ............... 2.23ms DONE
+  2025_01_27_000002_add_id_protocolo_to_orcamentos_table ......... 4.02ms FAIL
 
 In Connection.php line 824:
                                                                                
-  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'obm.centros_cust  
-  o' doesn't exist (Connection: mysql, SQL: SHOW INDEX FROM centros_custo)     
+  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'obm.orcamentos'   
+  doesn't exist (Connection: mysql, SQL: alter table `orcamentos` add `id_pro  
+  tocolo` varchar(255) null comment 'ID de Protocolo digitado pelo usuário' a  
+  fter `centro_custo_id`)                                                      
                                                                                
 
-In Connection.php line 411:
+In Connection.php line 570:
                                                                                
-  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'obm.centros_cust  
-  o' doesn't exist               
+  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'obm.orcamentos'   
+  doesn't exist                                                                
+                                                                               
