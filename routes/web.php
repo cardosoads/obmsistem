@@ -34,6 +34,11 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/settings', [SettingsController::class, 'index'])->name('admin.settings');
     Route::get('/admin/reports', [DashboardController::class, 'reports'])->name('admin.reports');
     
+    // Página de teste com select
+    Route::get('/admin/teste-select', function () {
+        return view('admin.teste-select');
+    })->name('admin.teste-select');
+    
 
     
     // Usuários
@@ -208,8 +213,8 @@ Route::prefix('api/omie')->name('api.omie.')->group(function () {
     Route::get('/clientes/{omieId}', [\App\Http\Controllers\Api\OmieClienteController::class, 'show'])->name('clientes.show');
     Route::post('/clientes/clear-cache', [\App\Http\Controllers\Api\OmieClienteController::class, 'clearCache'])->name('clientes.clear-cache');
     
-    Route::get('/fornecedores/search', [\App\Http\Controllers\Api\OmieFornecedorController::class, 'search'])->name('fornecedores.search');
-    Route::get('/fornecedores/{omieId}', [\App\Http\Controllers\Api\OmieFornecedorController::class, 'show'])->name('fornecedores.show');
+    Route::get('/fornecedores/search', [\App\Http\Controllers\Api\OmieClienteController::class, 'searchSuppliers'])->name('fornecedores.search');
+    Route::get('/fornecedores/{omieId}', [\App\Http\Controllers\Api\OmieClienteController::class, 'show'])->name('fornecedores.show');
 
 
 

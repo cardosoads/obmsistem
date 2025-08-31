@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\CentroCusto;
-use App\Services\OmieApiService;
+use App\Services\OmieService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,9 +24,9 @@ class SincronizarCentrosCustoOmie extends Command
      */
     protected $description = 'Sincroniza centros de custo (departamentos) da API Omie';
 
-    private OmieApiService $omieService;
+    private OmieService $omieService;
 
-    public function __construct(OmieApiService $omieService)
+    public function __construct(OmieService $omieService)
     {
         parent::__construct();
         $this->omieService = $omieService;

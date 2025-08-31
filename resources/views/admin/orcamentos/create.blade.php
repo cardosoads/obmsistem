@@ -318,27 +318,36 @@
                                         </svg>
                                     </div>
                                     
-                                    <!-- Dropdown de sugestões -->
-                                    <div id="cliente_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
-                                        <div id="cliente_loading" class="px-6 py-4 text-sm text-gray-600 hidden">
-                                            <div class="flex items-center">
+                                    <!-- Client Dropdown Results -->
+                                    <div id="client_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
+                                        <!-- Loading State -->
+                                        <div id="client_loading" class="px-6 py-4 text-center text-gray-500 hidden">
+                                            <div class="inline-flex items-center">
                                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                 </svg>
-                                                <span class="font-medium">Buscando clientes...</span>
+                                                <span class="text-sm font-medium">Buscando clientes...</span>
                                             </div>
                                         </div>
-                                        <div id="cliente_results"></div>
-                                        <div id="cliente_no_results" class="px-6 py-4 text-sm text-gray-500 hidden">
-                                            <div class="flex items-center justify-center">
-                                                <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        
+                                        <!-- Results List -->
+                                        <div id="client_results" class="divide-y divide-gray-200">
+                                            <!-- Results will be dynamically inserted here -->
+                                        </div>
+                                        
+                                        <!-- No Results State -->
+                                        <div id="client_no_results" class="px-6 py-4 text-center text-gray-500 hidden">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0120 12a8 8 0 11-16 0 8 8 0 016.291-7.836z"></path>
                                                 </svg>
-                                                Nenhum cliente encontrado
+                                                <p class="text-sm font-medium">Nenhum cliente encontrado</p>
+                                                <p class="text-xs text-gray-400 mt-1">Tente buscar por outro termo</p>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                                 <input type="hidden" 
                                        id="cliente_omie_id" 
@@ -1024,67 +1033,7 @@
                                 </div>
                             </div>
                             <div class="px-8 py-6 space-y-6">
-                                <!-- Busca de Fornecedor OMIE -->
-                                <div class="mb-6">
-                                    <label for="fornecedor_omie_search" class="flex items-center text-sm font-semibold text-gray-800 mb-3">
-                                        <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                        </svg>
-                                        Buscar Fornecedor OMIE <span class="text-red-500 ml-1">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                            </svg>
-                                        </div>
-                                        <input type="text" 
-                                               class="block w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-base bg-white hover:border-gray-300" 
-                                               id="fornecedor_omie_search" 
-                                               placeholder="Digite para buscar fornecedor..." 
-                                               autocomplete="off">
-                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                            </svg>
-                                        </div>
-                                        
-                                        <!-- Dropdown de resultados -->
-                                        <div id="fornecedor_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
-                                            <!-- Loading -->
-                                            <div id="fornecedor_loading" class="px-6 py-4 text-center text-gray-500 hidden">
-                                                <div class="inline-flex items-center">
-                                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                    </svg>
-                                                    <span class="text-sm font-medium">Buscando fornecedores...</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Resultados -->
-                                            <div id="fornecedor_results"></div>
-                                            
-                                            <!-- Nenhum resultado -->
-                                            <div id="fornecedor_no_results" class="px-6 py-4 text-center text-gray-500 hidden">
-                                                <div class="flex flex-col items-center">
-                                                    <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                    </svg>
-                                                    <span class="text-sm font-medium">Nenhum fornecedor encontrado</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @error('fornecedor_omie_id')
-                                        <div class="flex items-center mt-2 text-sm text-red-600">
-                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
+
 
                                 <!-- Fornecedor Selecionado -->
                                 <div id="fornecedor_selecionado" class="mb-6" style="display: none;">
@@ -1099,6 +1048,94 @@
                                                 <p class="text-sm font-medium text-green-800">
                                                     Fornecedor selecionado: <span id="nome_fornecedor_selecionado"></span>
                                                 </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Busca de Fornecedor OMIE -->
+                                <div class="mb-6">
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                        Buscar Fornecedor <span class="text-red-500 ml-1">*</span>
+                                    </label>
+                                    
+                                    <!-- Grid com dois campos de busca -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <!-- Busca por Código -->
+                                        <div class="relative">
+                                            <label for="fornecedor_codigo_search" class="block text-xs font-medium text-gray-600 mb-1">Buscar por Código</label>
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="top: 20px;">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="text" 
+                                                   class="block w-full pl-9 pr-9 py-2.5 border-2 border-gray-200 rounded-lg shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 text-sm bg-white hover:border-gray-300" 
+                                                   id="fornecedor_codigo_search" 
+                                                   placeholder="Ex: 123456" 
+                                                   autocomplete="off">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" style="top: 20px;">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Busca por Nome -->
+                                        <div class="relative">
+                                            <label for="fornecedor_nome_search" class="block text-xs font-medium text-gray-600 mb-1">Buscar por Nome</label>
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" style="top: 20px;">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                                </svg>
+                                            </div>
+                                            <input type="text" 
+                                                   class="block w-full pl-9 pr-9 py-2.5 border-2 border-gray-200 rounded-lg shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 text-sm bg-white hover:border-gray-300" 
+                                                   id="fornecedor_nome_search" 
+                                                   placeholder="Ex: Empresa ABC Ltda" 
+                                                   autocomplete="off">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" style="top: 20px;">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campo oculto para manter compatibilidade -->
+                                    <input type="hidden" id="fornecedor_omie_search" autocomplete="off">
+                                    
+                                    <div class="relative">
+                                        
+                                        <!-- Fornecedor Dropdown Results -->
+                                        <div id="fornecedor_dropdown" class="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
+                                            <!-- Loading State -->
+                                            <div id="fornecedor_loading" class="px-6 py-4 text-center text-gray-500 hidden">
+                                                <div class="inline-flex items-center">
+                                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <span class="text-sm font-medium">Buscando fornecedores...</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Results List -->
+                                            <div id="fornecedor_results" class="divide-y divide-gray-200">
+                                                <!-- Results will be dynamically inserted here -->
+                                            </div>
+                                            
+                                            <!-- No Results State -->
+                                            <div id="fornecedor_no_results" class="px-6 py-4 text-center text-gray-500 hidden">
+                                                <div class="flex flex-col items-center">
+                                                    <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                    </svg>
+                                                    <span class="text-sm font-medium">Nenhum fornecedor encontrado</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1407,13 +1444,15 @@ const clienteSelecionado = document.getElementById('cliente_selecionado');
 const clienteOmieId = document.getElementById('cliente_omie_id');
 const clienteNome = document.getElementById('cliente_nome');
 const nomeClienteSelecionado = document.getElementById('nome_cliente_selecionado');
-const clienteDropdown = document.getElementById('cliente_dropdown');
-const clienteLoading = document.getElementById('cliente_loading');
-const clienteResults = document.getElementById('cliente_results');
-const clienteNoResults = document.getElementById('cliente_no_results');
+const clienteDropdown = document.getElementById('client_dropdown');
+const clienteLoading = document.getElementById('client_loading');
+const clienteResults = document.getElementById('client_results');
+const clienteNoResults = document.getElementById('client_no_results');
 
 function showDropdown() {
-    if (clienteDropdown) clienteDropdown.classList.remove('hidden');
+    if (clienteDropdown) {
+        clienteDropdown.classList.remove('hidden');
+    }
 }
 
 function hideDropdown() {
@@ -1436,8 +1475,24 @@ function hideLoading() {
 function buscarClientesOmie(termo) {
     showLoading();
     
-    fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`)
-        .then(response => response.json())
+    // Criar AbortController para timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 35000); // 35 segundos
+    
+    fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`, {
+        signal: controller.signal,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            clearTimeout(timeoutId);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             hideLoading();
             
@@ -1450,13 +1505,24 @@ function buscarClientesOmie(termo) {
             }
         })
         .catch(error => {
+            clearTimeout(timeoutId);
             console.error('Erro ao buscar clientes OMIE:', error);
             hideLoading();
+            
+            let errorMessage = 'Erro ao buscar clientes. Tente novamente.';
+            
+            if (error.name === 'AbortError') {
+                errorMessage = 'Busca cancelada por timeout. Tente novamente.';
+            } else if (error.message.includes('HTTP')) {
+                errorMessage = `Erro no servidor: ${error.message}`;
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage = 'Erro de conexão. Verifique sua internet.';
+            }
             
             if (clienteResults) {
                 clienteResults.innerHTML = `
                     <div class="px-4 py-3 text-red-600 text-sm">
-                        Erro ao buscar clientes. Tente novamente.
+                        ${errorMessage}
                     </div>
                 `;
             }
@@ -1469,8 +1535,8 @@ function displayResults(clientes) {
     currentResults = clientes;
     selectedIndex = -1;
     
-    const clienteResults = document.getElementById('cliente_results');
-    const clienteNoResults = document.getElementById('cliente_no_results');
+    const clienteResults = document.getElementById('client_results');
+    const clienteNoResults = document.getElementById('client_no_results');
     
     if (clientes.length === 0) {
         if (clienteResults) clienteResults.innerHTML = '';
@@ -1887,7 +1953,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Buscar após 500ms de inatividade
+            // Buscar após 500ms de inatividade (permite busca por ID ou nome)
             if (termo.length >= 2) {
                 timeoutId = setTimeout(function() {
                     buscarClientesOmie(termo);
@@ -1930,7 +1996,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fechar dropdown ao clicar fora
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('#cliente_omie_search') && !e.target.closest('#cliente_dropdown')) {
+        if (!e.target.closest('#cliente_omie_search') && !e.target.closest('#client_dropdown')) {
             hideDropdown();
         }
     });
@@ -1984,10 +2050,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Calcular quantidade de dias inicial se houver checkboxes marcados
     calcularQuantidadeDias();
     
-    // Busca de fornecedores OMIE - Funcionalidade igual à do cliente
-    let fornecedorTimeoutId;
+    // Busca de fornecedores OMIE - Campos independentes para código e nome
+    let fornecedorCodigoTimeoutId;
+    let fornecedorNomeTimeoutId;
     
-    const fornecedorSearch = document.getElementById('fornecedor_omie_search');
+    // Elementos dos campos de busca
+    const fornecedorCodigoSearch = document.getElementById('fornecedor_codigo_search');
+    const fornecedorNomeSearch = document.getElementById('fornecedor_nome_search');
+    const fornecedorSearch = document.getElementById('fornecedor_omie_search'); // Campo oculto para compatibilidade
+    
+    // Elementos de resultado e seleção
     const fornecedorSelecionado = document.getElementById('fornecedor_selecionado');
     const fornecedorOmieId = document.getElementById('fornecedor_omie_id');
     const fornecedorNome = document.getElementById('fornecedor_nome');
@@ -1999,6 +2071,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let fornecedorSelectedIndex = -1;
     let fornecedorCurrentResults = [];
+    let activeSearchField = null; // Controla qual campo está ativo
     
     function showFornecedorLoading() {
         if (fornecedorLoading) fornecedorLoading.classList.remove('hidden');
@@ -2066,51 +2139,88 @@ document.addEventListener('DOMContentLoaded', function() {
         showFornecedorDropdown();
     }
     
-    if (fornecedorSearch) {
-        fornecedorSearch.addEventListener('input', function() {
-            clearTimeout(fornecedorTimeoutId);
-            const termo = this.value.trim();
+    // Event listeners para busca por código
+    if (fornecedorCodigoSearch) {
+        fornecedorCodigoSearch.addEventListener('input', function() {
+            clearTimeout(fornecedorCodigoTimeoutId);
+            const codigo = this.value.trim();
+            activeSearchField = 'codigo';
             
-            if (termo.length >= 2) {
-                fornecedorTimeoutId = setTimeout(() => {
-                    buscarFornecedoresOmie(termo);
+            // Limpar o outro campo quando este for usado
+            if (fornecedorNomeSearch && codigo.length > 0) {
+                fornecedorNomeSearch.value = '';
+            }
+            
+            if (codigo.length >= 1) {
+                fornecedorCodigoTimeoutId = setTimeout(() => {
+                    buscarFornecedoresPorCodigo(codigo);
+                }, 300);
+            } else {
+                hideFornecedorDropdown();
+            }
+        });
+        
+        // Navegação por teclado para campo código
+        fornecedorCodigoSearch.addEventListener('keydown', handleFornecedorKeydown);
+    }
+    
+    // Event listeners para busca por nome
+    if (fornecedorNomeSearch) {
+        fornecedorNomeSearch.addEventListener('input', function() {
+            clearTimeout(fornecedorNomeTimeoutId);
+            const nome = this.value.trim();
+            activeSearchField = 'nome';
+            
+            // Limpar o outro campo quando este for usado
+            if (fornecedorCodigoSearch && nome.length > 0) {
+                fornecedorCodigoSearch.value = '';
+            }
+            
+            if (nome.length >= 2) {
+                fornecedorNomeTimeoutId = setTimeout(() => {
+                    buscarFornecedoresPorNome(nome);
                 }, 500);
             } else {
                 hideFornecedorDropdown();
             }
         });
         
-        // Navegação por teclado
-        fornecedorSearch.addEventListener('keydown', function(e) {
-            if (fornecedorDropdown && !fornecedorDropdown.classList.contains('hidden')) {
-                switch(e.key) {
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        fornecedorSelectedIndex = Math.min(fornecedorSelectedIndex + 1, fornecedorCurrentResults.length - 1);
-                        updateFornecedorSelection();
-                        break;
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        fornecedorSelectedIndex = Math.max(fornecedorSelectedIndex - 1, -1);
-                        updateFornecedorSelection();
-                        break;
-                    case 'Enter':
-                        e.preventDefault();
-                        if (fornecedorSelectedIndex >= 0 && fornecedorCurrentResults[fornecedorSelectedIndex]) {
-                            selecionarFornecedor(fornecedorCurrentResults[fornecedorSelectedIndex]);
-                        }
-                        break;
-                    case 'Escape':
-                        hideFornecedorDropdown();
-                        break;
-                }
+        // Navegação por teclado para campo nome
+        fornecedorNomeSearch.addEventListener('keydown', handleFornecedorKeydown);
+    }
+    
+    // Função unificada para navegação por teclado
+    function handleFornecedorKeydown(e) {
+        if (fornecedorDropdown && !fornecedorDropdown.classList.contains('hidden')) {
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    fornecedorSelectedIndex = Math.min(fornecedorSelectedIndex + 1, fornecedorCurrentResults.length - 1);
+                    updateFornecedorSelection();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    fornecedorSelectedIndex = Math.max(fornecedorSelectedIndex - 1, -1);
+                    updateFornecedorSelection();
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (fornecedorSelectedIndex >= 0 && fornecedorCurrentResults[fornecedorSelectedIndex]) {
+                        selecionarFornecedor(fornecedorCurrentResults[fornecedorSelectedIndex]);
+                    }
+                    break;
+                case 'Escape':
+                    hideFornecedorDropdown();
+                    break;
             }
-        });
+        }
     }
     
     // Fechar dropdown ao clicar fora
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('#fornecedor_omie_search') && !e.target.closest('#fornecedor_dropdown')) {
+        if (!e.target.closest('#fornecedor_codigo_search') && 
+            !e.target.closest('#fornecedor_nome_search') && 
+            !e.target.closest('#fornecedor_dropdown')) {
             hideFornecedorDropdown();
         }
     });
@@ -2124,12 +2234,29 @@ document.addEventListener('DOMContentLoaded', function() {
         fornecedorSelectedIndex = -1;
     }
     
-    function buscarFornecedoresOmie(termo) {
+    // Função para buscar fornecedores por código
+    function buscarFornecedoresPorCodigo(codigo) {
         showFornecedorLoading();
         
-        // Usar a mesma API de clientes como fonte de dados
-        fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`)
-            .then(response => response.json())
+        // Criar AbortController para timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 35000); // 35 segundos
+        
+        // Usar a API específica de fornecedores com parâmetro de código
+        fetch(`/api/omie/fornecedores/search?search=${encodeURIComponent(codigo)}&type=codigo`, {
+            signal: controller.signal,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 hideFornecedorLoading();
                 
@@ -2143,32 +2270,104 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Erro ao buscar fornecedores OMIE:', error);
-                hideFornecedorLoading();
-                
-                // Mostrar mensagem de erro
-                if (fornecedorResults) {
-                    fornecedorResults.innerHTML = `
-                        <div class="px-4 py-3 text-red-600 text-sm">
-                            Erro ao buscar fornecedores. Tente novamente.
-                        </div>
-                    `;
-                }
-                showFornecedorDropdown();
+                handleFornecedorSearchError(error, timeoutId);
             });
     }
     
+    // Função para buscar fornecedores por nome
+    function buscarFornecedoresPorNome(nome) {
+        showFornecedorLoading();
+        
+        // Criar AbortController para timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 35000); // 35 segundos
+        
+        // Usar a API específica de fornecedores com parâmetro de nome
+        fetch(`/api/omie/fornecedores/search?search=${encodeURIComponent(nome)}&type=nome`, {
+            signal: controller.signal,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                hideFornecedorLoading();
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    displayFornecedorResults(data.data);
+                } else {
+                    // Nenhum resultado encontrado
+                    if (fornecedorNoResults) fornecedorNoResults.classList.remove('hidden');
+                    if (fornecedorResults) fornecedorResults.innerHTML = '';
+                    showFornecedorDropdown();
+                }
+            })
+            .catch(error => {
+                handleFornecedorSearchError(error, timeoutId);
+            });
+    }
+    
+    // Função unificada para tratamento de erros
+    function handleFornecedorSearchError(error, timeoutId) {
+        clearTimeout(timeoutId);
+        console.error('Erro ao buscar fornecedores OMIE:', error);
+        hideFornecedorLoading();
+        
+        let errorMessage = 'Erro ao buscar fornecedores. Tente novamente.';
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Busca cancelada por timeout. Tente novamente.';
+        } else if (error.message.includes('HTTP')) {
+            errorMessage = `Erro no servidor: ${error.message}`;
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Erro de conexão. Verifique sua internet.';
+        }
+        
+        // Mostrar mensagem de erro
+        if (fornecedorResults) {
+            fornecedorResults.innerHTML = `
+                <div class="px-4 py-3 text-red-600 text-sm">
+                    ${errorMessage}
+                </div>
+            `;
+        }
+        showFornecedorDropdown();
+    }
+    
     function selecionarFornecedor(fornecedor) {
-        if (fornecedorOmieId) fornecedorOmieId.value = fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie;
-        if (fornecedorNome) fornecedorNome.value = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
-        if (fornecedorSearch) fornecedorSearch.value = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
-        if (nomeFornecedorSelecionado) nomeFornecedorSelecionado.textContent = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
+        const fornecedorId = fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie;
+        const fornecedorNomeCompleto = fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome;
+        
+        // Preencher campos ocultos
+        if (fornecedorOmieId) fornecedorOmieId.value = fornecedorId;
+        if (fornecedorNome) fornecedorNome.value = fornecedorNomeCompleto;
+        if (fornecedorSearch) fornecedorSearch.value = fornecedorNomeCompleto; // Campo oculto para compatibilidade
+        
+        // Preencher ambos os campos de busca
+        if (fornecedorCodigoSearch) {
+            fornecedorCodigoSearch.value = fornecedorId;
+        }
+        if (fornecedorNomeSearch) {
+            fornecedorNomeSearch.value = fornecedorNomeCompleto;
+        }
+        
+        // Atualizar elementos de exibição
+        if (nomeFornecedorSelecionado) nomeFornecedorSelecionado.textContent = fornecedorNomeCompleto;
         if (fornecedorSelecionado) fornecedorSelecionado.style.display = 'block';
+        
         hideFornecedorDropdown();
         
         console.log('Fornecedor selecionado:', {
-            id: fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie,
-            nome: fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome
+            id: fornecedorId,
+            nome: fornecedorNomeCompleto,
+            campo_ativo: activeSearchField
         });
     }
     
@@ -2376,6 +2575,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
 </script>
 @endpush
 

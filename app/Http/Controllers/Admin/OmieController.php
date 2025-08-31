@@ -27,6 +27,7 @@ class OmieController extends Controller
         try {
             $page = $request->get('page', 1);
             $search = $request->get('search', '');
+            $searchType = $request->get('search_type', 'nome');
             
             $filtros = [
                 'pagina' => $page,
@@ -34,9 +35,55 @@ class OmieController extends Controller
             ];
             
             if ($search) {
-                $filtros['clientesFiltro'] = [
-                    'nome_fantasia' => $search
-                ];
+                // Busca específica por código Omie
+                if ($searchType === 'codigo') {
+                    // Para busca por código, usar método específico
+                    $cliente = $this->omieService->getClientById((int)$search);
+                    if ($cliente) {
+                        return view('admin.omie.clientes', [
+                            'clientes' => [$cliente],
+                            'pagination' => [
+                                'current_page' => 1,
+                                'total_pages' => 1,
+                                'total_records' => 1,
+                                'per_page' => 20
+                            ]
+                        ]);
+                    } else {
+                        return view('admin.omie.clientes', [
+                            'clientes' => [],
+                            'error' => 'Cliente com código ' . $search . ' não encontrado',
+                            'pagination' => null
+                        ]);
+                    }
+                }
+                // Busca por documento
+                elseif ($searchType === 'documento') {
+                    $cliente = $this->omieService->getClientByDocument($search);
+                    if ($cliente) {
+                        return view('admin.omie.clientes', [
+                            'clientes' => [$cliente],
+                            'pagination' => [
+                                'current_page' => 1,
+                                'total_pages' => 1,
+                                'total_records' => 1,
+                                'per_page' => 20
+                            ]
+                        ]);
+                    } else {
+                        return view('admin.omie.clientes', [
+                            'clientes' => [],
+                            'error' => 'Cliente com documento ' . $search . ' não encontrado',
+                            'pagination' => null
+                        ]);
+                    }
+                }
+                // Busca por nome/razão social (padrão)
+                else {
+                    $filtros['clientesFiltro'] = [
+                        'nome_fantasia' => $search
+                    ];
+                }
             }
             
             $response = $this->omieService->listarClientesPaginado($filtros);
@@ -100,7 +147,7 @@ class OmieController extends Controller
                 ]);
             }
             
-            $fornecedores = $response['data']['fornecedor_cadastro'] ?? [];
+            $fornecedores = $response['data']['clientes_cadastro'] ?? [];
             $pagination = [
                 'current_page' => $page,
                 'total_pages' => $response['data']['total_de_paginas'] ?? 1,

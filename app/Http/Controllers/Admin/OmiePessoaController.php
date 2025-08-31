@@ -85,7 +85,7 @@ class OmiePessoaController extends Controller
                 $responseFornecedores = $this->omieService->listarFornecedores($filtrosFornecedores);
                 
                 if ($responseFornecedores['success']) {
-                    $fornecedores = $responseFornecedores['data']['fornecedor_cadastro'] ?? [];
+                    $fornecedores = $responseFornecedores['data']['clientes_cadastro'] ?? [];
                     
                     // Adicionar tipo 'fornecedor' aos dados
                     foreach ($fornecedores as &$fornecedor) {

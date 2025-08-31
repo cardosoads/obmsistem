@@ -9,6 +9,7 @@ use App\Models\OrcamentoAumentoKm;
 use App\Models\OrcamentoProprioNovaRota;
 use App\Models\CentroCusto;
 use App\Models\GrupoImposto;
+use App\Services\OmieService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrcamentoController extends Controller
 {
+    private OmieService $omieService;
+
+    public function __construct(OmieService $omieService)
+    {
+        $this->omieService = $omieService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -40,7 +47,7 @@ class OrcamentoController extends Controller
             $query->whereDate('data_orcamento', '<=', $request->data_fim);
         }
 
-        // Nova estrutura de busca com select de tipo
+        // Nova estrutura de busca com select de tipo usando OmieService
         if ($request->filled('search_value') && $request->filled('search_type')) {
             $searchValue = $request->search_value;
             $searchType = $request->search_type;
@@ -64,7 +71,16 @@ class OrcamentoController extends Controller
                     $query->where('id_protocolo', 'like', '%' . $searchValue . '%');
                     break;
                 case 'cliente_omie_id':
-                    $query->where('cliente_omie_id', 'like', '%' . $searchValue . '%');
+                    // Busca melhorada usando OmieService
+                    $this->applyClienteOmieIdSearch($query, $searchValue);
+                    break;
+                case 'cliente_nome':
+                    // Busca melhorada usando OmieService
+                    $this->applyClienteNomeSearch($query, $searchValue);
+                    break;
+                case 'cliente_documento':
+                    // Busca por documento usando OmieService
+                    $this->applyClienteDocumentoSearch($query, $searchValue);
                     break;
                 case 'id_logcare':
                     $query->where('id_logcare', 'like', '%' . $searchValue . '%');
@@ -250,6 +266,15 @@ class OrcamentoController extends Controller
             
             DB::commit();
 
+            // Recarregar o orçamento do banco de dados para garantir que temos os dados persistidos
+            $orcamento->refresh();
+            $orcamento->load([
+                'centroCusto',
+                'orcamentoPrestador.grupoImposto',
+                'orcamentoAumentoKm',
+                'orcamentoProprioNovaRota'
+            ]);
+
             return redirect()->route('admin.orcamentos.show', $orcamento)
                            ->with('success', 'Orçamento atualizado com sucesso!');
         } catch (\Exception $e) {
@@ -299,6 +324,150 @@ class OrcamentoController extends Controller
     }
 
     /**
+     * Aplicar busca por cliente Omie ID usando OmieService
+     */
+    private function applyClienteOmieIdSearch($query, $searchValue)
+    {
+        if (is_numeric($searchValue)) {
+            try {
+                $cliente = $this->omieService->getClientById((int)$searchValue);
+                if ($cliente) {
+                    $query->where('cliente_omie_id', $searchValue);
+                } else {
+                    // Se cliente não existe na API, não retorna resultados
+                    $query->whereRaw('1 = 0');
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Erro ao buscar cliente por ID Omie', [
+                    'omie_id' => $searchValue,
+                    'error' => $e->getMessage()
+                ]);
+                // Em caso de erro na API, faz busca local
+                $query->where('cliente_omie_id', 'like', '%' . $searchValue . '%');
+            }
+        } else {
+            $query->where('cliente_omie_id', 'like', '%' . $searchValue . '%');
+        }
+    }
+
+    /**
+     * Aplicar busca por nome do cliente usando OmieService
+     */
+    private function applyClienteNomeSearch($query, $searchValue)
+    {
+        try {
+            $clientesEncontrados = $this->omieService->searchClientsByTerm($searchValue);
+            if (!empty($clientesEncontrados)) {
+                $omieIds = array_column($clientesEncontrados, 'codigo_cliente_omie');
+                $query->where(function($q) use ($searchValue, $omieIds) {
+                    $q->where('cliente_nome', 'like', '%' . $searchValue . '%')
+                      ->orWhereIn('cliente_omie_id', $omieIds);
+                });
+            } else {
+                $query->where('cliente_nome', 'like', '%' . $searchValue . '%');
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Erro ao buscar clientes por termo', [
+                'term' => $searchValue,
+                'error' => $e->getMessage()
+            ]);
+            // Em caso de erro na API, faz busca local apenas
+            $query->where('cliente_nome', 'like', '%' . $searchValue . '%');
+        }
+    }
+
+    /**
+      * Aplicar busca por documento do cliente usando OmieService
+      */
+    private function applyClienteDocumentoSearch($query, $searchValue)
+    {
+        try {
+            $cliente = $this->omieService->getClientByDocument($searchValue);
+            if ($cliente) {
+                $query->where('cliente_omie_id', $cliente['codigo_cliente_omie']);
+            } else {
+                // Se cliente não existe, não retorna resultados
+                $query->whereRaw('1 = 0');
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Erro ao buscar cliente por documento', [
+                'document' => $searchValue,
+                'error' => $e->getMessage()
+            ]);
+            // Em caso de erro na API, não retorna resultados
+            $query->whereRaw('1 = 0');
+        }
+    }
+
+    /**
+     * Aplicar busca por ID do fornecedor usando OmieService
+     */
+    private function applyFornecedorOmieIdSearch($query, $searchValue)
+    {
+        try {
+            $fornecedor = $this->omieService->consultarFornecedor($searchValue);
+            if ($fornecedor && $fornecedor['success']) {
+                $query->whereHas('orcamentoPrestador', function($q) use ($searchValue) {
+                    $q->where('fornecedor_omie_id', $searchValue);
+                });
+            } else {
+                // Se fornecedor não existe, não retorna resultados
+                $query->whereRaw('1 = 0');
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Erro ao buscar fornecedor por ID Omie', [
+                'fornecedor_id' => $searchValue,
+                'error' => $e->getMessage()
+            ]);
+            // Em caso de erro na API, tenta busca local
+            $query->whereHas('orcamentoPrestador', function($q) use ($searchValue) {
+                $q->where('fornecedor_omie_id', $searchValue);
+            });
+        }
+    }
+
+    /**
+     * Aplicar busca por nome do fornecedor usando OmieService
+     */
+    private function applyFornecedorNomeSearch($query, $searchValue)
+    {
+        try {
+            $fornecedores = $this->omieService->searchSuppliersByTerm($searchValue);
+            if ($fornecedores && !empty($fornecedores)) {
+                $fornecedorIds = collect($fornecedores)->pluck('codigo_cliente_omie')->filter()->toArray();
+                
+                $query->where(function($q) use ($searchValue, $fornecedorIds) {
+                    // Busca por nome local
+                    $q->whereHas('orcamentoPrestador', function($subQ) use ($searchValue) {
+                        $subQ->where('fornecedor_nome', 'like', '%' . $searchValue . '%');
+                    });
+                    
+                    // Busca por IDs encontrados na API Omie
+                    if (!empty($fornecedorIds)) {
+                        $q->orWhereHas('orcamentoPrestador', function($subQ) use ($fornecedorIds) {
+                            $subQ->whereIn('fornecedor_omie_id', $fornecedorIds);
+                        });
+                    }
+                });
+            } else {
+                // Se não encontrou fornecedores na API, busca apenas local
+                $query->whereHas('orcamentoPrestador', function($q) use ($searchValue) {
+                    $q->where('fornecedor_nome', 'like', '%' . $searchValue . '%');
+                });
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Erro ao buscar fornecedor por nome', [
+                'search_term' => $searchValue,
+                'error' => $e->getMessage()
+            ]);
+            // Em caso de erro na API, busca apenas local
+            $query->whereHas('orcamentoPrestador', function($q) use ($searchValue) {
+                $q->where('fornecedor_nome', 'like', '%' . $searchValue . '%');
+            });
+        }
+    }
+
+    /**
      * Filtrar campos do orçamento baseado no tipo
      */
     private function filtrarCamposOrcamento(array $validated)
@@ -306,6 +475,7 @@ class OrcamentoController extends Controller
         // Campos que sempre devem ser incluídos
         $camposPermitidos = [
             'data_solicitacao',
+            'id_protocolo',
             'centro_custo_id',
             'nome_rota',
             'id_logcare',

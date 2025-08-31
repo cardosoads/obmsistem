@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Busca Cliente</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        .dropdown { border: 1px solid #ccc; max-height: 200px; overflow-y: auto; }
+        .result-item { padding: 10px; cursor: pointer; }
+        .result-item:hover { background-color: #f0f0f0; }
+        .hidden { display: none; }
+        .loading { text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste de Busca de Cliente</h1>
+        <input type="text" id="cliente_omie_search" placeholder="Digite para buscar cliente...">
+        <div id="client_dropdown" class="dropdown hidden">
+            <div id="client_loading" class="loading hidden">Carregando...</div>
+            <div id="client_results"></div>
+            <div id="client_no_results" class="hidden">Nenhum resultado encontrado</div>
+        </div>
+        <div id="debug"></div>
+    </div>
+
+    <script>
+        let timeoutId;
+        let selectedIndex = -1;
+        let currentResults = [];
+
+        const clienteSearch = document.getElementById('cliente_omie_search');
+        const clienteDropdown = document.getElementById('client_dropdown');
+        const clienteLoading = document.getElementById('client_loading');
+        const clienteResults = document.getElementById('client_results');
+        const clienteNoResults = document.getElementById('client_no_results');
+        const debugDiv = document.getElementById('debug');
+
+        function log(message) {
+            console.log(message);
+            debugDiv.innerHTML += '<p>' + message + '</p>';
+        }
+
+        function showDropdown() {
+            if (clienteDropdown) {
+                clienteDropdown.classList.remove('hidden');
+                log('Dropdown mostrado');
+            }
+        }
+
+        function hideDropdown() {
+            if (clienteDropdown) clienteDropdown.classList.add('hidden');
+            selectedIndex = -1;
+            currentResults = [];
+            log('Dropdown escondido');
+        }
+
+        function showLoading() {
+            if (clienteLoading) clienteLoading.classList.remove('hidden');
+            if (clienteResults) clienteResults.innerHTML = '';
+            if (clienteNoResults) clienteNoResults.classList.add('hidden');
+            showDropdown();
+            log('Loading mostrado');
+        }
+
+        function hideLoading() {
+            if (clienteLoading) clienteLoading.classList.add('hidden');
+            log('Loading escondido');
+        }
+
+        async function buscarClientesOmie(termo) {
+            log('Iniciando busca para: ' + termo);
+            showLoading();
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 35000);
+
+            try {
+                const response = await fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+                log('Resposta recebida: ' + response.status);
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                log('Dados recebidos: ' + JSON.stringify(data));
+
+                hideLoading();
+
+                if (data.success && data.data && data.data.length > 0) {
+                    displayResults(data.data);
+                } else {
+                    showNoResults();
+                }
+            } catch (error) {
+                clearTimeout(timeoutId);
+                hideLoading();
+                log('Erro na busca: ' + error.message);
+                
+                if (error.name === 'AbortError') {
+                    log('Busca cancelada por timeout');
+                } else {
+                    log('Erro na conexão: ' + error.message);
+                }
+            }
+        }
+
+        function displayResults(results) {
+            currentResults = results;
+            clienteResults.innerHTML = '';
+            
+            results.forEach((cliente, index) => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `<strong>${cliente.nome}</strong><br><small>${cliente.documento || 'Sem documento'}</small>`;
+                item.onclick = () => selecionarCliente(cliente);
+                clienteResults.appendChild(item);
+            });
+            
+            showDropdown();
+            log('Resultados exibidos: ' + results.length + ' itens');
+        }
+
+        function showNoResults() {
+            if (clienteNoResults) clienteNoResults.classList.remove('hidden');
+            if (clienteResults) clienteResults.innerHTML = '';
+            showDropdown();
+            log('Nenhum resultado encontrado');
+        }
+
+        function selecionarCliente(cliente) {
+            log('Cliente selecionado: ' + cliente.nome);
+            hideDropdown();
+        }
+
+        if (clienteSearch) {
+            log('Event listener adicionado ao campo de busca');
+            
+            clienteSearch.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                const termo = this.value.trim();
+                log('Input detectado: "' + termo + '"');
+                
+                if (termo === '') {
+                    hideDropdown();
+                    return;
+                }
+                
+                if (termo.length >= 2) {
+                    timeoutId = setTimeout(function() {
+                        buscarClientesOmie(termo);
+                    }, 500);
+                } else {
+                    hideDropdown();
+                }
+            });
+        } else {
+            log('ERRO: Campo de busca não encontrado!');
+        }
+
+        log('Script carregado com sucesso');
+    </script>
+</body>
+</html>

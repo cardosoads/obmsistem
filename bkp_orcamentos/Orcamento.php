@@ -61,7 +61,7 @@ class Orcamento extends Model
         }
 
         try {
-            $omieService = app(\App\Services\OmieApiService::class);
+            $omieService = app(\App\Services\OmieService::class);
             return $omieService->getCliente($this->cliente_omie_id);
         } catch (\Exception $e) {
             \Log::error('Erro ao buscar cliente OMIE: ' . $e->getMessage());

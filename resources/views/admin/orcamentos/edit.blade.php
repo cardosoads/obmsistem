@@ -51,7 +51,7 @@
                                 <input type="date" 
                                        id="data_solicitacao" 
                                        name="data_solicitacao" 
-                                       value="{{ old('data_solicitacao', $orcamento->data_solicitacao) }}"
+                                       value="{{ old('data_solicitacao', $orcamento->data_solicitacao ? $orcamento->data_solicitacao->format('Y-m-d') : '') }}"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('data_solicitacao') border-red-500 @enderror" 
                                        required>
                                 @error('data_solicitacao')
@@ -863,8 +863,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function buscarFornecedoresOmie(termo) {
         showFornecedorLoading();
         
-        // Usar a mesma API de clientes como fonte de dados
-        fetch(`/api/omie/clientes/search?search=${encodeURIComponent(termo)}`)
+        // Usar a API específica de fornecedores
+        fetch(`/api/omie/fornecedores/search?search=${encodeURIComponent(termo)}`)
             .then(response => response.json())
             .then(data => {
                 hideFornecedorLoading();

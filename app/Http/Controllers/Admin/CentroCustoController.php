@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CentroCusto;
 use App\Models\Base;
 use App\Models\Marca;
-use App\Services\OmieApiService;
+use App\Services\OmieService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;

@@ -8,8 +8,14 @@
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h3 class="text-lg font-medium text-gray-900">Clientes Omie</h3>
             <div class="flex gap-2">
-                <input type="text" id="searchInput" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Buscar clientes..." style="width: 300px;">
+                <select id="searchType" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="nome">Nome/Razão Social</option>
+                    <option value="codigo">Código Omie</option>
+                    <option value="documento">CNPJ/CPF</option>
+                </select>
+                <input type="text" id="searchInput" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Digite o termo de busca..." style="width: 300px;">
                 <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="searchClientes()">Buscar</button>
+                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500" onclick="clearSearch()">Limpar</button>
             </div>
         </div>
         <div class="p-6">
@@ -118,16 +124,29 @@
 @push('scripts')
 <script>
 function searchClientes() {
-    const searchTerm = document.getElementById('searchInput').value;
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    const searchType = document.getElementById('searchType').value;
     const url = new URL(window.location.href);
     
     if (searchTerm) {
         url.searchParams.set('search', searchTerm);
+        url.searchParams.set('search_type', searchType);
     } else {
         url.searchParams.delete('search');
+        url.searchParams.delete('search_type');
     }
     
     url.searchParams.delete('page'); // Reset pagination
+    window.location.href = url.toString();
+}
+
+function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchType').value = 'nome';
+    const url = new URL(window.location.href);
+    url.searchParams.delete('search');
+    url.searchParams.delete('search_type');
+    url.searchParams.delete('page');
     window.location.href = url.toString();
 }
 
@@ -137,6 +156,45 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
         searchClientes();
     }
 });
+
+// Manter valores dos campos após busca
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTerm = urlParams.get('search');
+    const searchType = urlParams.get('search_type');
+    
+    if (searchTerm) {
+        document.getElementById('searchInput').value = searchTerm;
+    }
+    
+    if (searchType) {
+        document.getElementById('searchType').value = searchType;
+    }
+    
+    // Atualizar placeholder baseado no tipo selecionado
+    updatePlaceholder();
+});
+
+// Atualizar placeholder quando o tipo de busca mudar
+document.getElementById('searchType').addEventListener('change', function() {
+    updatePlaceholder();
+});
+
+function updatePlaceholder() {
+    const searchType = document.getElementById('searchType').value;
+    const searchInput = document.getElementById('searchInput');
+    
+    switch(searchType) {
+        case 'codigo':
+            searchInput.placeholder = 'Digite o código Omie do cliente...';
+            break;
+        case 'documento':
+            searchInput.placeholder = 'Digite o CNPJ ou CPF...';
+            break;
+        default:
+            searchInput.placeholder = 'Digite o nome ou razão social...';
+    }
+}
 
 function showClienteDetails(omieId) {
     if (!omieId) {

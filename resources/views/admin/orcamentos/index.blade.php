@@ -28,7 +28,11 @@
                                     name="search_type">
                                 <option value="geral" {{ request('search_type', 'geral') == 'geral' ? 'selected' : '' }}>Geral</option>
                                 <option value="id_protocolo" {{ request('search_type') == 'id_protocolo' ? 'selected' : '' }}>ID Protocolo</option>
-                                <option value="cliente_omie_id" {{ request('search_type') == 'cliente_omie_id' ? 'selected' : '' }}>ID Cliente</option>
+                                <option value="cliente_omie_id" {{ request('search_type') == 'cliente_omie_id' ? 'selected' : '' }}>ID Cliente Omie</option>
+                                <option value="cliente_nome" {{ request('search_type') == 'cliente_nome' ? 'selected' : '' }}>Nome Cliente</option>
+                                <option value="cliente_documento" {{ request('search_type') == 'cliente_documento' ? 'selected' : '' }}>CPF/CNPJ Cliente</option>
+                                <option value="fornecedor_omie_id" {{ request('search_type') == 'fornecedor_omie_id' ? 'selected' : '' }}>ID Fornecedor Omie</option>
+                                <option value="fornecedor_nome" {{ request('search_type') == 'fornecedor_nome' ? 'selected' : '' }}>Nome Fornecedor</option>
                                 <option value="id_logcare" {{ request('search_type') == 'id_logcare' ? 'selected' : '' }}>Logcare</option>
                                 <option value="centro_custo_codigo" {{ request('search_type') == 'centro_custo_codigo' ? 'selected' : '' }}>Centro Custo</option>
                             </select>

@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function searchClientes(searchTerm) {
         showClienteLoading();
         
-        fetch(`/api/omie/clientes/search?q=${encodeURIComponent(searchTerm)}`)
+        fetch(`/api/omie/clientes/search?search=${encodeURIComponent(searchTerm)}`)
             .then(response => response.json())
             .then(data => {
                 hideClienteLoading();
