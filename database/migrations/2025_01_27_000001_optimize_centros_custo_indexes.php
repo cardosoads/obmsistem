@@ -11,6 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Verifica se a tabela existe antes de tentar acessá-la
+        if (!Schema::hasTable('centros_custo')) {
+            // Se a tabela não existe, pula esta migração
+            // Isso pode acontecer se as migrações anteriores não foram executadas
+            return;
+        }
+        
         // Verifica se os índices já existem antes de tentar criá-los
         $existingIndexes = collect(\DB::select("SHOW INDEX FROM centros_custo"))
             ->pluck('Key_name')
@@ -45,12 +52,32 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Verifica se a tabela existe antes de tentar remover índices
+        if (!Schema::hasTable('centros_custo')) {
+            return;
+        }
+        
         Schema::table('centros_custo', function (Blueprint $table) {
-            $table->dropIndex('centros_custo_created_at_index');
-            $table->dropIndex('centros_custo_cliente_nome_active_index');
-            $table->dropIndex('centros_custo_codigo_active_index');
-            $table->dropIndex('centros_custo_name_active_index');
-            $table->dropIndex('centros_custo_active_index');
+            // Verifica se cada índice existe antes de tentar removê-lo
+            $existingIndexes = collect(\DB::select("SHOW INDEX FROM centros_custo"))
+                ->pluck('Key_name')
+                ->toArray();
+            
+            if (in_array('centros_custo_created_at_index', $existingIndexes)) {
+                $table->dropIndex('centros_custo_created_at_index');
+            }
+            if (in_array('centros_custo_cliente_nome_active_index', $existingIndexes)) {
+                $table->dropIndex('centros_custo_cliente_nome_active_index');
+            }
+            if (in_array('centros_custo_codigo_active_index', $existingIndexes)) {
+                $table->dropIndex('centros_custo_codigo_active_index');
+            }
+            if (in_array('centros_custo_name_active_index', $existingIndexes)) {
+                $table->dropIndex('centros_custo_name_active_index');
+            }
+            if (in_array('centros_custo_active_index', $existingIndexes)) {
+                $table->dropIndex('centros_custo_active_index');
+            }
         });
     }
 };
