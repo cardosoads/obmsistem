@@ -29,28 +29,34 @@ class Setting extends Model
         $cacheKey = "setting_{$key}";
         
         return Cache::remember($cacheKey, 3600, function () use ($key, $default) {
-            $setting = static::where('key', $key)->first();
-            
-            if (!$setting) {
-                return $default;
-            }
-            
-            if ($setting->is_encrypted) {
-                try {
-                    $value = Crypt::decryptString($setting->value);
-                    // Se o valor ainda estiver serializado, deserializar
-                    if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
-                        $value = unserialize($value);
-                    }
-                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-                    // Se não conseguir descriptografar, retorna o valor padrão
+            try {
+                $setting = static::where('key', $key)->first();
+                
+                if (!$setting) {
                     return $default;
                 }
-            } else {
-                $value = $setting->value;
+                
+                if ($setting->is_encrypted) {
+                    try {
+                        $value = Crypt::decryptString($setting->value);
+                        // Se o valor ainda estiver serializado, deserializar
+                        if (is_string($value) && (strpos($value, 's:') === 0 || strpos($value, 'a:') === 0 || strpos($value, 'i:') === 0)) {
+                            $value = unserialize($value);
+                        }
+                    } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                        // Se não conseguir descriptografar, retorna o valor padrão
+                        return $default;
+                    }
+                } else {
+                    $value = $setting->value;
+                }
+                
+                return static::castValue($value, $setting->type);
+            } catch (\Exception $e) {
+                // Se a tabela não existir ou houver erro de banco, retorna o valor padrão
+                // Isso evita falhas durante migrations ou package discovery
+                return $default;
             }
-            
-            return static::castValue($value, $setting->type);
         });
     }
 
