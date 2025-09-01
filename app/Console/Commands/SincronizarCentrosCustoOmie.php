@@ -59,13 +59,16 @@ class SincronizarCentrosCustoOmie extends Command
                     ]
                 );
 
-                if (empty($response['departamentos'])) {
+                if (!$response['success'] || empty($response['data']['departamentos'])) {
                     $this->warn('Nenhum departamento encontrado na página ' . $pagina);
+                    if (!$response['success']) {
+                        $this->error('Erro na API: ' . ($response['message'] ?? 'Erro desconhecido'));
+                    }
                     break;
                 }
 
-                $totalPaginas = $response['total_de_paginas'] ?? 1;
-                $departamentos = $response['departamentos'];
+                $totalPaginas = $response['data']['total_de_paginas'] ?? 1;
+                $departamentos = $response['data']['departamentos'];
 
                 $this->info('Encontrados ' . count($departamentos) . ' departamentos na página ' . $pagina);
 
@@ -119,8 +122,10 @@ class SincronizarCentrosCustoOmie extends Command
         $inativoOmie = $departamento['inativo'] ?? 'N'; // Mantém o valor original 'S' ou 'N'
         $inativo = $inativoOmie === 'S'; // Boolean para lógica interna
 
-        // Busca centro de custo existente pelo omie_codigo
-        $centroCusto = CentroCusto::where('omie_codigo', $omieId)->first();
+        // Busca centro de custo existente pelo omie_codigo ou codigo
+        $centroCusto = CentroCusto::where('omie_codigo', $omieId)
+            ->orWhere('codigo', $codigo)
+            ->first();
 
         $dados = [
             'omie_codigo' => $omieId,
