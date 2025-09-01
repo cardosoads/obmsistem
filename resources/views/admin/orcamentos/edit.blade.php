@@ -416,7 +416,7 @@ value="{{ old('percentual_lucro', $orcamento->orcamentoPrestador->lucro_percentu
                                 <input type="number" 
                                        id="percentual_impostos"
 name="percentual_impostos"
-value="{{ old('percentual_impostos', $orcamento->orcamentoPrestador->impostos_percentual ?? '') }}"
+value="{{ old('percentual_impostos', $orcamento->orcamentoPrestador->impostos_percentual_formatado ?? '') }}"
                                        step="0.01" 
                                        min="0" 
                                        max="100"
@@ -459,6 +459,330 @@ value="{{ old('percentual_impostos', $orcamento->orcamentoPrestador->impostos_pe
                         </div>
                     </div>
 
+                    <!-- Seção do Aumento KM -->
+                    <div id="aumento_km_section" class="bg-white shadow-lg rounded-2xl mt-8 border border-gray-100" style="display: none;">
+                        <div class="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-2xl">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Dados do Aumento KM</h3>
+                                    <p class="text-sm text-gray-600">Informações para cálculo do aumento de quilometragem</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="px-8 py-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- KM por Dia -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                        KM por Dia
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">KM</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('km_dia') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="km_dia" 
+                                               name="km_dia" 
+                                               value="{{ old('km_dia', $orcamento->orcamentoAumentoKm->km_dia ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('km_dia')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Quantidade de Dias de Aumento -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Quantidade de Dias de Aumento
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <input type="number" 
+                                               step="1" 
+                                               min="0"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('qtd_dias_aumento') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="qtd_dias_aumento" 
+                                               name="qtd_dias_aumento" 
+                                               value="{{ old('qtd_dias_aumento', $orcamento->orcamentoAumentoKm->qtd_dias ?? '') }}"
+                                               placeholder="0">
+                                    </div>
+                                    @error('qtd_dias_aumento')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Combustível KM/Litro -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                        </svg>
+                                        Combustível KM/Litro
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">KM/L</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0"
+                                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('combustivel_km_litro') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="combustivel_km_litro" 
+                                               name="combustivel_km_litro" 
+                                               value="{{ old('combustivel_km_litro', $orcamento->orcamentoAumentoKm->combustivel_km_litro ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('combustivel_km_litro')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Valor Combustível -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Valor Combustível
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">R$</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('valor_combustivel') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="valor_combustivel" 
+                                               name="valor_combustivel" 
+                                               value="{{ old('valor_combustivel', $orcamento->orcamentoAumentoKm->valor_combustivel ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('valor_combustivel')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Hora Extra -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Hora Extra
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">R$</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('hora_extra') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="hora_extra" 
+                                               name="hora_extra" 
+                                               value="{{ old('hora_extra', $orcamento->orcamentoAumentoKm->hora_extra ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('hora_extra')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Pedágio -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                        Pedágio
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">R$</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0"
+                                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('pedagio') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="pedagio" 
+                                               name="pedagio" 
+                                               value="{{ old('pedagio', $orcamento->orcamentoAumentoKm->pedagio ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('pedagio')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Percentual de Lucro -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                                        </svg>
+                                        Percentual de Lucro (%)
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">%</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0" 
+                                               max="100"
+                                               class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('percentual_lucro') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="percentual_lucro_aumento" 
+                                               name="percentual_lucro" 
+                                               value="{{ old('percentual_lucro', $orcamento->orcamentoAumentoKm->lucro_percentual ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('percentual_lucro')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Grupo de Imposto -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Grupo de Imposto
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <select class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 bg-white @error('grupo_imposto_id_aumento') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                                id="grupo_imposto_id_aumento" 
+                                                name="grupo_imposto_id_aumento">
+                                            <option value="">Selecione um grupo de impostos...</option>
+                                            @foreach($gruposImpostos as $grupo)
+                                                <option value="{{ $grupo->id }}" data-percentual="{{ $grupo->percentual_total }}" {{ old('grupo_imposto_id_aumento', $orcamento->orcamentoAumentoKm->grupo_imposto_id ?? '') == $grupo->id ? 'selected' : '' }}>
+                                                    {{ $grupo->nome }} ({{ number_format($grupo->percentual_total, 2, ',', '.') }}%)
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('grupo_imposto_id_aumento')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Percentual de Impostos -->
+                                <div>
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Percentual de Impostos (%)
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">%</span>
+                                        </div>
+                                        <input type="number" 
+                                               step="0.01" 
+                                               min="0" 
+                                               max="100"
+                                               class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-400 @error('percentual_impostos') border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200 @enderror" 
+                                               id="percentual_impostos_aumento" 
+                                               name="percentual_impostos" 
+                                               value="{{ old('percentual_impostos', $orcamento->orcamentoAumentoKm->impostos_percentual ?? '') }}"
+                                               placeholder="0,00">
+                                    </div>
+                                    @error('percentual_impostos')
+                                        <div class="flex items-center mt-2 text-sm text-red-600">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Valor Total Calculado -->
+                                <div class="md:col-span-2 lg:col-span-3">
+                                    <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Valor Total Calculado
+                                    </label>
+                                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                                        <div class="text-2xl font-bold text-green-600" id="valor_total_aumento_km">R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_total ?? 0, 2, ',', '.') }}</div>
+                                        <div class="text-sm text-gray-600 mt-1">Cálculo baseado nos valores informados</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Observações -->
                     <div class="bg-gray-50 rounded-lg p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Observações</h3>
@@ -480,6 +804,10 @@ value="{{ old('percentual_impostos', $orcamento->orcamentoPrestador->impostos_pe
                     <!-- Campos Hidden para Valores Calculados -->
                     <input type="hidden" id="valor_lucro_hidden" name="valor_lucro" value="{{ old('valor_lucro', $orcamento->orcamentoPrestador->valor_lucro ?? 0) }}">
                     <input type="hidden" id="valor_impostos_hidden" name="valor_impostos" value="{{ old('valor_impostos', $orcamento->orcamentoPrestador->valor_impostos ?? 0) }}">
+                    
+                    <!-- Campos Hidden para Valores Calculados - Aumento KM -->
+                    <input type="hidden" id="valor_lucro_aumento_hidden" name="valor_lucro_aumento" value="{{ old('valor_lucro_aumento', $orcamento->orcamentoAumentoKm->valor_lucro ?? 0) }}">
+                    <input type="hidden" id="valor_impostos_aumento_hidden" name="valor_impostos_aumento" value="{{ old('valor_impostos_aumento', $orcamento->orcamentoAumentoKm->valor_impostos ?? 0) }}">
 
                     <!-- Botões de Ação -->
                     <div class="flex justify-end space-x-3 pt-6">
@@ -499,7 +827,11 @@ value="{{ old('percentual_impostos', $orcamento->orcamentoPrestador->impostos_pe
             </div>
         </div>
     </div>
-</div>
+
+
+
+
+
 
 @push('scripts')
 <script>
@@ -541,19 +873,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Atualizar na inicialização
     updateFrequenciaAtendimento();
     
-    // Controle de exibição da seção Dados do Prestador
+    // Controle de exibição das seções baseado no tipo de orçamento
     const tipoOrcamentoSelect = document.getElementById('tipo_orcamento');
     const dadosPrestadorDiv = document.getElementById('dados_prestador');
+    const aumentoKmSection = document.getElementById('aumento_km_section');
     
     function toggleDadosPrestador() {
-        if (tipoOrcamentoSelect.value === 'prestador') {
+        // Ocultar todas as seções primeiro
+        if (dadosPrestadorDiv) dadosPrestadorDiv.style.display = 'none';
+        if (aumentoKmSection) aumentoKmSection.style.display = 'none';
+        
+        // Mostrar seção apropriada baseada no tipo selecionado
+        if (tipoOrcamentoSelect.value === 'prestador' && dadosPrestadorDiv) {
             dadosPrestadorDiv.style.display = 'block';
-        } else {
-            dadosPrestadorDiv.style.display = 'none';
+        } else if (tipoOrcamentoSelect.value === 'aumento_km' && aumentoKmSection) {
+            aumentoKmSection.style.display = 'block';
         }
     }
     
     tipoOrcamentoSelect.addEventListener('change', toggleDadosPrestador);
+    
+    // Executar toggle inicial para mostrar a seção correta ao carregar a página
+    toggleDadosPrestador();
     
     // Cálculos automáticos para prestador
     const valorReferenciaInput = document.getElementById('valor_referencia');
@@ -611,7 +952,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (valor > 100) {
             valor = 100;
         }
-        input.value = valor.toFixed(2);
+        // Não arredondar o valor, manter a precisão original
+        input.value = valor;
     }
     
     // Adicionar event listeners para cálculos automáticos
@@ -625,7 +967,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (percentualImpostosInput) {
         percentualImpostosInput.addEventListener('input', function() {
-            formatarPercentual(this);
+            // Permitir edição livre do valor sem formatação/arredondamento
             calcularValoresPrestador();
         });
     }
@@ -651,14 +993,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success && percentualImpostosInput) {
-                        percentualImpostosInput.value = data.percentual_total;
-                        formatarPercentual(percentualImpostosInput);
+                    if (data.percentual !== undefined && percentualImpostosInput) {
+                        // Formatar o valor com 2 casas decimais para evitar problemas de precisão
+                        percentualImpostosInput.value = parseFloat(data.percentual).toFixed(2);
+                        // Não chamar formatarPercentual para evitar arredondamento
                         calcularValoresPrestador();
                         
                         console.log('Grupo de impostos selecionado:', {
-                            nome: data.nome_grupo,
-                            percentual: data.percentual_total,
+                            nome: data.nome,
+                            percentual: data.percentual,
                             impostos: data.impostos
                         });
                     }
@@ -669,8 +1012,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Fallback: usar o percentual do data-attribute
                     const percentual = selectedOption.getAttribute('data-percentual');
                     if (percentual && percentualImpostosInput) {
-                        percentualImpostosInput.value = percentual;
-                        formatarPercentual(percentualImpostosInput);
+                        percentualImpostosInput.value = parseFloat(percentual).toFixed(2);
+                        // Não formatar para manter precisão original
                         calcularValoresPrestador();
                     }
                 });
@@ -906,6 +1249,119 @@ document.addEventListener('DOMContentLoaded', function() {
             id: fornecedor.omie_id || fornecedor.id || fornecedor.codigo_fornecedor_omie,
             nome: fornecedor.razao_social || fornecedor.nome_fantasia || fornecedor.nome
         });
+    }
+    
+    // Função para formatar valores em moeda brasileira
+    function formatarMoeda(valor) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor || 0);
+    }
+    
+    // Cálculos automáticos do Aumento KM
+    const kmDiaInput = document.getElementById('km_dia');
+    const qtdDiasAumentoInput = document.getElementById('qtd_dias_aumento');
+    const combustivelKmLitroInput = document.getElementById('combustivel_km_litro');
+    const valorCombustivelInput = document.getElementById('valor_combustivel');
+    const horaExtraInput = document.getElementById('hora_extra');
+    const pedagioInput = document.getElementById('pedagio');
+    const lucroPercentualAumentoInput = document.getElementById('percentual_lucro_aumento');
+    const grupoImpostoIdAumentoSelect = document.getElementById('grupo_imposto_id_aumento');
+    const impostosPercentualAumentoInput = document.getElementById('percentual_impostos_aumento');
+    const valorTotalAumentoKmDisplay = document.getElementById('valor_total_aumento_km');
+    const valorLucroAumentoHidden = document.getElementById('valor_lucro_aumento_hidden');
+    const valorImpostosAumentoHidden = document.getElementById('valor_impostos_aumento_hidden');
+    
+    // Função para atualizar percentual de impostos baseado no grupo selecionado (Aumento KM)
+    if (grupoImpostoIdAumentoSelect) {
+        grupoImpostoIdAumentoSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.dataset.percentual && impostosPercentualAumentoInput) {
+                const percentual = parseFloat(selectedOption.dataset.percentual) || 0;
+                impostosPercentualAumentoInput.value = parseFloat(percentual).toFixed(2);
+                calcularValoresAumentoKm();
+            } else if (impostosPercentualAumentoInput) {
+                impostosPercentualAumentoInput.value = '';
+                calcularValoresAumentoKm();
+            }
+        });
+    }
+    
+    function calcularValoresAumentoKm() {
+        const kmDia = parseFloat(kmDiaInput?.value) || 0;
+        const qtdDiasAumento = parseInt(qtdDiasAumentoInput?.value) || 0;
+        const combustivelKmLitro = parseFloat(combustivelKmLitroInput?.value) || 0;
+        const valorCombustivel = parseFloat(valorCombustivelInput?.value) || 0;
+        const horaExtra = parseFloat(horaExtraInput?.value) || 0;
+        const pedagio = parseFloat(pedagioInput?.value) || 0;
+        const lucroPercentual = parseFloat(lucroPercentualAumentoInput?.value) || 0;
+        const impostosPercentual = parseFloat(impostosPercentualAumentoInput?.value) || 0;
+        
+        // Cálculo básico: KM total do mês
+        const kmTotalMes = kmDia * qtdDiasAumento;
+        
+        // Cálculo do combustível total
+        const totalCombustivel = combustivelKmLitro > 0 ? kmTotalMes / combustivelKmLitro : 0;
+        
+        // Custo total combustível + hora extra + pedágio
+        const custoTotalCombustivelHe = (totalCombustivel * valorCombustivel) + horaExtra + pedagio;
+        
+        // Calcular lucro
+        const valorLucro = custoTotalCombustivelHe * (lucroPercentual / 100);
+        
+        // Subtotal com lucro
+        const subtotalComLucro = custoTotalCombustivelHe + valorLucro;
+        
+        // Calcular impostos
+        const valorImpostos = subtotalComLucro * (impostosPercentual / 100);
+        
+        // Valor total final
+        const valorTotal = subtotalComLucro + valorImpostos;
+        
+        // Atualizar display
+        if (valorTotalAumentoKmDisplay) {
+            valorTotalAumentoKmDisplay.textContent = formatarMoeda(valorTotal);
+        }
+        
+        // Atualizar campos hidden com valores calculados
+        if (valorLucroAumentoHidden) {
+            valorLucroAumentoHidden.value = valorLucro.toFixed(2);
+        }
+        if (valorImpostosAumentoHidden) {
+            valorImpostosAumentoHidden.value = valorImpostos.toFixed(2);
+        }
+        
+        // Atualizar campo valor_total do orçamento principal se for aumento_km
+        const valorTotalPrincipal = document.getElementById('valor_total');
+        if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'aumento_km' && valorTotalPrincipal) {
+            valorTotalPrincipal.value = valorTotal.toFixed(2);
+        }
+    }
+    
+    // Event listeners para cálculos automáticos do Aumento KM
+    if (kmDiaInput) kmDiaInput.addEventListener('input', calcularValoresAumentoKm);
+    if (qtdDiasAumentoInput) qtdDiasAumentoInput.addEventListener('input', calcularValoresAumentoKm);
+    if (combustivelKmLitroInput) combustivelKmLitroInput.addEventListener('input', calcularValoresAumentoKm);
+    if (valorCombustivelInput) valorCombustivelInput.addEventListener('input', calcularValoresAumentoKm);
+    if (horaExtraInput) horaExtraInput.addEventListener('input', calcularValoresAumentoKm);
+    if (pedagioInput) pedagioInput.addEventListener('input', calcularValoresAumentoKm);
+    if (lucroPercentualAumentoInput) {
+        lucroPercentualAumentoInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresAumentoKm();
+        });
+    }
+    if (impostosPercentualAumentoInput) {
+        impostosPercentualAumentoInput.addEventListener('input', function() {
+            formatarPercentual(this);
+            calcularValoresAumentoKm();
+        });
+    }
+    
+    // Calcular valores iniciais do Aumento KM quando a página carregar
+    if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'aumento_km') {
+        calcularValoresAumentoKm();
     }
 });
 </script>

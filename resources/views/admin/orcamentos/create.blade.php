@@ -799,8 +799,7 @@
                                                    id="impostos_percentual_aumento" 
                                                    name="impostos_percentual_aumento" 
                                                    value="{{ old('impostos_percentual_aumento') }}"
-                                                   placeholder="0,00" 
-                                                   readonly>
+                                                   placeholder="0,00">
                                         </div>
                                         @error('impostos_percentual_aumento')
                                             <div class="flex items-center mt-2 text-sm text-red-600">
@@ -1403,6 +1402,10 @@
                         <!-- Campos hidden para valores calculados -->
                         <input type="hidden" id="valor_lucro_hidden" name="valor_lucro" value="0">
                         <input type="hidden" id="valor_impostos_hidden" name="valor_impostos" value="0">
+                        
+                        <!-- Campos hidden para valores calculados do Aumento KM -->
+                        <input type="hidden" id="valor_lucro_aumento_hidden" name="valor_lucro_aumento" value="0">
+                        <input type="hidden" id="valor_impostos_aumento_hidden" name="valor_impostos_aumento" value="0">
                     </div>
 
                     <div class="px-6 py-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 rounded-b-lg">
@@ -1755,7 +1758,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (percentualImpostosInput) {
         percentualImpostosInput.addEventListener('input', function() {
-            formatarPercentual(this);
+            // Permitir edição livre do valor sem formatação/arredondamento
             calcularValoresPrestador();
         });
     }
@@ -1785,8 +1788,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.percentual !== undefined && percentualImpostosInput) {
-                        percentualImpostosInput.value = data.percentual;
-                        formatarPercentual(percentualImpostosInput);
+                        percentualImpostosInput.value = parseFloat(data.percentual).toFixed(2);
+                        // Não formatar para manter precisão original
                         calcularValoresPrestador();
                     }
                 })
@@ -1795,8 +1798,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Fallback: usar o atributo data-percentual se disponível
                     const selectedOption = this.options[this.selectedIndex];
                     if (selectedOption && selectedOption.dataset.percentual && percentualImpostosInput) {
-                        percentualImpostosInput.value = selectedOption.dataset.percentual;
-                        formatarPercentual(percentualImpostosInput);
+                        percentualImpostosInput.value = parseFloat(selectedOption.dataset.percentual).toFixed(2);
+                        // Não formatar para manter precisão original
                         calcularValoresPrestador();
                     }
                 });
@@ -1872,6 +1875,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Atualizar display
         if (valorTotalAumentoKmDisplay) {
             valorTotalAumentoKmDisplay.textContent = formatarMoeda(valorTotal);
+        }
+        
+        // Atualizar campos hidden com valores calculados
+        const valorLucroAumentoHidden = document.getElementById('valor_lucro_aumento_hidden');
+        const valorImpostosAumentoHidden = document.getElementById('valor_impostos_aumento_hidden');
+        if (valorLucroAumentoHidden) {
+            valorLucroAumentoHidden.value = valorLucro.toFixed(2);
+        }
+        if (valorImpostosAumentoHidden) {
+            valorImpostosAumentoHidden.value = valorImpostos.toFixed(2);
         }
         
         // Atualizar campo valor_total do orçamento principal se for aumento_km

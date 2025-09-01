@@ -421,11 +421,39 @@
                             <div class="space-y-4">
                                 <!-- Custo Base -->
                                 <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                                    <span class="text-gray-700 font-medium">Custo Total (Combustível + Hora Extra)</span>
+                                    <span class="text-gray-700 font-medium">Custo Total (Combustível + Hora Extra + Pedágio)</span>
                                     <span class="text-lg font-semibold text-gray-900">R$ {{ number_format($orcamento->orcamentoAumentoKm->custo_total_combustivel_he, 2, ',', '.') }}</span>
                                 </div>
                                 
+                                <!-- Percentuais -->
+                                @if($orcamento->orcamentoAumentoKm->lucro_percentual)
+                                <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                                    <span class="text-gray-700 font-medium">Percentual de Lucro</span>
+                                    <span class="text-yellow-600 font-bold text-lg">{{ number_format($orcamento->orcamentoAumentoKm->lucro_percentual, 2, ',', '.') }}%</span>
+                                </div>
+                                @endif
+                                
+                                @if($orcamento->orcamentoAumentoKm->impostos_percentual)
+                                <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                                    <span class="text-gray-700 font-medium">Percentual de Impostos</span>
+                                    <span class="text-red-600 font-bold text-lg">{{ number_format($orcamento->orcamentoAumentoKm->impostos_percentual, 2, ',', '.') }}%</span>
+                                </div>
+                                @endif
 
+                                <!-- Valores Calculados -->
+                                @if($orcamento->orcamentoAumentoKm->valor_lucro)
+                                <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                                    <span class="text-gray-700 font-medium">Valor do Lucro</span>
+                                    <span class="text-lg font-semibold text-yellow-600">+ R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_lucro, 2, ',', '.') }}</span>
+                                </div>
+                                @endif
+                                
+                                @if($orcamento->orcamentoAumentoKm->valor_impostos)
+                                <div class="flex justify-between items-center py-3 border-b border-gray-200">
+                                    <span class="text-gray-700 font-medium">Valor dos Impostos</span>
+                                    <span class="text-lg font-semibold text-red-600">+ R$ {{ number_format($orcamento->orcamentoAumentoKm->valor_impostos, 2, ',', '.') }}</span>
+                                </div>
+                                @endif
                                 
                                 <!-- Total -->
                                 <div class="flex justify-between items-center py-4 bg-green-100 rounded-lg px-4 mt-4">

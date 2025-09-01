@@ -52,6 +52,14 @@ class OrcamentoPrestador extends Model
     }
 
     /**
+     * Accessor para formatar o percentual de impostos
+     */
+    public function getImpostosPercentualFormatadoAttribute(): string
+    {
+        return number_format($this->impostos_percentual, 2, '.', '');
+    }
+
+    /**
      * Calcula o custo do fornecedor (valor_referencia * qtd_dias)
      */
     public function calcularCustoFornecedor(): float

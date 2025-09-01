@@ -174,18 +174,18 @@ class OmieController extends Controller
     public function consultarCliente($omieId)
     {
         try {
-            $response = $this->omieService->consultarCliente($omieId);
+            $data = $this->omieService->consultarCliente($omieId);
             
-            if (!$response['success']) {
+            if (empty($data)) {
                 return response()->json([
                     'success' => false,
-                    'message' => $response['message']
-                ], 400);
+                    'message' => 'Cliente não encontrado'
+                ], 404);
             }
             
             return response()->json([
                 'success' => true,
-                'data' => $response['data']
+                'data' => $data
             ]);
             
         } catch (Exception $e) {

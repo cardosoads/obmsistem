@@ -41,6 +41,8 @@ Route::middleware(['admin.auth'])->group(function () {
     
 
     
+
+    
     // Usuários
     Route::resource('admin/users', UserController::class, [
         'names' => [

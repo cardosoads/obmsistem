@@ -41,32 +41,9 @@ class CentroCustoController extends Controller
             }
         }
         
-        // Filtro de sincronização
-        if ($request->filled('sync_status')) {
-            if ($request->sync_status === 'sincronizado') {
-                $query->sincronizados();
-            } elseif ($request->sync_status === 'nao_sincronizado') {
-                $query->naoSincronizados();
-            } elseif ($request->sync_status === 'precisa_preenchimento') {
-                $query->sincronizados()->where(function($q) {
-                    $q->whereNull('name')
-                      ->orWhereNull('description')
-                      ->orWhereNull('base_id')
-                      ->orWhereNull('marca_id');
-                });
-            }
-        }
+
         
-        // Filtro de status Omie
-        if ($request->filled('omie_status')) {
-            if ($request->omie_status === 'ativo_omie') {
-                $query->ativosOmie();
-            } elseif ($request->omie_status === 'inativo_omie') {
-                $query->inativosOmie();
-            }
-        }
-        
-        $centrosCusto = $query->latest('sincronizado_em')->paginate(15);
+        $centrosCusto = $query->latest('updated_at')->paginate(15);
         
         return view('admin.centros-custo.index', compact('centrosCusto'));
     }

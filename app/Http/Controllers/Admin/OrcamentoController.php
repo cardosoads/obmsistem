@@ -158,6 +158,10 @@ class OrcamentoController extends Controller
             'hora_extra' => 'nullable|numeric|min:0',
             'pedagio' => 'nullable|numeric|min:0',
             'grupo_imposto_id_aumento' => 'nullable|exists:grupos_impostos,id',
+            'lucro_percentual_aumento' => 'nullable|numeric|min:0|max:100',
+            'impostos_percentual_aumento' => 'nullable|numeric|min:0|max:100',
+            'valor_lucro_aumento' => 'nullable|numeric|min:0',
+            'valor_impostos_aumento' => 'nullable|numeric|min:0',
             // Campos específicos do Próprio Nova Rota
             'nova_origem' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
             'novo_destino' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
@@ -196,7 +200,13 @@ class OrcamentoController extends Controller
      */
     public function show(Orcamento $orcamento)
     {
-        $orcamento->load(['centroCusto', 'user']);
+        $orcamento->load([
+            'centroCusto', 
+            'user',
+            'orcamentoPrestador.grupoImposto',
+            'orcamentoAumentoKm.grupoImposto',
+            'orcamentoProprioNovaRota'
+        ]);
         
         return view('admin.orcamentos.show', compact('orcamento'));
     }
@@ -225,6 +235,9 @@ class OrcamentoController extends Controller
      */
     public function update(Request $request, Orcamento $orcamento)
     {
+        // DEBUG: Log dos dados recebidos
+        \Log::info('Dados recebidos no update:', $request->all());
+        
         $validated = $request->validate([
             'data_solicitacao' => 'required|date',
             'centro_custo_id' => 'required|exists:centros_custo,id',
@@ -250,7 +263,19 @@ class OrcamentoController extends Controller
             'percentual_impostos' => 'nullable|numeric|min:0|max:100',
             'valor_impostos' => 'nullable|numeric|min:0',
             'valor_total' => 'nullable|numeric|min:0',
-            'grupo_imposto_id' => 'nullable|exists:grupos_impostos,id'
+            'grupo_imposto_id' => 'nullable|exists:grupos_impostos,id',
+            // Campos específicos do Aumento KM
+            'km_dia' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
+            'qtd_dias_aumento' => 'required_if:tipo_orcamento,aumento_km|nullable|integer|min:1',
+            'combustivel_km_litro' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
+            'valor_combustivel' => 'required_if:tipo_orcamento,aumento_km|nullable|numeric|min:0',
+            'hora_extra' => 'nullable|numeric|min:0',
+            'pedagio' => 'nullable|numeric|min:0',
+            'grupo_imposto_id_aumento' => 'nullable|exists:grupos_impostos,id',
+            'lucro_percentual_aumento' => 'nullable|numeric|min:0|max:100',
+            'impostos_percentual_aumento' => 'nullable|numeric|min:0|max:100',
+            'valor_lucro_aumento' => 'nullable|numeric|min:0',
+            'valor_impostos_aumento' => 'nullable|numeric|min:0'
         ]);
 
         try {
@@ -588,13 +613,13 @@ class OrcamentoController extends Controller
             return response()->json(['percentual' => 0]);
         }
         
-        // Calcular percentual total dos impostos do grupo
-        $percentualTotal = $grupoImposto->impostos->sum('percentual');
+        // Calcular percentual total dos impostos ativos do grupo
+        $percentualTotal = $grupoImposto->impostosAtivos->sum('percentual');
         
         return response()->json([
             'percentual' => $percentualTotal,
             'nome' => $grupoImposto->nome,
-            'impostos' => $grupoImposto->impostos->map(function($imposto) {
+            'impostos' => $grupoImposto->impostosAtivos->map(function($imposto) {
                 return [
                     'nome' => $imposto->nome,
                     'percentual' => $imposto->percentual
@@ -616,8 +641,10 @@ class OrcamentoController extends Controller
             'valor_combustivel' => $validated['valor_combustivel'] ?? 0,
             'hora_extra' => $validated['hora_extra'] ?? 0,
             'pedagio' => $validated['pedagio'] ?? 0,
-            'lucro_percentual' => $validated['percentual_lucro'] ?? 0,
-            'impostos_percentual' => $validated['percentual_impostos'] ?? 0,
+            'lucro_percentual' => $validated['lucro_percentual_aumento'] ?? 0,
+            'impostos_percentual' => $validated['impostos_percentual_aumento'] ?? 0,
+            'valor_lucro' => $validated['valor_lucro_aumento'] ?? 0,
+            'valor_impostos' => $validated['valor_impostos_aumento'] ?? 0,
             'grupo_imposto_id' => $validated['grupo_imposto_id_aumento'] ?? null,
             'observacoes' => $validated['observacoes'] ?? null
         ];
@@ -718,6 +745,9 @@ class OrcamentoController extends Controller
       */
      private function atualizarOrcamentoAumentoKm(Orcamento $orcamento, array $validated)
      {
+         // DEBUG: Log dos dados validados para aumento KM
+         \Log::info('Dados validados para aumento KM:', $validated);
+         
          $aumentoKmData = [
              'km_dia' => $validated['km_dia'] ?? 0,
              'qtd_dias' => $validated['qtd_dias_aumento'] ?? 1,
@@ -725,11 +755,16 @@ class OrcamentoController extends Controller
              'valor_combustivel' => $validated['valor_combustivel'] ?? 0,
              'hora_extra' => $validated['hora_extra'] ?? 0,
              'pedagio' => $validated['pedagio'] ?? 0,
-             'lucro_percentual' => $validated['percentual_lucro'] ?? 0,
-             'impostos_percentual' => $validated['percentual_impostos'] ?? 0,
+             'lucro_percentual' => $validated['lucro_percentual_aumento'] ?? 0,
+             'impostos_percentual' => $validated['impostos_percentual_aumento'] ?? 0,
+             'valor_lucro' => $validated['valor_lucro_aumento'] ?? 0,
+             'valor_impostos' => $validated['valor_impostos_aumento'] ?? 0,
              'grupo_imposto_id' => $validated['grupo_imposto_id_aumento'] ?? null,
              'observacoes' => $validated['observacoes'] ?? null
          ];
+         
+         // DEBUG: Log dos dados que serão salvos
+         \Log::info('Dados que serão salvos no aumento KM:', $aumentoKmData);
 
          $orcamentoAumentoKm = $orcamento->orcamentoAumentoKm;
          
