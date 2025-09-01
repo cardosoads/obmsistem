@@ -475,7 +475,7 @@ class OmieService
     /**
      * Método genérico para fazer requisições à API Omie
      */
-    private function makeRequest(string $endpoint, string $call, array $param = []): array
+    public function makeRequest(string $endpoint, string $call, array $param = []): array
     {
         $startTime = microtime(true);
         

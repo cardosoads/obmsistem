@@ -6,7 +6,13 @@
 <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Centros de Custo</h1>
-
+        
+        <button onclick="sincronizarCentrosCusto()" 
+                id="btnSincronizar"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200 flex items-center">
+            <i class="fas fa-sync-alt mr-2" id="iconSincronizar"></i>
+            <span id="textSincronizar">Sincronizar com Omie</span>
+        </button>
     </div>
 
     <!-- Filtros -->
@@ -183,6 +189,52 @@ function toggleStatus(id, status) {
     }
 }
 
-
+function sincronizarCentrosCusto() {
+    const btnSincronizar = document.getElementById('btnSincronizar');
+    const iconSincronizar = document.getElementById('iconSincronizar');
+    const textSincronizar = document.getElementById('textSincronizar');
+    
+    // Desabilita o botão e mostra loading
+    btnSincronizar.disabled = true;
+    btnSincronizar.classList.add('opacity-50', 'cursor-not-allowed');
+    iconSincronizar.classList.add('fa-spin');
+    textSincronizar.textContent = 'Sincronizando...';
+    
+    fetch('/admin/centros-custo/sincronizar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mostra mensagem de sucesso com estatísticas
+            let message = 'Sincronização concluída com sucesso!';
+            if (data.data) {
+                message += `\n\nEstatísticas:`;
+                message += `\n• Total processados: ${data.data.total_processados}`;
+                message += `\n• Novos: ${data.data.novos}`;
+                message += `\n• Atualizados: ${data.data.atualizados}`;
+            }
+            alert(message);
+            location.reload();
+        } else {
+            alert('Erro durante a sincronização: ' + (data.message || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro de conexão durante a sincronização.');
+    })
+    .finally(() => {
+        // Reabilita o botão
+        btnSincronizar.disabled = false;
+        btnSincronizar.classList.remove('opacity-50', 'cursor-not-allowed');
+        iconSincronizar.classList.remove('fa-spin');
+        textSincronizar.textContent = 'Sincronizar com Omie';
+    });
+}
 </script>
 @endsection
