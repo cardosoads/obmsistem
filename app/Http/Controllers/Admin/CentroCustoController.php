@@ -188,10 +188,14 @@ class CentroCustoController extends Controller
     /**
      * Alterna o status ativo/inativo do centro de custo
      */
-    public function toggleStatus(CentroCusto $centroCusto)
+    public function toggleStatus(Request $request, CentroCusto $centroCusto)
     {
         try {
-            $centroCusto->update(['active' => !$centroCusto->active]);
+            $validated = $request->validate([
+                'active' => 'required|boolean'
+            ]);
+            
+            $centroCusto->update(['active' => $validated['active']]);
             
             $status = $centroCusto->active ? 'ativado' : 'desativado';
             

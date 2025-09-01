@@ -132,7 +132,7 @@ Route::middleware(['admin.auth'])->group(function () {
             'centros-custo' => 'centroCusto'
         ]
     ]);
-    Route::patch('/admin/centros-custo/{centroCusto}/status', [CentroCustoController::class, 'toggleStatus'])->name('admin.centros-custo.toggle-status');
+    Route::patch('/admin/centros-custo/{centroCusto}/toggle-status', [CentroCustoController::class, 'toggleStatus'])->name('admin.centros-custo.toggle-status');
     Route::get('/admin/centros-custo/base/{base}/data', [CentroCustoController::class, 'getBaseData'])->name('admin.centros-custo.base-data');
     Route::post('/admin/centros-custo/sincronizar', [CentroCustoController::class, 'sincronizar'])->name('admin.centros-custo.sincronizar');
     
