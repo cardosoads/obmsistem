@@ -36,7 +36,8 @@
             <nav class="flex-1 overflow-y-auto py-6 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent" x-data="{ 
                 cadastrosOpen: {{ request()->routeIs('admin.bases*', 'admin.marcas*') ? 'true' : 'false' }},
                 omieOpen: {{ request()->routeIs('admin.omie*') ? 'true' : 'false' }},
-                financeirosOpen: {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*', 'admin.grupos-impostos*') ? 'true' : 'false' }}
+                financeirosOpen: {{ request()->routeIs('admin.centros-custo*', 'admin.impostos*', 'admin.grupos-impostos*') ? 'true' : 'false' }},
+                frotasOpen: {{ request()->routeIs('admin.tipos-veiculos*', 'admin.frotas*', 'admin.combustiveis*') ? 'true' : 'false' }}
             }">
                 <div class="px-4 space-y-3">
                     <!-- Dashboard -->
@@ -159,6 +160,54 @@
                         </div>
                     </a>
                     
+                    <!-- Recursos Humanos -->
+                    <a href="{{ route('admin.recursos-humanos.index') }}" 
+                       class="group flex items-center px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-teal-600/20 hover:to-cyan-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg {{ request()->routeIs('admin.recursos-humanos*') ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-500/25' : '' }}">
+                        <i class="fas fa-user-tie w-5 h-5 mr-3"></i>
+                        <span class="font-medium">Recursos Humanos</span>
+                        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <i class="fas fa-chevron-right w-3 h-3"></i>
+                        </div>
+                    </a>
+                    
+                    <!-- Frotas e Veículos -->
+                    <div class="space-y-2">
+                        <button @click="frotasOpen = !frotasOpen" 
+                                class="group w-full flex items-center justify-between px-4 py-3 text-slate-300 rounded-xl hover:bg-gradient-to-r hover:from-orange-600/20 hover:to-red-600/20 hover:text-white transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('admin.tipos-veiculos*', 'admin.frotas*', 'admin.combustiveis*') ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg shadow-orange-500/25' : '' }}">
+                            <div class="flex items-center">
+                                <i class="fas fa-truck w-5 h-5 mr-3"></i>
+                                <span class="font-medium">Frotas e Veículos</span>
+                            </div>
+                            <i class="fas fa-chevron-down w-4 h-4 transition-all duration-300 group-hover:text-orange-300" :class="{ 'rotate-180': frotasOpen }"></i>
+                        </button>
+                        
+                        <div x-show="frotasOpen" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform -translate-y-2"
+                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform translate-y-0"
+                             x-transition:leave-end="opacity-0 transform -translate-y-2"
+                             class="ml-6 space-y-2 border-l-2 border-slate-700 pl-4">
+
+                            <a href="{{ route('admin.tipos-veiculos.index') }}" 
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-orange-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.tipos-veiculos*') ? 'bg-slate-700 text-orange-300 border-l-2 border-orange-500' : '' }}">
+                                <i class="fas fa-car w-4 h-4 mr-3 group-hover:text-orange-400"></i>
+                                <span>Tipos de Veículos</span>
+                            </a>
+                            <a href="{{ route('admin.frotas.index') }}" 
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-orange-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.frotas*') ? 'bg-slate-700 text-orange-300 border-l-2 border-orange-500' : '' }}">
+                                <i class="fas fa-truck-moving w-4 h-4 mr-3 group-hover:text-orange-400"></i>
+                                <span>Frotas</span>
+                            </a>
+                            <a href="{{ route('admin.combustiveis.index') }}" 
+                               class="group flex items-center px-3 py-2 text-sm text-slate-400 rounded-lg hover:bg-slate-700/50 hover:text-orange-300 transition-all duration-200 transform hover:translate-x-1 {{ request()->routeIs('admin.combustiveis*') ? 'bg-slate-700 text-orange-300 border-l-2 border-orange-500' : '' }}">
+                                <i class="fas fa-gas-pump w-4 h-4 mr-3 group-hover:text-orange-400"></i>
+                                <span>Combustíveis</span>
+                            </a>
+                        </div>
+                    </div>
+                    
                     <!-- Divisor -->
                     <div class="relative my-6">
                         <div class="border-t border-slate-700"></div>
@@ -240,7 +289,42 @@
         
         <!-- Main content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-
+            <!-- Top Bar -->
+            <header class="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-6 flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <!-- Mobile menu toggle -->
+                    <button @click="sidebarOpen = !sidebarOpen" 
+                            class="lg:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-bars w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Back button -->
+                    <button onclick="history.back()" 
+                            class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 transform hover:scale-105" 
+                            title="Voltar">
+                        <i class="fas fa-arrow-left w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Page title -->
+                    <h1 class="text-xl font-semibold text-gray-900">@yield('page-title', 'Dashboard')</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- User info -->
+                    <div class="flex items-center space-x-3">
+                        <div class="hidden sm:block text-right">
+                            <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
+                            <p class="text-xs text-gray-500">{{ ucfirst(auth()->user()->role) }}</p>
+                        </div>
+                        <div class="relative">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+                                <span class="text-xs font-bold text-white">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                            </div>
+                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
             
             <!-- Page content -->
             <main class="flex-1 overflow-y-auto bg-gray-50">

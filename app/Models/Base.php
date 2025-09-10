@@ -29,6 +29,22 @@ class Base extends Model
 
 
     /**
+     * Relacionamento com combustíveis
+     */
+    public function combustiveis(): HasMany
+    {
+        return $this->hasMany(Combustivel::class);
+    }
+
+    /**
+     * Relacionamento com centros de custo
+     */
+    public function centrosCusto(): HasMany
+    {
+        return $this->hasMany(CentroCusto::class);
+    }
+
+    /**
      * Scope para bases ativas
      */
     public function scopeActive($query)

@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
             CentroCustoSeeder::class,
             GrupoImpostoSeeder::class,
             ImpostosSeeder::class,
+            // Módulo de Frotas e Veículos
+            TipoVeiculoSeeder::class,
+            FrotaSeeder::class,
+            CombustivelSeeder::class,
         ]);
     }
 }

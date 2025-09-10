@@ -17,6 +17,10 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\OrcamentoController;
 use App\Http\Controllers\Admin\ImpostoController;
 use App\Http\Controllers\Admin\GrupoImpostoController;
+use App\Http\Controllers\RecursoHumanoController;
+use App\Http\Controllers\TipoVeiculoController;
+use App\Http\Controllers\FrotaController;
+use App\Http\Controllers\CombustivelController;
 
 // Rota de login (página inicial)
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -169,6 +173,77 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/grupos-impostos/{gruposImposto}/breakdown', [GrupoImpostoController::class, 'breakdown'])->name('admin.grupos-impostos.breakdown');
     Route::get('/admin/grupos-impostos/search', [GrupoImpostoController::class, 'search'])->name('admin.grupos-impostos.search');
     Route::get('/admin/grupos-impostos/impostos-disponiveis', [GrupoImpostoController::class, 'impostosDisponiveis'])->name('admin.grupos-impostos.impostos-disponiveis');
+
+    // Recursos Humanos
+    Route::resource('admin/recursos-humanos', RecursoHumanoController::class, [
+        'names' => [
+            'index' => 'admin.recursos-humanos.index',
+            'create' => 'admin.recursos-humanos.create',
+            'store' => 'admin.recursos-humanos.store',
+            'show' => 'admin.recursos-humanos.show',
+            'edit' => 'admin.recursos-humanos.edit',
+            'update' => 'admin.recursos-humanos.update',
+            'destroy' => 'admin.recursos-humanos.destroy'
+        ],
+        'parameters' => [
+            'recursos-humanos' => 'recursoHumano'
+        ]
+    ]);
+    Route::patch('/admin/recursos-humanos/{recursoHumano}/toggle-status', [RecursoHumanoController::class, 'toggleStatus'])->name('admin.recursos-humanos.toggle-status');
+    Route::post('/admin/recursos-humanos/{recursoHumano}/recalcular', [RecursoHumanoController::class, 'recalcular'])->name('admin.recursos-humanos.recalcular');
+    Route::get('/admin/recursos-humanos/relatorio', [RecursoHumanoController::class, 'relatorio'])->name('admin.recursos-humanos.relatorio');
+
+    // Módulo de Frotas e Veículos
+    
+    // Tipos de Veículos
+    Route::resource('admin/tipos-veiculos', TipoVeiculoController::class, [
+        'names' => [
+            'index' => 'admin.tipos-veiculos.index',
+            'create' => 'admin.tipos-veiculos.create',
+            'store' => 'admin.tipos-veiculos.store',
+            'show' => 'admin.tipos-veiculos.show',
+            'edit' => 'admin.tipos-veiculos.edit',
+            'update' => 'admin.tipos-veiculos.update',
+            'destroy' => 'admin.tipos-veiculos.destroy'
+        ],
+        'parameters' => [
+            'tipos-veiculos' => 'tipoVeiculo'
+        ]
+    ]);
+    Route::patch('/admin/tipos-veiculos/{tipoVeiculo}/toggle-status', [TipoVeiculoController::class, 'toggleStatus'])->name('admin.tipos-veiculos.toggle-status');
+    
+    // Frotas
+    Route::resource('admin/frotas', FrotaController::class, [
+        'names' => [
+            'index' => 'admin.frotas.index',
+            'create' => 'admin.frotas.create',
+            'store' => 'admin.frotas.store',
+            'show' => 'admin.frotas.show',
+            'edit' => 'admin.frotas.edit',
+            'update' => 'admin.frotas.update',
+            'destroy' => 'admin.frotas.destroy'
+        ]
+    ]);
+    Route::patch('/admin/frotas/{frota}/toggle-status', [FrotaController::class, 'toggleStatus'])->name('admin.frotas.toggle-status');
+    Route::post('/admin/frotas/{frota}/recalcular-custo', [FrotaController::class, 'recalcularCusto'])->name('admin.frotas.recalcular-custo');
+    
+    // Combustíveis
+    Route::resource('admin/combustiveis', CombustivelController::class, [
+        'names' => [
+            'index' => 'admin.combustiveis.index',
+            'create' => 'admin.combustiveis.create',
+            'store' => 'admin.combustiveis.store',
+            'show' => 'admin.combustiveis.show',
+            'edit' => 'admin.combustiveis.edit',
+            'update' => 'admin.combustiveis.update',
+            'destroy' => 'admin.combustiveis.destroy'
+        ],
+        'parameters' => [
+            'combustiveis' => 'combustivel'
+        ]
+    ]);
+    Route::patch('/admin/combustiveis/{combustivel}/toggle-status', [CombustivelController::class, 'toggleStatus'])->name('admin.combustiveis.toggle-status');
+    Route::get('/admin/combustiveis/base/{base}', [CombustivelController::class, 'getByBase'])->name('admin.combustiveis.by-base');
 
     // Orçamentos
     Route::resource('admin/orcamentos', OrcamentoController::class, [
