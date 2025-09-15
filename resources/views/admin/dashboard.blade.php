@@ -101,6 +101,127 @@
         </div>
     </div>
 
+    <!-- Módulos Stats Cards -->
+    <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                <i class="fas fa-cubes text-blue-500 mr-2"></i>
+                Estatísticas dos Módulos
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Recursos Humanos -->
+                <div class="group bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-users text-white text-lg"></i>
+                        </div>
+                        <a href="{{ route('admin.recursos-humanos.index') }}" class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Recursos Humanos</h4>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Total:</span>
+                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_funcionarios']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Ativos:</span>
+                            <span class="font-medium text-green-600">{{ number_format($modulesStats['funcionarios_ativos']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Custo Total:</span>
+                            <span class="font-medium text-blue-600">R$ {{ number_format($modulesStats['custo_total_funcionarios'], 2, ',', '.') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frotas -->
+                <div class="group bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-car text-white text-lg"></i>
+                        </div>
+                        <a href="{{ route('admin.frotas.index') }}" class="text-green-600 hover:text-green-800 transition-colors duration-200">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Frotas</h4>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Total:</span>
+                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_veiculos']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Ativos:</span>
+                            <span class="font-medium text-green-600">{{ number_format($modulesStats['veiculos_ativos']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Valor Médio:</span>
+                            <span class="font-medium text-green-600">R$ {{ number_format($modulesStats['valor_medio_veiculo'] ?? 0, 2, ',', '.') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tipos de Veículos -->
+                <div class="group bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-truck text-white text-lg"></i>
+                        </div>
+                        <a href="{{ route('admin.tipos-veiculos.index') }}" class="text-purple-600 hover:text-purple-800 transition-colors duration-200">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Tipos de Veículos</h4>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Total:</span>
+                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_tipos_veiculos']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Ativos:</span>
+                            <span class="font-medium text-green-600">{{ number_format($modulesStats['tipos_veiculos_ativos']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Consumo Médio:</span>
+                            <span class="font-medium text-purple-600">{{ number_format($modulesStats['consumo_medio'] ?? 0, 1, ',', '.') }} km/l</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combustíveis -->
+                <div class="group bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-gas-pump text-white text-lg"></i>
+                        </div>
+                        <a href="{{ route('admin.combustiveis.index') }}" class="text-orange-600 hover:text-orange-800 transition-colors duration-200">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Combustíveis</h4>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Total:</span>
+                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_combustiveis']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Ativos:</span>
+                            <span class="font-medium text-green-600">{{ number_format($modulesStats['combustiveis_ativos']) }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-600">Preço Médio:</span>
+                            <span class="font-medium text-orange-600">R$ {{ number_format($modulesStats['preco_medio_combustivel'] ?? 0, 2, ',', '.') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Recent Activity -->
@@ -226,6 +347,50 @@
                             <div>
                                 <p class="text-sm font-medium text-gray-900">Centros de Custo</p>
                                 <p class="text-xs text-gray-500">Controle financeiro</p>
+                            </div>
+                        </a>
+
+                        <!-- Recursos Humanos -->
+                        <a href="{{ route('admin.recursos-humanos.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all duration-200 transform hover:scale-105">
+                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-600 transition-colors duration-200">
+                                <i class="fas fa-users text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Recursos Humanos</p>
+                                <p class="text-xs text-gray-500">Funcionários</p>
+                            </div>
+                        </a>
+
+                        <!-- Frotas -->
+                        <a href="{{ route('admin.frotas.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg hover:from-green-100 hover:to-green-200 transition-all duration-200 transform hover:scale-105">
+                            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-600 transition-colors duration-200">
+                                <i class="fas fa-car text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Frotas</p>
+                                <p class="text-xs text-gray-500">Veículos</p>
+                            </div>
+                        </a>
+
+                        <!-- Tipos de Veículos -->
+                        <a href="{{ route('admin.tipos-veiculos.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg hover:from-purple-100 hover:to-purple-200 transition-all duration-200 transform hover:scale-105">
+                            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-600 transition-colors duration-200">
+                                <i class="fas fa-truck text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Tipos de Veículos</p>
+                                <p class="text-xs text-gray-500">Categorias</p>
+                            </div>
+                        </a>
+
+                        <!-- Combustíveis -->
+                        <a href="{{ route('admin.combustiveis.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg hover:from-orange-100 hover:to-orange-200 transition-all duration-200 transform hover:scale-105">
+                            <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-600 transition-colors duration-200">
+                                <i class="fas fa-gas-pump text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Combustíveis</p>
+                                <p class="text-xs text-gray-500">Preços e dados</p>
                             </div>
                         </a>
 

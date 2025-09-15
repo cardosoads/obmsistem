@@ -63,7 +63,18 @@ class CombustivelController extends Controller
     public function create(): View
     {
         $bases = Base::active()->orderBy('name')->get();
-        return view('admin.combustiveis.create', compact('bases'));
+        
+        // Calcular estatísticas de preços
+        $precoMedio = Combustivel::where('active', true)->avg('preco_litro') ?? 0;
+        $menorPreco = Combustivel::where('active', true)->min('preco_litro') ?? 0;
+        $maiorPreco = Combustivel::where('active', true)->max('preco_litro') ?? 0;
+        
+        return view('admin.combustiveis.create', compact(
+            'bases', 
+            'precoMedio', 
+            'menorPreco', 
+            'maiorPreco'
+        ));
     }
 
     /**
