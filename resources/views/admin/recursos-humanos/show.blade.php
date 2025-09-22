@@ -69,12 +69,7 @@
             </div>
             @endif
             
-            @if($recursoHumano->base_salarial)
-            <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">Base Salarial</label>
-                <p class="text-lg text-gray-900">{{ $recursoHumano->base_salarial }}</p>
-            </div>
-            @endif
+
             
             <div>
                 <label class="block text-sm font-medium text-gray-500 mb-1">Data de Cadastro</label>
@@ -88,55 +83,55 @@
         <h3 class="text-lg font-semibold text-gray-700 mb-4">Composição Salarial</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Salário Base</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Salário Base /mês</label>
                 <p class="text-xl font-bold text-blue-600">R$ {{ number_format($recursoHumano->salario_base, 2, ',', '.') }}</p>
             </div>
             
             @if($recursoHumano->insalubridade > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Insalubridade</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Insalubridade /mês</label>
                 <p class="text-xl font-bold text-orange-600">R$ {{ number_format($recursoHumano->insalubridade, 2, ',', '.') }}</p>
             </div>
             @endif
             
             @if($recursoHumano->periculosidade > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Periculosidade</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Periculosidade /mês</label>
                 <p class="text-xl font-bold text-red-600">R$ {{ number_format($recursoHumano->periculosidade, 2, ',', '.') }}</p>
             </div>
             @endif
             
             @if($recursoHumano->horas_extras > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Horas Extras</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Horas Extras /mês</label>
                 <p class="text-xl font-bold text-purple-600">R$ {{ number_format($recursoHumano->horas_extras, 2, ',', '.') }}</p>
             </div>
             @endif
             
             @if($recursoHumano->adicional_noturno > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Adicional Noturno</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Adicional Noturno /mês</label>
                 <p class="text-xl font-bold text-indigo-600">R$ {{ number_format($recursoHumano->adicional_noturno, 2, ',', '.') }}</p>
             </div>
             @endif
             
             @if($recursoHumano->extras > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Extras</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Extras /mês</label>
                 <p class="text-xl font-bold text-teal-600">R$ {{ number_format($recursoHumano->extras, 2, ',', '.') }}</p>
             </div>
             @endif
             
             @if($recursoHumano->vale_transporte > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Vale Transporte</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Vale Transporte /mês</label>
                 <p class="text-xl font-bold text-green-600">R$ {{ number_format($recursoHumano->vale_transporte, 2, ',', '.') }}</p>
             </div>
             @endif
             
             @if($recursoHumano->beneficios > 0)
             <div class="bg-white p-4 rounded-lg border">
-                <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios /mês</label>
                 <p class="text-xl font-bold text-cyan-600">R$ {{ number_format($recursoHumano->beneficios, 2, ',', '.') }}</p>
             </div>
             @endif
@@ -150,7 +145,7 @@
             <div class="bg-white p-6 rounded-lg border-l-4 border-blue-500 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Salário Bruto</p>
+                        <p class="text-sm font-medium text-gray-500">Salário Bruto /mês</p>
                         <p class="text-2xl font-bold text-blue-600">
                             R$ {{ number_format($recursoHumano->salario_bruto, 2, ',', '.') }}
                         </p>
@@ -164,7 +159,7 @@
             <div class="bg-white p-6 rounded-lg border-l-4 border-orange-500 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Encargos Sociais</p>
+                        <p class="text-sm font-medium text-gray-500">Encargos Sociais /mês</p>
                         <p class="text-2xl font-bold text-orange-600">
                             R$ {{ number_format($recursoHumano->encargos_sociais, 2, ',', '.') }}
                         </p>
@@ -179,7 +174,7 @@
             <div class="bg-white p-6 rounded-lg border-l-4 border-green-500 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Benefícios</p>
+                        <p class="text-sm font-medium text-gray-500">Benefícios /mês</p>
                         <p class="text-2xl font-bold text-green-600">
                             R$ {{ number_format($recursoHumano->beneficios, 2, ',', '.') }}
                         </p>
@@ -193,7 +188,7 @@
             <div class="bg-white p-6 rounded-lg border-l-4 border-teal-500 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Custo Total</p>
+                        <p class="text-sm font-medium text-gray-500">Custo Total /mês</p>
                         <p class="text-2xl font-bold text-teal-600">
                             R$ {{ number_format($recursoHumano->custo_total_mao_obra, 2, ',', '.') }}
                         </p>
@@ -211,71 +206,71 @@
         <h3 class="text-lg font-semibold text-gray-700 mb-4">Breakdown de Custos</h3>
         <div class="space-y-3">
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">Salário Base</span>
+                <span class="text-gray-600">Salário Base /mês</span>
                 <span class="font-semibold">R$ {{ number_format($recursoHumano->salario_base, 2, ',', '.') }}</span>
             </div>
             
             @if($recursoHumano->insalubridade > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Insalubridade</span>
+                <span class="text-gray-600">+ Insalubridade /mês</span>
                 <span class="font-semibold text-orange-600">R$ {{ number_format($recursoHumano->insalubridade, 2, ',', '.') }}</span>
             </div>
             @endif
             
             @if($recursoHumano->periculosidade > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Periculosidade</span>
+                <span class="text-gray-600">+ Periculosidade /mês</span>
                 <span class="font-semibold text-red-600">R$ {{ number_format($recursoHumano->periculosidade, 2, ',', '.') }}</span>
             </div>
             @endif
             
             @if($recursoHumano->horas_extras > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Horas Extras</span>
+                <span class="text-gray-600">+ Horas Extras /mês</span>
                 <span class="font-semibold text-purple-600">R$ {{ number_format($recursoHumano->horas_extras, 2, ',', '.') }}</span>
             </div>
             @endif
             
             @if($recursoHumano->adicional_noturno > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Adicional Noturno</span>
+                <span class="text-gray-600">+ Adicional Noturno /mês</span>
                 <span class="font-semibold text-indigo-600">R$ {{ number_format($recursoHumano->adicional_noturno, 2, ',', '.') }}</span>
             </div>
             @endif
             
             @if($recursoHumano->extras > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Extras</span>
+                <span class="text-gray-600">+ Extras /mês</span>
                 <span class="font-semibold text-teal-600">R$ {{ number_format($recursoHumano->extras, 2, ',', '.') }}</span>
             </div>
             @endif
             
             @if($recursoHumano->vale_transporte > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Vale Transporte</span>
+                <span class="text-gray-600">+ Vale Transporte /mês</span>
                 <span class="font-semibold text-green-600">R$ {{ number_format($recursoHumano->vale_transporte, 2, ',', '.') }}</span>
             </div>
             @endif
             
             <div class="flex justify-between items-center py-2 border-b-2 border-gray-300 bg-blue-50 px-3 rounded">
-                <span class="font-semibold text-blue-700">= Salário Bruto</span>
+                <span class="font-semibold text-blue-700">= Salário Bruto /mês</span>
                 <span class="font-bold text-blue-700 text-lg">R$ {{ number_format($recursoHumano->salario_bruto, 2, ',', '.') }}</span>
             </div>
             
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Encargos Sociais ({{ number_format($recursoHumano->percentual_encargos, 2, ',', '.') }}%)</span>
+                <span class="text-gray-600">+ Encargos Sociais /mês ({{ number_format($recursoHumano->percentual_encargos, 2, ',', '.') }}%)</span>
                 <span class="font-semibold text-orange-600">R$ {{ number_format($recursoHumano->encargos_sociais, 2, ',', '.') }}</span>
             </div>
             
             @if($recursoHumano->beneficios > 0)
             <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                <span class="text-gray-600">+ Benefícios</span>
+                <span class="text-gray-600">+ Benefícios /mês</span>
                 <span class="font-semibold text-green-600">R$ {{ number_format($recursoHumano->beneficios, 2, ',', '.') }}</span>
             </div>
             @endif
             
             <div class="flex justify-between items-center py-3 border-t-2 border-teal-300 bg-teal-50 px-3 rounded">
-                <span class="font-bold text-teal-700 text-lg">= CUSTO TOTAL</span>
+                <span class="font-bold text-teal-700 text-lg">= CUSTO TOTAL /mês</span>
                 <span class="font-bold text-teal-700 text-xl">R$ {{ number_format($recursoHumano->custo_total_mao_obra, 2, ',', '.') }}</span>
             </div>
         </div>

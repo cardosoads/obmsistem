@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Máscara Monetária</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-field {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 200px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .info {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .expected {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste da Máscara Monetária</h1>
+    
+    <div class="info">
+        <h3>Como deve funcionar:</h3>
+        <ul>
+            <li>Digite <strong>1</strong> → deve mostrar <strong>1,00</strong></li>
+            <li>Digite <strong>12</strong> → deve mostrar <strong>12,00</strong></li>
+            <li>Digite <strong>123</strong> → deve mostrar <strong>1,23</strong></li>
+            <li>Digite <strong>1234</strong> → deve mostrar <strong>12,34</strong></li>
+            <li>Digite <strong>12345</strong> → deve mostrar <strong>123,45</strong></li>
+            <li>Digite <strong>123456</strong> → deve mostrar <strong>1.234,56</strong></li>
+            <li>Digite <strong>1234567</strong> → deve mostrar <strong>12.345,67</strong></li>
+        </ul>
+    </div>
+
+    <div class="test-field">
+        <label for="valor1">Teste 1 - Campo Monetário:</label>
+        <input type="text" id="valor1" class="money-mask" placeholder="Digite um valor">
+        <div class="expected">Experimente digitar: 1, 12, 123, 1234, 12345, 123456</div>
+    </div>
+
+    <div class="test-field">
+        <label for="valor2">Teste 2 - Outro Campo:</label>
+        <input type="text" id="valor2" class="money-mask" placeholder="Digite outro valor">
+        <div class="expected">Teste com valores maiores: 1234567, 12345678</div>
+    </div>
+
+    <div class="test-field">
+        <label for="valor3">Teste 3 - Campo Zerado:</label>
+        <input type="text" id="valor3" class="money-mask" value="0,00">
+        <div class="expected">Clique no campo e digite - deve limpar o zero</div>
+    </div>
+
+    <script src="js/money-mask.js"></script>
+    
+    <script>
+        // Log para debug
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Teste da máscara monetária carregado');
+            
+            // Adiciona listeners para mostrar valores no console
+            document.querySelectorAll('.money-mask').forEach(field => {
+                field.addEventListener('input', function() {
+                    console.log(`Campo ${this.id}: "${this.value}" (numérico: ${window.getFieldNumericValue(this.id)})`);
+                    
+                    // Debug detalhado da função formatMoney
+                    let cleanValue = this.value.replace(/\D/g, '');
+                    console.log(`  - Valor limpo: "${cleanValue}" (length: ${cleanValue.length})`);
+                    console.log(`  - Resultado formatMoney: "${formatMoney(this.value)}"`);
+                });
+                
+                // Teste específico para o problema relatado
+                field.addEventListener('keyup', function() {
+                    if (this.value.replace(/\D/g, '') === '1234567') {
+                        console.log('🔍 TESTE ESPECÍFICO - Digitou 1234567:');
+                        console.log(`  - Valor atual: "${this.value}"`);
+                        console.log(`  - Esperado: "12.345,67"`);
+                        console.log(`  - Status: ${this.value === '12.345,67' ? '✅ CORRETO' : '❌ INCORRETO'}`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

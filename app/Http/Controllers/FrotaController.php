@@ -12,6 +12,45 @@ use Illuminate\Http\RedirectResponse;
 class FrotaController extends Controller
 {
     /**
+     * Processa campos monetários convertendo de formato brasileiro para numérico
+     */
+    private function processMoneyFields(array $data): array
+    {
+        $moneyFields = [
+            'fipe',
+            'aluguel_carro',
+            'rastreador',
+            'provisoes_avarias',
+            'provisao_desmobilizacao',
+            'provisao_diaria_rac'
+        ];
+
+        foreach ($moneyFields as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = $this->convertMoneyToNumeric($data[$field]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Converte valor monetário brasileiro para formato numérico
+     */
+    private function convertMoneyToNumeric($value): float
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+        
+        // Remove pontos (separadores de milhares) e substitui vírgula por ponto
+        $value = str_replace('.', '', $value);
+        $value = str_replace(',', '.', $value);
+        
+        return (float) $value;
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request): View
@@ -69,6 +108,10 @@ class FrotaController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Processar campos monetários antes da validação
+        $requestData = $this->processMoneyFields($request->all());
+        $request->merge($requestData);
+        
         $validated = $request->validate([
             'tipo_veiculo_id' => 'required|exists:tipos_veiculos,id',
             'fipe' => 'required|numeric|min:0|max:9999999999.99',
@@ -117,6 +160,10 @@ class FrotaController extends Controller
      */
     public function update(Request $request, Frota $frota): RedirectResponse
     {
+        // Processar campos monetários antes da validação
+        $requestData = $this->processMoneyFields($request->all());
+        $request->merge($requestData);
+        
         $validated = $request->validate([
             'tipo_veiculo_id' => 'required|exists:tipos_veiculos,id',
             'fipe' => 'required|numeric|min:0|max:9999999999.99',

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Brazilian Values</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-field {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .test-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f5e8;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .error {
+            background-color: #ffe8e8;
+            color: #d00;
+        }
+        .success {
+            background-color: #e8f5e8;
+            color: #080;
+        }
+        .test-case {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste Brazilian Values - Máscara Monetária</h1>
+        <p>Testando a nova implementação com a biblioteca brazilian-values</p>
+        
+        <div class="test-field">
+            <label for="fipe">Campo FIPE (com máscara monetária):</label>
+            <input type="text" id="fipe" class="money-mask" placeholder="Digite um valor">
+            <div class="result" id="resultado-fipe">Resultado aparecerá aqui...</div>
+        </div>
+        
+        <div class="test-field">
+            <label>Testes Específicos (Nova Formatação):</label>
+            <button onclick="testarValor('1')">Testar: 1 → 0,01</button>
+            <button onclick="testarValor('12')">Testar: 12 → 0,12</button>
+            <button onclick="testarValor('123')">Testar: 123 → 1,23</button>
+            <button onclick="testarValor('1234')">Testar: 1234 → 12,34</button>
+            <button onclick="testarValor('10000')">Testar: 10000 → 100,00</button>
+            <button onclick="testarValor('123456')">Testar: 123456 → 1.234,56</button>
+            <br><br>
+            <strong>Testes de Digitação Manual:</strong><br>
+            <button onclick="testarDigitacaoManual('0,01')">Testar Digitação: 0,01</button>
+            <button onclick="testarDigitacaoManual('12,34')">Testar Digitação: 12,34</button>
+            <button onclick="testarDigitacaoManual('1.234,56')">Testar Digitação: 1.234,56</button>
+            <button onclick="testarValor('1000000')">Testar: 1000000 → 10.000,00</button>
+            <div class="result" id="resultado-teste">Clique em um botão para testar</div>
+        </div>
+        
+        <div class="test-field">
+            <h3>🤖 Teste Automatizado de Digitação Real</h3>
+            <p>Simula digitação humana real com eventos de teclado, incluindo apagar e redigitar</p>
+            
+            <button onclick="iniciarTesteAutomatizado()">🚀 Iniciar Teste Automatizado Completo</button>
+            <button onclick="pararTeste()">⏹️ Parar Teste</button>
+            <button onclick="limparLog()">🗑️ Limpar Log</button>
+            
+            <div class="result" id="status-teste-automatizado">Clique em "Iniciar Teste" para começar</div>
+            
+            <div style="margin-top: 15px;">
+                <h4>📊 Log de Eventos em Tempo Real:</h4>
+                <div id="log-eventos" style="background: #f0f0f0; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <h4>📈 Resumo dos Resultados:</h4>
+                <div id="resumo-resultados" style="background: #e8f5e8; padding: 10px; border-radius: 5px;"></div>
+            </div>
+        </div>
+        
+        <div class="test-field">
+            <label>Status da Biblioteca:</label>
+            <div id="library-status">Verificando...</div>
+        </div>
+        
+        <div class="test-field">
+            <label>Testes de Comparação:</label>
+            <div id="comparison-tests"></div>
+        </div>
+    </div>
+
+    <!-- Carrega a nova implementação -->
+    <script src="js/money-mask.js"></script>
+    
+    <script>
+        // Sistema de Teste Automatizado
+        let testeAtivo = false;
+        let logEventos = [];
+        let resultadosTeste = [];
+        
+        function adicionarLog(tipo, evento, valorCampo, valorNumerico, valorFormatado, observacao = '') {
+            const timestamp = new Date().toLocaleTimeString('pt-BR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 });
+            const logEntry = {
+                timestamp,
+                tipo,
+                evento,
+                valorCampo,
+                valorNumerico,
+                valorFormatado,
+                observacao
+            };
+            
+            logEventos.push(logEntry);
+            
+            const logDiv = document.getElementById('log-eventos');
+            const logLine = `[${timestamp}] ${tipo}: ${evento} | Campo: "${valorCampo}" | Numérico: ${valorNumerico} | Formatado: "${valorFormatado}"${observacao ? ' | ' + observacao : ''}`;
+            logDiv.innerHTML += logLine + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function simularEventoTeclado(campo, tipo, key, char = '') {
+            const event = new KeyboardEvent(tipo, {
+                key: key,
+                code: key === 'Backspace' ? 'Backspace' : `Key${key.toUpperCase()}`,
+                keyCode: key === 'Backspace' ? 8 : key.charCodeAt(0),
+                which: key === 'Backspace' ? 8 : key.charCodeAt(0),
+                bubbles: true,
+                cancelable: true
+            });
+            
+            campo.dispatchEvent(event);
+            
+            if (tipo === 'keydown' && char) {
+                // Simular inserção do caractere
+                const start = campo.selectionStart;
+                const end = campo.selectionEnd;
+                const value = campo.value;
+                campo.value = value.substring(0, start) + char + value.substring(end);
+                campo.setSelectionRange(start + 1, start + 1);
+                
+                // Disparar evento input
+                const inputEvent = new Event('input', { bubbles: true });
+                campo.dispatchEvent(inputEvent);
+            } else if (tipo === 'keydown' && key === 'Backspace') {
+                // Simular backspace
+                const start = campo.selectionStart;
+                const end = campo.selectionEnd;
+                const value = campo.value;
+                
+                if (start === end && start > 0) {
+                    campo.value = value.substring(0, start - 1) + value.substring(start);
+                    campo.setSelectionRange(start - 1, start - 1);
+                } else if (start !== end) {
+                    campo.value = value.substring(0, start) + value.substring(end);
+                    campo.setSelectionRange(start, start);
+                }
+                
+                // Disparar evento input
+                const inputEvent = new Event('input', { bubbles: true });
+                campo.dispatchEvent(inputEvent);
+            }
+        }
+        
+        async function digitarTexto(campo, texto, delay = 150) {
+            for (let i = 0; i < texto.length; i++) {
+                if (!testeAtivo) break;
+                
+                const char = texto[i];
+                simularEventoTeclado(campo, 'keydown', char, char);
+                simularEventoTeclado(campo, 'keyup', char);
+                
+                // Capturar estado após cada caractere
+                const valorCampo = campo.value;
+                const valorNumerico = getNumericValue(valorCampo);
+                const valorFormatado = formatMoney(valorNumerico);
+                
+                adicionarLog('DIGITAÇÃO', `Char '${char}'`, valorCampo, valorNumerico, valorFormatado);
+                
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+        
+        async function apagarTudo(campo, delay = 100) {
+            while (campo.value.length > 0 && testeAtivo) {
+                simularEventoTeclado(campo, 'keydown', 'Backspace');
+                simularEventoTeclado(campo, 'keyup', 'Backspace');
+                
+                // Capturar estado após backspace
+                const valorCampo = campo.value;
+                const valorNumerico = getNumericValue(valorCampo);
+                const valorFormatado = formatMoney(valorNumerico);
+                
+                adicionarLog('BACKSPACE', 'Apagar char', valorCampo, valorNumerico, valorFormatado);
+                
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+        
+        async function executarCenarioTeste(nome, valor, esperado = null) {
+            if (!testeAtivo) return;
+            
+            const campo = document.getElementById('fipe');
+            const statusDiv = document.getElementById('status-teste-automatizado');
+            
+            statusDiv.innerHTML = `🔄 Executando: ${nome}`;
+            adicionarLog('CENÁRIO', `Iniciando: ${nome}`, '', '', '', `Valor: "${valor}"`);
+            
+            // Limpar campo primeiro
+            campo.value = '';
+            campo.focus();
+            
+            // Digitar o valor
+            await digitarTexto(campo, valor);
+            
+            // Capturar resultado final
+            const valorFinal = campo.value;
+            const numericoFinal = getNumericValue(valorFinal);
+            const formatadoFinal = formatMoney(numericoFinal);
+            
+            const resultado = {
+                cenario: nome,
+                valorDigitado: valor,
+                valorCampo: valorFinal,
+                valorNumerico: numericoFinal,
+                valorFormatado: formatadoFinal,
+                sucesso: esperado ? (valorFinal === esperado) : true
+            };
+            
+            resultadosTeste.push(resultado);
+            adicionarLog('RESULTADO', `${nome} concluído`, valorFinal, numericoFinal, formatadoFinal, 
+                esperado ? `Esperado: "${esperado}" | ${resultado.sucesso ? '✅ PASSOU' : '❌ FALHOU'}` : '✅ CONCLUÍDO');
+            
+            // Pausa entre cenários
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        
+        async function iniciarTesteAutomatizado() {
+            if (testeAtivo) {
+                alert('Teste já está em execução!');
+                return;
+            }
+            
+            testeAtivo = true;
+            logEventos = [];
+            resultadosTeste = [];
+            
+            const statusDiv = document.getElementById('status-teste-automatizado');
+            const logDiv = document.getElementById('log-eventos');
+            const resumoDiv = document.getElementById('resumo-resultados');
+            
+            logDiv.innerHTML = '';
+            resumoDiv.innerHTML = '';
+            statusDiv.innerHTML = '🚀 Iniciando teste automatizado...';
+            
+            try {
+                // Cenários de teste
+                const cenarios = [
+                    { nome: 'Digitar 1', valor: '1' },
+                    { nome: 'Digitar 12', valor: '12' },
+                    { nome: 'Digitar 123', valor: '123' },
+                    { nome: 'Digitar 1000', valor: '1000' },
+                    { nome: 'Digitar 0,01', valor: '0,01' },
+                    { nome: 'Digitar 12,34', valor: '12,34' },
+                    { nome: 'Digitar 1234,56', valor: '1234,56' },
+                    { nome: 'Digitar 10000', valor: '10000' }
+                ];
+                
+                for (const cenario of cenarios) {
+                    if (!testeAtivo) break;
+                    
+                    await executarCenarioTeste(cenario.nome, cenario.valor, cenario.esperado);
+                    
+                    // Teste de apagar e redigitar
+                    if (testeAtivo) {
+                        statusDiv.innerHTML = `🔄 Apagando e redigitando: ${cenario.nome}`;
+                        await apagarTudo(document.getElementById('fipe'));
+                        await executarCenarioTeste(`${cenario.nome} (redigitado)`, cenario.valor, cenario.esperado);
+                    }
+                }
+                
+                // Gerar resumo
+                if (testeAtivo) {
+                    gerarResumoResultados();
+                    statusDiv.innerHTML = '✅ Teste automatizado concluído com sucesso!';
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Erro durante o teste: ${error.message}`;
+                adicionarLog('ERRO', 'Falha no teste', '', '', '', error.message);
+            } finally {
+                testeAtivo = false;
+            }
+        }
+        
+        function pararTeste() {
+            testeAtivo = false;
+            document.getElementById('status-teste-automatizado').innerHTML = '⏹️ Teste interrompido pelo usuário';
+        }
+        
+        function limparLog() {
+            document.getElementById('log-eventos').innerHTML = '';
+            document.getElementById('resumo-resultados').innerHTML = '';
+            logEventos = [];
+            resultadosTeste = [];
+        }
+        
+        function gerarResumoResultados() {
+            const resumoDiv = document.getElementById('resumo-resultados');
+            const totalTestes = resultadosTeste.length;
+            const testesPassaram = resultadosTeste.filter(r => r.sucesso).length;
+            const testesFalharam = totalTestes - testesPassaram;
+            
+            let html = `
+                <h5>📊 Estatísticas do Teste:</h5>
+                <p><strong>Total de cenários:</strong> ${totalTestes}</p>
+                <p><strong>Sucessos:</strong> ${testesPassaram} ✅</p>
+                <p><strong>Falhas:</strong> ${testesFalharam} ❌</p>
+                <p><strong>Taxa de sucesso:</strong> ${((testesPassaram/totalTestes)*100).toFixed(1)}%</p>
+                
+                <h5>📋 Detalhes por Cenário:</h5>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <tr style="background: #ddd; font-weight: bold;">
+                        <td style="border: 1px solid #ccc; padding: 5px;">Cenário</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">Digitado</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">Campo</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">Numérico</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">Formatado</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">Status</td>
+                    </tr>
+            `;
+            
+            resultadosTeste.forEach(resultado => {
+                const statusIcon = resultado.sucesso ? '✅' : '❌';
+                const rowColor = resultado.sucesso ? '#e8f5e8' : '#ffe8e8';
+                
+                html += `
+                    <tr style="background: ${rowColor};">
+                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.cenario}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorDigitado}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorCampo}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorNumerico}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorFormatado}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">${statusIcon}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</table>';
+            resumoDiv.innerHTML = html;
+        }
+        
+        // Função para formatar FIPE (igual à implementada nos arquivos)
+        function formatFipeValue() {
+            const fipeField = document.getElementById('fipe');
+            if (fipeField && fipeField.value) {
+                const fipeValue = fipeField.value.trim();
+                if (fipeValue && fipeValue !== '0,00' && fipeValue !== '') {
+                    // Se já tem R$ no início, retorna como está
+                    if (fipeValue.startsWith('R$')) {
+                        return fipeValue;
+                    }
+                    // Se não tem R$, adiciona sem alterar o resto
+                    return 'R$ ' + fipeValue;
+                }
+            }
+            return 'R$ 0,00';
+        }
+        
+        // Atualizar resultado em tempo real
+        document.getElementById('fipe').addEventListener('input', function() {
+            const resultadoDiv = document.getElementById('resultado-fipe');
+            const valorFormatado = formatFipeValue();
+            
+            resultadoDiv.innerHTML = `
+                <strong>Valor Formatado:</strong> ${valorFormatado}<br>
+                <strong>Valor do Campo:</strong> "${this.value}"<br>
+                <strong>Valor Numérico:</strong> ${window.getFieldNumericValue ? window.getFieldNumericValue('fipe') : 'N/A'}
+            `;
+            
+            resultadoDiv.className = 'result success';
+        });
+        
+        // Função para testar valores específicos
+        function testarValor(valor) {
+            const fipeField = document.getElementById('fipe');
+            const resultadoDiv = document.getElementById('resultado-teste');
+            
+            // Simular digitação
+            fipeField.value = '';
+            fipeField.focus();
+            
+            // Simular digitação caractere por caractere
+            for (let i = 0; i < valor.length; i++) {
+                fipeField.value += valor[i];
+                // Aplicar máscara
+                if (window.applyMoneyMask) {
+                    window.applyMoneyMask(fipeField);
+                }
+                fipeField.dispatchEvent(new Event('input'));
+            }
+            
+            // Aguardar um momento e verificar resultado
+            setTimeout(() => {
+                const valorFinal = fipeField.value;
+                const valorFormatado = formatFipeValue();
+                const valorNumerico = window.getFieldNumericValue ? window.getFieldNumericValue('fipe') : 'N/A';
+                
+                // Valores esperados baseados na lógica de centavos
+                const esperados = {
+                    '1': { input: '0,01', formatado: 'R$ 0,01', numerico: 0.01 },
+                    '12': { input: '0,12', formatado: 'R$ 0,12', numerico: 0.12 },
+                    '123': { input: '1,23', formatado: 'R$ 1,23', numerico: 1.23 },
+                    '1234': { input: '12,34', formatado: 'R$ 12,34', numerico: 12.34 },
+                    '12345': { input: '123,45', formatado: 'R$ 123,45', numerico: 123.45 },
+                    '123456': { input: '1.234,56', formatado: 'R$ 1.234,56', numerico: 1234.56 },
+                    '10000': { input: '100,00', formatado: 'R$ 100,00', numerico: 100 },
+                    '1000000': { input: '10.000,00', formatado: 'R$ 10.000,00', numerico: 10000 }
+                };
+                
+                const esperado = esperados[valor] || { input: 'N/A', formatado: 'N/A', numerico: 'N/A' };
+                
+                const inputCorreto = valorFinal === esperado.input;
+                const formatadoCorreto = valorFormatado === esperado.formatado;
+                const numericoCorreto = Math.abs(valorNumerico - esperado.numerico) < 0.01;
+                
+                const status = inputCorreto && formatadoCorreto && numericoCorreto ? '✅ CORRETO' : '❌ INCORRETO';
+                
+                resultadoDiv.innerHTML = `
+                    <strong>Dígitos Digitados:</strong> ${valor}<br>
+                    <strong>Esperado no Input:</strong> ${esperado.input}<br>
+                    <strong>Valor no Input:</strong> "${valorFinal}"<br>
+                    <strong>Valor Formatado (R$):</strong> ${valorFormatado}<br>
+                    <strong>Esperado Numérico:</strong> ${esperado.numerico}<br>
+                    <strong>Valor Numérico:</strong> ${valorNumerico}<br>
+                    <strong>Status:</strong> ${status}<br>
+                    <strong>Detalhes:</strong> Input: ${inputCorreto ? '✅' : '❌'} | Formatado: ${formatadoCorreto ? '✅' : '❌'} | Numérico: ${numericoCorreto ? '✅' : '❌'}
+                `;
+                
+                if (status.includes('CORRETO')) {
+                    resultadoDiv.className = 'result success';
+                } else {
+                    resultadoDiv.className = 'result error';
+                }
+            }, 100);
+        }
+        
+        // Verificar status da biblioteca
+        function checkLibraryStatus() {
+            const statusDiv = document.getElementById('library-status');
+            
+            // Verifica se a biblioteca está disponível globalmente
+            const hasBrazilianValues = typeof window !== 'undefined' && window.BrazilianValues && window.BrazilianValues.formatToBRL;
+            
+            if (hasBrazilianValues) {
+                try {
+                    const testResult = window.BrazilianValues.formatToBRL(1234.56);
+                    statusDiv.innerHTML = `
+                        <span style="color: green;">✅ Brazilian Values carregado com sucesso!</span><br>
+                        <strong>Teste:</strong> BrazilianValues.formatToBRL(1234.56) = ${testResult}<br>
+                        <strong>Versão:</strong> Biblioteca carregada via CDN
+                    `;
+                } catch (e) {
+                    statusDiv.innerHTML = `
+                        <span style="color: red;">❌ Erro ao usar Brazilian Values: ${e.message}</span>
+                    `;
+                }
+            } else {
+                statusDiv.innerHTML = `
+                    <span style="color: orange;">⚠️ Brazilian Values não carregado, usando implementação fallback</span><br>
+                    <small>A máscara funcionará normalmente com nossa implementação manual</small>
+                `;
+                // Tentar novamente em 1 segundo, mas apenas por 10 tentativas
+                if (!checkLibraryStatus.attempts) checkLibraryStatus.attempts = 0;
+                checkLibraryStatus.attempts++;
+                
+                if (checkLibraryStatus.attempts < 10) {
+                    setTimeout(checkLibraryStatus, 1000);
+                }
+            }
+        }
+        
+        // Executar testes de comparação
+        function runComparisonTests() {
+            const comparisonDiv = document.getElementById('comparison-tests');
+            const testCases = [
+                { input: '1', expected: '0,01' },
+                { input: '12', expected: '0,12' },
+                { input: '123', expected: '1,23' },
+                { input: '1234', expected: '12,34' },
+                { input: '12345', expected: '123,45' },
+                { input: '123456', expected: '1.234,56' },
+                { input: '1000000', expected: '10.000,00' },
+                { input: '1111111111', expected: '11.111.111,11' }
+            ];
+            
+            let html = '<h3>Resultados dos Testes:</h3>';
+            
+            testCases.forEach((testCase, index) => {
+                // Simular a formatação
+                const result = formatMoney(testCase.input);
+                const isCorrect = result === testCase.expected;
+                
+                html += `
+                    <div class="test-case ${isCorrect ? 'success' : 'error'}">
+                        <strong>Teste ${index + 1}:</strong> Input "${testCase.input}"<br>
+                        <strong>Esperado:</strong> ${testCase.expected}<br>
+                        <strong>Resultado:</strong> ${result}<br>
+                        <strong>Status:</strong> ${isCorrect ? '✅ PASSOU' : '❌ FALHOU'}
+                    </div>
+                `;
+            });
+            
+            comparisonDiv.innerHTML = html;
+        }
+        
+        // Executar quando a página carregar
+        window.addEventListener('load', function() {
+            checkLibraryStatus();
+            
+            // Aguardar um pouco para a biblioteca carregar e executar testes
+            setTimeout(() => {
+                runComparisonTests();
+                // Teste automático
+                testarValor('10000');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Correção FIPE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-field {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .test-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f5e8;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .error {
+            background-color: #ffe8e8;
+            color: #d00;
+        }
+        .success {
+            background-color: #e8f5e8;
+            color: #080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste de Correção - Formatação FIPE</h1>
+        <p>Este teste simula o problema onde "10.000,00" aparecia como "1.000,000"</p>
+        
+        <div class="test-field">
+            <label for="fipe">Campo FIPE (com máscara monetária):</label>
+            <input type="text" id="fipe" class="money-mask" placeholder="Digite um valor">
+            <div class="result" id="resultado-fipe">Resultado aparecerá aqui...</div>
+        </div>
+        
+        <div class="test-field">
+            <label>Testes Específicos:</label>
+            <button onclick="testarProblemaReportado()">🔍 Testar Problema: '1' → '0,01'</button>
+            <button onclick="testarValor('10000')">Testar: 10.000,00</button>
+            <button onclick="testarValor('100000')">Testar: 100.000,00</button>
+            <button onclick="testarValor('123456')">Testar: 1.234,56</button>
+            <button onclick="testarValor('1111111111')" style="background-color: #ffeb3b;">🚨 Teste 1: 11.111.111,11</button>
+            <button onclick="testarValor('123456789')" style="background-color: #ffeb3b;">🚨 Teste 2: 1.234.567,89</button>
+            <div class="result" id="resultado-teste">Clique em um botão para testar</div>
+        </div>
+    </div>
+
+    <script src="js/money-mask.js"></script>
+    
+    <script>
+        // Função corrigida para formatar FIPE (igual à implementada nos arquivos)
+        function formatFipeValue() {
+            const fipeField = document.getElementById('fipe');
+            if (fipeField && fipeField.value) {
+                const fipeValue = fipeField.value.trim();
+                if (fipeValue && fipeValue !== '0,00' && fipeValue !== '') {
+                    // Se já tem R$ no início, retorna como está
+                    if (fipeValue.startsWith('R$')) {
+                        return fipeValue;
+                    }
+                    // Se não tem R$, adiciona sem alterar o resto
+                    return 'R$ ' + fipeValue;
+                }
+            }
+            return 'R$ 0,00';
+        }
+        
+        // Função para verificar se brazilian-values está funcionando
+        function checkBrazilianValues() {
+            const brazilianLib = typeof window !== 'undefined' ? window.BrazilianValues : null;
+            if (brazilianLib && brazilianLib.formatToBRL) {
+                console.log('✅ Brazilian Values disponível!');
+                console.log('Teste: formatToBRL(1234.56) =', brazilianLib.formatToBRL(1234.56));
+                return true;
+            } else {
+                console.log('⚠️ Brazilian Values não disponível, usando fallback');
+                return false;
+            }
+        }
+        
+        // Função antiga (problemática) para comparação
+        function formatFipeValueOld(formValue) {
+            const fipeValue = formValue || '0,00';
+            if (fipeValue.startsWith('R$')) {
+                return fipeValue;
+            }
+            return 'R$ ' + fipeValue;
+        }
+        
+        // Atualizar resultado em tempo real
+        document.getElementById('fipe').addEventListener('input', function() {
+            const resultadoDiv = document.getElementById('resultado-fipe');
+            const valorFormatado = formatFipeValue();
+            
+            resultadoDiv.innerHTML = `
+                <strong>Valor Formatado (NOVO):</strong> ${valorFormatado}<br>
+                <strong>Valor do Campo:</strong> "${this.value}"<br>
+                <strong>Valor Numérico:</strong> ${window.getFieldNumericValue ? window.getFieldNumericValue('fipe') : 'N/A'}
+            `;
+            
+            // Verificar se está correto
+            if (this.value === '10.000,00' && valorFormatado === 'R$ 10.000,00') {
+                resultadoDiv.className = 'result success';
+            } else if (this.value && !valorFormatado.includes(this.value)) {
+                resultadoDiv.className = 'result error';
+            } else {
+                resultadoDiv.className = 'result';
+            }
+        });
+        
+        // Função para testar valores específicos
+        function testarValor(valor) {
+            const fipeField = document.getElementById('fipe');
+            const resultadoDiv = document.getElementById('resultado-teste');
+            
+            // Simular digitação
+            fipeField.value = '';
+            fipeField.focus();
+            
+            // Simular digitação caractere por caractere
+            for (let i = 0; i < valor.length; i++) {
+                fipeField.value += valor[i];
+                // Aplicar máscara
+                if (window.applyMoneyMask) {
+                    window.applyMoneyMask(fipeField);
+                }
+                fipeField.dispatchEvent(new Event('input'));
+            }
+            
+            // Aguardar um momento e verificar resultado
+            setTimeout(() => {
+                const valorFinal = fipeField.value;
+                const valorFormatado = formatFipeValue();
+                const valorOld = formatFipeValueOld(valorFinal);
+                
+                resultadoDiv.innerHTML = `
+                    <strong>Valor Digitado:</strong> ${valor}<br>
+                    <strong>Valor no Campo:</strong> "${valorFinal}"<br>
+                    <strong>Formatação NOVA:</strong> ${valorFormatado}<br>
+                    <strong>Formatação ANTIGA:</strong> ${valorOld}<br>
+                    <strong>Status:</strong> ${valorFormatado.includes(valorFinal) ? '✅ CORRETO' : '❌ INCORRETO'}
+                `;
+                
+                if (valorFormatado.includes(valorFinal)) {
+                    resultadoDiv.className = 'result success';
+                } else {
+                    resultadoDiv.className = 'result error';
+                }
+            }, 100);
+        }
+        
+        // Teste específico para o problema reportado
+        function testarProblemaReportado() {
+            const fipeField = document.getElementById('fipe');
+            const resultadoDiv = document.getElementById('resultado-fipe');
+            
+            // Limpar campo
+            fipeField.value = '';
+            fipeField.focus();
+            
+            // Simular digitação de '1'
+            fipeField.value = '1';
+            fipeField.dispatchEvent(new Event('input'));
+            
+            setTimeout(() => {
+                const valorFinal = fipeField.value;
+                const valorFormatado = formatFipeValue();
+                
+                resultadoDiv.innerHTML = `
+                    <h3>🔍 Teste do Problema Reportado</h3>
+                    <p><strong>Digitado:</strong> "1"</p>
+                    <p><strong>Valor no Campo:</strong> "${valorFinal}"</p>
+                    <p><strong>Valor Formatado:</strong> ${valorFormatado}</p>
+                    <p><strong>Esperado:</strong> "0,01" no campo e "R$ 0,01" formatado</p>
+                    <p><strong>Status:</strong> ${valorFinal === '0,01' && valorFormatado === 'R$ 0,01' ? '✅ CORRETO' : '❌ INCORRETO'}</p>
+                `;
+                
+                if (valorFinal === '0,01' && valorFormatado === 'R$ 0,01') {
+                    resultadoDiv.className = 'result success';
+                } else {
+                    resultadoDiv.className = 'result error';
+                }
+            }, 100);
+        }
+        
+        // Teste automático quando a página carrega
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                console.log('Testando correção FIPE...');
+                checkBrazilianValues();
+                testarValor('10000');
+            }, 2000); // Aumentado para 2 segundos para dar tempo da biblioteca carregar
+        });
+    </script>
+</body>
+</html>

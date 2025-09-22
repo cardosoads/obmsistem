@@ -56,39 +56,23 @@
         <!-- Valores FIPE -->
         <div class="bg-gray-50 p-6 rounded-lg">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Valores FIPE</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4">
                 <div>
                     <label for="fipe" class="block text-sm font-medium text-gray-700 mb-2">Valor FIPE *</label>
-                    <input type="number" 
-                           id="fipe" 
-                           name="fipe" 
-                           value="{{ old('fipe') }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.fipe"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('fipe') border-red-500 @enderror" 
-                           required>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="fipe" 
+                               name="fipe" 
+                               value="{{ old('fipe') ? number_format(old('fipe'), 2, ',', '.') : '0,00' }}"
+                               x-model="form.fipe"
+                               @input="updateFipeValue(); $nextTick(() => calcularCustos())"
+                               @keyup="updateFipeValue(); $nextTick(() => calcularCustos())"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('fipe') border-red-500 @enderror" 
+                               required>
+                    </div>
                     @error('fipe')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div>
-                    <label for="percentual_fipe" class="block text-sm font-medium text-gray-700 mb-2">Percentual FIPE (%)</label>
-                    <input type="number" 
-                           id="percentual_fipe" 
-                           name="percentual_fipe" 
-                           value="{{ old('percentual_fipe', 80) }}"
-                           step="0.1"
-                           min="0"
-                           max="100"
-                           x-model="form.percentual_fipe"
-                           @input="calcularCustos()"
-                           placeholder="80.0"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('percentual_fipe') border-red-500 @enderror">
-                    @error('percentual_fipe')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -100,35 +84,57 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Custos Operacionais</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="aluguel_carro" class="block text-sm font-medium text-gray-700 mb-2">Aluguel do Carro *</label>
+                    <label for="percentual_fipe" class="block text-sm font-medium text-gray-700 mb-2">Percentual FIPE (%)</label>
                     <input type="number" 
-                           id="aluguel_carro" 
-                           name="aluguel_carro" 
-                           value="{{ old('aluguel_carro') }}"
-                           step="0.01"
+                           id="percentual_fipe" 
+                           name="percentual_fipe" 
+                           value="{{ old('percentual_fipe', 0) }}"
+                           step="0.1"
                            min="0"
-                           x-model="form.aluguel_carro"
+                           max="100"
+                           x-model="form.percentual_fipe"
                            @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('aluguel_carro') border-red-500 @enderror" 
-                           required>
-                    @error('aluguel_carro')
+                           placeholder="0.0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('percentual_fipe') border-red-500 @enderror">
+                    @error('percentual_fipe')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
+                    <label for="aluguel_carro" class="block text-sm font-medium text-gray-700 mb-2">Aluguel do Carro</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="aluguel_carro" 
+                               name="aluguel_carro" 
+                               value="{{ old('aluguel_carro') ? number_format(old('aluguel_carro'), 2, ',', '.') : '0,00' }}"
+                               x-model="form.aluguel_carro"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 money-mask @error('aluguel_carro') border-red-500 @enderror" 
+                               readonly>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Calculado automaticamente (Valor FIPE × Percentual FIPE)</p>
+                    @error('aluguel_carro')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
                     <label for="rastreador" class="block text-sm font-medium text-gray-700 mb-2">Rastreador</label>
-                    <input type="number" 
-                           id="rastreador" 
-                           name="rastreador" 
-                           value="{{ old('rastreador', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.rastreador"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('rastreador') border-red-500 @enderror">
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="rastreador" 
+                               name="rastreador" 
+                               value="{{ old('rastreador') ? number_format(old('rastreador'), 2, ',', '.') : '0,00' }}"
+                               x-model="form.rastreador"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('rastreador') border-red-500 @enderror">
+                    </div>
                     @error('rastreador')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -141,34 +147,74 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Provisões</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="provisoes_avarias" class="block text-sm font-medium text-gray-700 mb-2">Provisões para Avarias</label>
+                    <label for="percentual_provisoes_avarias" class="block text-sm font-medium text-gray-700 mb-2">Percentual Provisões Avarias (%)</label>
                     <input type="number" 
-                           id="provisoes_avarias" 
-                           name="provisoes_avarias" 
-                           value="{{ old('provisoes_avarias', 0) }}"
-                           step="0.01"
+                           id="percentual_provisoes_avarias" 
+                           name="percentual_provisoes_avarias" 
+                           value="{{ old('percentual_provisoes_avarias', 0) }}"
+                           step="0.1"
                            min="0"
-                           x-model="form.provisoes_avarias"
+                           max="100"
+                           x-model="form.percentual_provisoes_avarias"
                            @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('provisoes_avarias') border-red-500 @enderror">
+                           placeholder="0.0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('percentual_provisoes_avarias') border-red-500 @enderror">
+                    @error('percentual_provisoes_avarias')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="provisoes_avarias" class="block text-sm font-medium text-gray-700 mb-2">Provisões para Avarias</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="provisoes_avarias" 
+                               name="provisoes_avarias" 
+                               value="{{ old('provisoes_avarias') ? number_format(old('provisoes_avarias'), 2, ',', '.') : '0,00' }}"
+                               x-model="form.provisoes_avarias"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 money-mask @error('provisoes_avarias') border-red-500 @enderror" 
+                               readonly>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Calculado automaticamente (Aluguel × Percentual)</p>
                     @error('provisoes_avarias')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="provisao_desmobilizacao" class="block text-sm font-medium text-gray-700 mb-2">Provisão para Desmobilização</label>
+                    <label for="percentual_provisao_desmobilizacao" class="block text-sm font-medium text-gray-700 mb-2">Percentual Provisão Desmobilização (%)</label>
                     <input type="number" 
-                           id="provisao_desmobilizacao" 
-                           name="provisao_desmobilizacao" 
-                           value="{{ old('provisao_desmobilizacao', 0) }}"
-                           step="0.01"
+                           id="percentual_provisao_desmobilizacao" 
+                           name="percentual_provisao_desmobilizacao" 
+                           value="{{ old('percentual_provisao_desmobilizacao', 0) }}"
+                           step="0.1"
                            min="0"
-                           x-model="form.provisao_desmobilizacao"
+                           max="100"
+                           x-model="form.percentual_provisao_desmobilizacao"
                            @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('provisao_desmobilizacao') border-red-500 @enderror">
+                           placeholder="0.0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('percentual_provisao_desmobilizacao') border-red-500 @enderror">
+                    @error('percentual_provisao_desmobilizacao')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="provisao_desmobilizacao" class="block text-sm font-medium text-gray-700 mb-2">Provisão para Desmobilização</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="provisao_desmobilizacao" 
+                               name="provisao_desmobilizacao" 
+                               value="{{ old('provisao_desmobilizacao') ? number_format(old('provisao_desmobilizacao'), 2, ',', '.') : '0,00' }}"
+                               x-model="form.provisao_desmobilizacao"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 money-mask @error('provisao_desmobilizacao') border-red-500 @enderror" 
+                               readonly>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Calculado automaticamente (Provisões Avarias × Percentual)</p>
                     @error('provisao_desmobilizacao')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -177,17 +223,37 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label for="provisao_diaria_rac" class="block text-sm font-medium text-gray-700 mb-2">Provisão Diária RAC</label>
+                    <label for="percentual_provisao_rac" class="block text-sm font-medium text-gray-700 mb-2">Percentual Provisão RAC (%)</label>
                     <input type="number" 
-                           id="provisao_diaria_rac" 
-                           name="provisao_diaria_rac" 
-                           value="{{ old('provisao_diaria_rac', 0) }}"
-                           step="0.01"
+                           id="percentual_provisao_rac" 
+                           name="percentual_provisao_rac" 
+                           value="{{ old('percentual_provisao_rac', 0) }}"
+                           step="0.1"
                            min="0"
-                           x-model="form.provisao_diaria_rac"
+                           max="100"
+                           x-model="form.percentual_provisao_rac"
                            @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('provisao_diaria_rac') border-red-500 @enderror">
+                           placeholder="0.0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('percentual_provisao_rac') border-red-500 @enderror">
+                    @error('percentual_provisao_rac')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div>
+                    <label for="provisao_diaria_rac" class="block text-sm font-medium text-gray-700 mb-2">Provisão Diária RAC</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="provisao_diaria_rac" 
+                               name="provisao_diaria_rac" 
+                               value="{{ old('provisao_diaria_rac') ? number_format(old('provisao_diaria_rac'), 2, ',', '.') : '0,00' }}"
+                               x-model="form.provisao_diaria_rac"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 money-mask @error('provisao_diaria_rac') border-red-500 @enderror" 
+                               readonly>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Calculado automaticamente (Aluguel × Percentual)</p>
                     @error('provisao_diaria_rac')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -200,8 +266,8 @@
             <h3 class="text-lg font-semibold text-blue-700 mb-4">Resumo de Custos</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="text-center">
-                    <p class="text-sm text-blue-600">Valor FIPE Calculado</p>
-                    <p class="text-2xl font-bold text-blue-800" x-text="formatCurrency(form.fipe * form.percentual_fipe / 100)">R$ 0,00</p>
+                    <p class="text-sm text-blue-600">Valor FIPE Digitado</p>
+                    <p class="text-2xl font-bold text-blue-800" x-text="formatFipeValue()">R$ 0,00</p>
                 </div>
                 <div class="text-center">
                     <p class="text-sm text-blue-600">Total Provisões</p>
@@ -249,33 +315,162 @@
     </div>
 </div>
 
+<script src="{{ asset('js/money-mask.js') }}"></script>
 <script>
 function frotaForm() {
     return {
         form: {
             tipo_veiculo_id: '{{ old("tipo_veiculo_id", request("tipo_veiculo_id")) }}',
-            fipe: {{ old('fipe', 0) }},
-            percentual_fipe: {{ old('percentual_fipe', 80) }},
-            aluguel_carro: {{ old('aluguel_carro', 0) }},
-            rastreador: {{ old('rastreador', 0) }},
-            provisoes_avarias: {{ old('provisoes_avarias', 0) }},
-            provisao_desmobilizacao: {{ old('provisao_desmobilizacao', 0) }},
-            provisao_diaria_rac: {{ old('provisao_diaria_rac', 0) }}
+            fipe: '{{ old('fipe') ? number_format(old('fipe'), 2, ',', '.') : '0,00' }}',
+            percentual_fipe: {{ old('percentual_fipe', 0) }},
+            aluguel_carro: '{{ old('aluguel_carro') ? number_format(old('aluguel_carro'), 2, ',', '.') : '0,00' }}',
+            rastreador: '{{ old('rastreador') ? number_format(old('rastreador'), 2, ',', '.') : '0,00' }}',
+            percentual_provisoes_avarias: {{ old('percentual_provisoes_avarias', 0) }},
+            provisoes_avarias: '{{ old('provisoes_avarias') ? number_format(old('provisoes_avarias'), 2, ',', '.') : '0,00' }}',
+            percentual_provisao_desmobilizacao: {{ old('percentual_provisao_desmobilizacao', 0) }},
+            provisao_desmobilizacao: '{{ old('provisao_desmobilizacao') ? number_format(old('provisao_desmobilizacao'), 2, ',', '.') : '0,00' }}',
+            percentual_provisao_rac: {{ old('percentual_provisao_rac', 0) }},
+            provisao_diaria_rac: '{{ old('provisao_diaria_rac') ? number_format(old('provisao_diaria_rac'), 2, ',', '.') : '0,00' }}'
+        },
+        
+        // Valor numérico reativo do FIPE
+        fipeNumericValue: 0,
+        
+        // Função para formatar diretamente o valor FIPE digitado como moeda
+        formatFipeValue() {
+            // Pega o valor diretamente do campo DOM para evitar conflito com a máscara
+            const fipeField = document.getElementById('fipe');
+            if (fipeField && fipeField.value) {
+                const fipeValue = fipeField.value.trim();
+                if (fipeValue && fipeValue !== '0,00' && fipeValue !== '') {
+                    // Se já tem R$ no início, retorna como está
+                    if (fipeValue.startsWith('R$')) {
+                        return fipeValue;
+                    }
+                    // Se não tem R$, adiciona sem alterar o resto
+                    return 'R$ ' + fipeValue;
+                }
+            }
+            return 'R$ 0,00';
+        },
+        
+        // Função para atualizar o valor numérico do FIPE
+        updateFipeValue() {
+            const fipeValue = this.form.fipe || '0,00';
+            // Remove R$ e espaços, depois remove pontos (separadores de milhares) e substitui vírgula por ponto
+            const cleanValue = fipeValue
+                .replace(/[R$\s]/g, '')
+                .replace(/\./g, '') // Remove separadores de milhares
+                .replace(',', '.'); // Substitui vírgula decimal por ponto
+            
+            this.fipeNumericValue = parseFloat(cleanValue) || 0;
+        },
+        
+        // Função local para converter valor monetário em número
+        getNumericValue(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (!field || !field.value) return 0;
+            
+            // Remove formatação monetária e converte para número
+            const cleanValue = field.value
+                .replace(/[R$\s]/g, '')
+                .replace(/\./g, '') // Remove separadores de milhares
+                .replace(',', '.'); // Substitui vírgula decimal por ponto
+            
+            return parseFloat(cleanValue) || 0;
+        },
+        
+        // Função local para formatar valor como moeda
+        formatMoneyValue(value) {
+            if (!value || isNaN(value)) return '0,00';
+            
+            return value.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         },
         
         calcularCustos() {
-            // Função para recalcular custos em tempo real
+            // Obter valores usando funções locais
+            const fipe = this.getNumericValue('fipe');
+            const percentualFipe = parseFloat(this.form.percentual_fipe || 0);
+            
+            // 1. Calcular aluguel: FIPE * Percentual / 100
+            const aluguelCalculado = (fipe * percentualFipe) / 100;
+            
+            // Formatar e atualizar o campo aluguel
+            const aluguelFormatado = this.formatMoneyValue(aluguelCalculado);
+            this.form.aluguel_carro = aluguelFormatado;
+            
+            // Atualizar o campo DOM diretamente
+            const aluguelField = document.getElementById('aluguel_carro');
+            if (aluguelField) {
+                aluguelField.value = aluguelFormatado;
+                // Disparar evento para sincronizar com Alpine.js
+                aluguelField.dispatchEvent(new Event('input'));
+            }
+            
+            // 2. Calcular provisões para avarias: Aluguel * Percentual / 100
+            const percentualProvisoes = parseFloat(this.form.percentual_provisoes_avarias || 0);
+            const provisoesCalculadas = (aluguelCalculado * percentualProvisoes) / 100;
+            
+            // Formatar e atualizar o campo provisões para avarias
+            const provisoesFormatadas = this.formatMoneyValue(provisoesCalculadas);
+            this.form.provisoes_avarias = provisoesFormatadas;
+            
+            // Atualizar o campo DOM diretamente
+            const provisoesField = document.getElementById('provisoes_avarias');
+            if (provisoesField) {
+                provisoesField.value = provisoesFormatadas;
+                // Disparar evento para sincronizar com Alpine.js
+                provisoesField.dispatchEvent(new Event('input'));
+            }
+            
+            // 3. Calcular provisão para desmobilização: Provisões Avarias * Percentual / 100
+            const percentualDesmob = parseFloat(this.form.percentual_provisao_desmobilizacao || 0);
+            const desmobCalculada = (provisoesCalculadas * percentualDesmob) / 100;
+            
+            // Formatar e atualizar o campo provisão desmobilização
+            const desmobFormatada = this.formatMoneyValue(desmobCalculada);
+            this.form.provisao_desmobilizacao = desmobFormatada;
+            
+            // Atualizar o campo DOM diretamente
+            const desmobField = document.getElementById('provisao_desmobilizacao');
+            if (desmobField) {
+                desmobField.value = desmobFormatada;
+                // Disparar evento para sincronizar com Alpine.js
+                desmobField.dispatchEvent(new Event('input'));
+            }
+            
+            // 4. Calcular provisão diária RAC: Aluguel * Percentual / 100
+            const percentualRac = parseFloat(this.form.percentual_provisao_rac || 0);
+            const racCalculada = (aluguelCalculado * percentualRac) / 100;
+            
+            // Formatar e atualizar o campo provisão RAC
+            const racFormatada = this.formatMoneyValue(racCalculada);
+            this.form.provisao_diaria_rac = racFormatada;
+            
+            // Atualizar o campo DOM diretamente
+            const racField = document.getElementById('provisao_diaria_rac');
+            if (racField) {
+                racField.value = racFormatada;
+                // Disparar evento para sincronizar com Alpine.js
+                racField.dispatchEvent(new Event('input'));
+            }
         },
         
         calcularCustoTotal() {
-            const fipeCalculado = (parseFloat(this.form.fipe || 0) * parseFloat(this.form.percentual_fipe || 0)) / 100;
-            const aluguel = parseFloat(this.form.aluguel_carro || 0);
-            const rastreador = parseFloat(this.form.rastreador || 0);
-            const provisoes = parseFloat(this.form.provisoes_avarias || 0) + 
-                            parseFloat(this.form.provisao_desmobilizacao || 0) + 
-                            parseFloat(this.form.provisao_diaria_rac || 0);
+            const fipe = this.getNumericValue('fipe');
+            const percentualFipe = parseFloat(this.form.percentual_fipe || 0);
+            const fipeCalculado = (fipe * percentualFipe) / 100;
             
-            return fipeCalculado + aluguel + rastreador + provisoes;
+            const aluguel = this.getNumericValue('aluguel_carro');
+            const rastreador = this.getNumericValue('rastreador');
+            const provisoesAvarias = this.getNumericValue('provisoes_avarias');
+            const provisaoDesmob = this.getNumericValue('provisao_desmobilizacao');
+            const provisaoRac = this.getNumericValue('provisao_diaria_rac');
+            
+            return fipeCalculado + aluguel + rastreador + provisoesAvarias + provisaoDesmob + provisaoRac;
         },
         
         formatCurrency(value) {
@@ -283,6 +478,33 @@ function frotaForm() {
                 style: 'currency',
                 currency: 'BRL'
             }).format(value || 0);
+        },
+        
+        // Inicialização do componente
+        init() {
+            // Inicializar valor numérico do FIPE
+            this.updateFipeValue();
+            
+            // Aguardar um momento para garantir que o DOM esteja pronto
+            this.$nextTick(() => {
+                // Calcular valores iniciais
+                this.calcularCustos();
+            });
+            
+            // Watcher para o campo FIPE
+            this.$watch('form.fipe', () => {
+                this.updateFipeValue();
+                this.$nextTick(() => {
+                    this.calcularCustos();
+                });
+            });
+            
+            // Watcher para percentual FIPE
+            this.$watch('form.percentual_fipe', () => {
+                this.$nextTick(() => {
+                    this.calcularCustos();
+                });
+            });
         }
     }
 }

@@ -99,7 +99,8 @@ class RecursoHumano extends Model
                $this->periculosidade + 
                $this->horas_extras + 
                $this->adicional_noturno + 
-               $this->extras;
+               $this->extras + 
+               $this->vale_transporte;
     }
 
     /**
@@ -129,7 +130,7 @@ class RecursoHumano extends Model
         if ($this->percentual_beneficios > 0) {
             return $this->salario_bruto * ($this->percentual_beneficios / 100);
         }
-        return (float) (($this->beneficios ?? 0) + ($this->vale_transporte ?? 0));
+        return (float) ($this->beneficios ?? 0);
     }
 
     /**
@@ -139,29 +140,38 @@ class RecursoHumano extends Model
     {
         return $this->salario_bruto + 
                $this->calcularEncargosSociais() + 
-               $this->calcularBeneficios();
+               ($this->beneficios ?? 0);
     }
 
     /**
      * Atualiza automaticamente os campos calculados
+     * Só recalcula se os percentuais estiverem definidos
      */
     public function atualizarCalculos(): void
     {
-        $this->encargos_sociais = $this->calcularEncargosSociais();
-        $this->beneficios = $this->calcularBeneficios();
+        // Só recalcula encargos se há percentual definido
+        if ($this->percentual_encargos > 0) {
+            $this->encargos_sociais = $this->calcularEncargosSociais();
+        }
+        
+        // Só recalcula benefícios se há percentual definido
+        if ($this->percentual_beneficios > 0) {
+            $this->beneficios = $this->calcularBeneficios();
+        }
+        
+        // Sempre recalcula o custo total
         $this->custo_total_mao_obra = $this->calcularCustoTotal();
     }
 
     /**
-     * Boot do modelo para cálculos automáticos
+     * Boot do modelo
      */
     protected static function boot()
     {
         parent::boot();
-
-        static::saving(function ($recursoHumano) {
-            $recursoHumano->atualizarCalculos();
-        });
+        
+        // Removido o cálculo automático para evitar duplicação de valores
+        // Os cálculos devem ser feitos manualmente quando necessário
     }
 
     /**

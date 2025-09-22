@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Máscara Monetária</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .error {
+            background-color: #ffe8e8;
+            border-color: #ff9999;
+        }
+        .success {
+            background-color: #e8f5e8;
+            border-color: #99cc99;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Debug da Máscara Monetária</h1>
+        <p>Testando a função formatMoney() com diferentes valores</p>
+        
+        <div id="test-results"></div>
+        
+        <h2>Teste Interativo</h2>
+        <input type="text" id="test-input" class="money-mask" placeholder="Digite um valor">
+        <div id="live-debug"></div>
+    </div>
+
+    <script>
+        // Função original formatMoney
+        function formatMoney(value) {
+            console.log('formatMoney input:', value);
+            
+            // Remove tudo que não é dígito
+            let cleanValue = value.toString().replace(/\D/g, '');
+            console.log('cleanValue:', cleanValue);
+            
+            // Se não há valor, retorna vazio
+            if (!cleanValue) return '';
+            
+            // Lógica de formatação natural: cada dígito digitado é um centavo
+            if (cleanValue.length === 1) {
+                // 1 dígito: "1" → "0,01"
+                return '0,0' + cleanValue;
+            } else if (cleanValue.length === 2) {
+                // 2 dígitos: "12" → "0,12"
+                return '0,' + cleanValue;
+            } else {
+                // 3+ dígitos: separa os últimos 2 como centavos
+                let reaisPart = cleanValue.substring(0, cleanValue.length - 2);
+                let centavosPart = cleanValue.substring(cleanValue.length - 2);
+                
+                console.log('reaisPart:', reaisPart);
+                console.log('centavosPart:', centavosPart);
+                
+                // Converte a parte dos reais para número e formata com separadores
+                let reaisNumber = parseInt(reaisPart);
+                console.log('reaisNumber:', reaisNumber);
+                
+                // Formata manualmente para evitar problemas com toLocaleString
+                let reaisStr = reaisNumber.toString();
+                let reaisFormatted = '';
+                
+                // Adiciona pontos a cada 3 dígitos da direita para esquerda
+                for (let i = reaisStr.length - 1, count = 0; i >= 0; i--, count++) {
+                    if (count > 0 && count % 3 === 0) {
+                        reaisFormatted = '.' + reaisFormatted;
+                    }
+                    reaisFormatted = reaisStr[i] + reaisFormatted;
+                }
+                
+                console.log('reaisFormatted:', reaisFormatted);
+                
+                return reaisFormatted + ',' + centavosPart;
+            }
+        }
+        
+        // Função corrigida formatMoney
+        function formatMoneyFixed(value) {
+            console.log('formatMoneyFixed input:', value);
+            
+            // Remove tudo que não é dígito
+            let cleanValue = value.toString().replace(/\D/g, '');
+            console.log('cleanValue:', cleanValue);
+            
+            // Se não há valor, retorna vazio
+            if (!cleanValue) return '';
+            
+            // Converte para número para garantir que não há zeros à esquerda
+            let numericValue = parseInt(cleanValue);
+            
+            // Converte de volta para string para trabalhar com os dígitos
+            cleanValue = numericValue.toString();
+            
+            // Lógica de formatação natural: cada dígito digitado é um centavo
+            if (cleanValue.length === 1) {
+                // 1 dígito: "1" → "0,01"
+                return '0,0' + cleanValue;
+            } else if (cleanValue.length === 2) {
+                // 2 dígitos: "12" → "0,12"
+                return '0,' + cleanValue;
+            } else {
+                // 3+ dígitos: separa os últimos 2 como centavos
+                let reaisPart = cleanValue.substring(0, cleanValue.length - 2);
+                let centavosPart = cleanValue.substring(cleanValue.length - 2);
+                
+                console.log('reaisPart:', reaisPart);
+                console.log('centavosPart:', centavosPart);
+                
+                // Formata a parte dos reais com separadores de milhares
+                let reaisFormatted = '';
+                
+                // Adiciona pontos a cada 3 dígitos da direita para esquerda
+                for (let i = reaisPart.length - 1, count = 0; i >= 0; i--, count++) {
+                    if (count > 0 && count % 3 === 0) {
+                        reaisFormatted = '.' + reaisFormatted;
+                    }
+                    reaisFormatted = reaisPart[i] + reaisFormatted;
+                }
+                
+                console.log('reaisFormatted:', reaisFormatted);
+                
+                return reaisFormatted + ',' + centavosPart;
+            }
+        }
+        
+        // Casos de teste incluindo os problemas reportados
+        const testCases = [
+            { input: '1', expected: '0,01' },
+            { input: '12', expected: '0,12' },
+            { input: '123', expected: '1,23' },
+            { input: '1234', expected: '12,34' },
+            { input: '12345', expected: '123,45' },
+            { input: '123456', expected: '1.234,56' },
+            { input: '1234567', expected: '12.345,67' },
+            { input: '12345678', expected: '123.456,78' },
+            { input: '10000', expected: '100,00' },
+            { input: '100000', expected: '1.000,00' },
+            { input: '1000000', expected: '10.000,00' },
+            // Casos problemáticos reportados pelo usuário
+            { input: '1111111111', expected: '11.111.111,11', description: 'Teste 1: Problema reportado' },
+            { input: '123456789', expected: '1.234.567,89', description: 'Teste 2: Problema reportado' },
+            { input: '1111111100', expected: '11.111.111,00', description: 'Variação do teste 1' },
+            { input: '12345678900', expected: '123.456.789,00', description: 'Teste com valor ainda maior' }
+        ];
+        
+        function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            let html = '';
+            
+            testCases.forEach((testCase, index) => {
+                console.log(`\n--- Teste ${index + 1}: ${testCase.input} ---`);
+                
+                const originalResult = formatMoney(testCase.input);
+                const fixedResult = formatMoneyFixed(testCase.input);
+                
+                const originalCorrect = originalResult === testCase.expected;
+                const fixedCorrect = fixedResult === testCase.expected;
+                
+                const testTitle = testCase.description ? `${testCase.description}` : `Teste ${index + 1}`;
+                
+                html += `
+                    <div class="test-case ${originalCorrect ? 'success' : 'error'}">
+                        <h3>${testTitle}: Input "${testCase.input}"</h3>
+                        <p><strong>Esperado:</strong> ${testCase.expected}</p>
+                        <p><strong>Original:</strong> ${originalResult} ${originalCorrect ? '✅' : '❌'}</p>
+                        <p><strong>Corrigido:</strong> ${fixedResult} ${fixedCorrect ? '✅' : '❌'}</p>
+                        ${!originalCorrect ? '<p style="color: red;"><strong>⚠️ PROBLEMA IDENTIFICADO!</strong></p>' : ''}
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // Teste interativo
+        function setupInteractiveTest() {
+            const input = document.getElementById('test-input');
+            const debugDiv = document.getElementById('live-debug');
+            
+            input.addEventListener('input', function() {
+                const value = this.value.replace(/\D/g, '');
+                
+                if (value) {
+                    console.log(`\n--- Teste Interativo: ${value} ---`);
+                    
+                    const originalResult = formatMoney(value);
+                    const fixedResult = formatMoneyFixed(value);
+                    
+                    debugDiv.innerHTML = `
+                        <h3>Debug em Tempo Real</h3>
+                        <p><strong>Input limpo:</strong> "${value}"</p>
+                        <p><strong>Resultado Original:</strong> "${originalResult}"</p>
+                        <p><strong>Resultado Corrigido:</strong> "${fixedResult}"</p>
+                        <p><strong>Diferença:</strong> ${originalResult === fixedResult ? 'Nenhuma' : 'DIFERENTE!'}</p>
+                    `;
+                } else {
+                    debugDiv.innerHTML = '';
+                }
+            });
+        }
+        
+        // Executar testes quando a página carregar
+        window.addEventListener('load', function() {
+            runTests();
+            setupInteractiveTest();
+        });
+    </script>
+</body>
+</html>

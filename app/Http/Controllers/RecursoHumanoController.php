@@ -13,6 +13,53 @@ use Illuminate\Validation\Rule;
 class RecursoHumanoController extends Controller
 {
     /**
+     * Converte valor formatado com máscara monetária para numérico
+     */
+    private function convertMoneyToNumeric($value): float
+    {
+        if (empty($value)) {
+            return 0;
+        }
+        
+        // Se já é numérico, retorna diretamente
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+        
+        // Remove pontos de milhares e substitui vírgula por ponto
+        $cleanValue = str_replace(['.', ','], ['', '.'], $value);
+        
+        return (float) $cleanValue;
+    }
+    
+    /**
+     * Processa campos monetários do request
+     */
+    private function processMoneyFields(array $data): array
+    {
+        $moneyFields = [
+            'salario_base', 'insalubridade', 'periculosidade', 'horas_extras',
+            'adicional_noturno', 'extras', 'vale_transporte', 'beneficios'
+        ];
+        
+        foreach ($moneyFields as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = $this->convertMoneyToNumeric($data[$field]);
+            }
+        }
+        
+        // Garantir que campos percentuais nunca sejam null
+        if (empty($data['percentual_encargos']) || $data['percentual_encargos'] === null) {
+            $data['percentual_encargos'] = 0;
+        }
+        if (empty($data['percentual_beneficios']) || $data['percentual_beneficios'] === null) {
+            $data['percentual_beneficios'] = 0;
+        }
+        
+        return $data;
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request): View|JsonResponse
@@ -76,11 +123,14 @@ class RecursoHumanoController extends Controller
      */
     public function store(Request $request): RedirectResponse|JsonResponse
     {
+        // Processar campos monetários antes da validação
+        $requestData = $this->processMoneyFields($request->all());
+        $request->merge($requestData);
+        
         $validated = $request->validate([
             'tipo_contratacao' => 'required|string|max:100',
             'cargo' => 'required|string|max:100',
             'base_id' => 'nullable|exists:bases,id',
-            'base_salarial' => 'required|numeric|min:0',
             'salario_base' => 'required|numeric|min:0',
             'insalubridade' => 'nullable|numeric|min:0',
             'periculosidade' => 'nullable|numeric|min:0',
@@ -138,11 +188,14 @@ class RecursoHumanoController extends Controller
      */
     public function update(Request $request, RecursoHumano $recursoHumano): RedirectResponse|JsonResponse
     {
+        // Processar campos monetários antes da validação
+        $requestData = $this->processMoneyFields($request->all());
+        $request->merge($requestData);
+        
         $validated = $request->validate([
             'tipo_contratacao' => 'required|string|max:100',
             'cargo' => 'required|string|max:100',
             'base_id' => 'nullable|exists:bases,id',
-            'base_salarial' => 'required|numeric|min:0',
             'salario_base' => 'required|numeric|min:0',
             'insalubridade' => 'nullable|numeric|min:0',
             'periculosidade' => 'nullable|numeric|min:0',

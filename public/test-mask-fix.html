@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Correção Máscara Monetária</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-field {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .info {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .result {
+            background: #f0fff0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste da Correção da Máscara Monetária</h1>
+    
+    <div class="info">
+        <h3>Teste específico:</h3>
+        <p><strong>Digite: 123456789</strong></p>
+        <p><strong>Resultado esperado: 1.234.567,89</strong></p>
+    </div>
+
+    <div class="test-field">
+        <label for="valor_teste">Campo de Teste:</label>
+        <input type="text" id="valor_teste" class="money-mask" placeholder="Digite 123456789">
+        <div class="result" id="resultado">Resultado aparecerá aqui...</div>
+    </div>
+
+    <script src="js/money-mask.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const campo = document.getElementById('valor_teste');
+            const resultado = document.getElementById('resultado');
+            
+            campo.addEventListener('input', function() {
+                resultado.textContent = `Valor digitado: "${this.value}"`;
+                console.log(`Teste: ${this.value}`);
+            });
+            
+            // Teste automático
+            setTimeout(() => {
+                console.log('Iniciando teste automático...');
+                campo.focus();
+                
+                // Simula digitação de 123456789
+                const digitos = '123456789';
+                let valorAtual = '';
+                
+                for (let i = 0; i < digitos.length; i++) {
+                    setTimeout(() => {
+                        valorAtual += digitos[i];
+                        campo.value = valorAtual;
+                        campo.dispatchEvent(new Event('input'));
+                        console.log(`Dígito ${i+1}: ${digitos[i]} -> Resultado: ${campo.value}`);
+                    }, i * 200);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

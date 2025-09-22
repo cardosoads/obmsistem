@@ -71,19 +71,6 @@
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                
-                <div>
-                    <label for="base_salarial" class="block text-sm font-medium text-gray-700 mb-2">Base Salarial</label>
-                    <input type="text" 
-                           id="base_salarial" 
-                           name="base_salarial" 
-                           value="{{ old('base_salarial') }}"
-                           placeholder="Descrição da base salarial"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('base_salarial') border-red-500 @enderror">
-                    @error('base_salarial')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
         </div>
 
@@ -92,35 +79,37 @@
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Valores Salariais</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="salario_base" class="block text-sm font-medium text-gray-700 mb-2">Salário Base *</label>
-                    <input type="number" 
-                           id="salario_base" 
-                           name="salario_base" 
-                           value="{{ old('salario_base') }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.salario_base"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('salario_base') border-red-500 @enderror" 
-                           required>
+                    <label for="salario_base" class="block text-sm font-medium text-gray-700 mb-2">Salário Base /mês *</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="salario_base" 
+                               name="salario_base" 
+                               value="{{ old('salario_base') }}"
+                               x-model="form.salario_base"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('salario_base') border-red-500 @enderror" 
+                               required>
+                    </div>
                     @error('salario_base')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="insalubridade" class="block text-sm font-medium text-gray-700 mb-2">Insalubridade</label>
-                    <input type="number" 
-                           id="insalubridade" 
-                           name="insalubridade" 
-                           value="{{ old('insalubridade', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.insalubridade"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('insalubridade') border-red-500 @enderror">
+                    <label for="insalubridade" class="block text-sm font-medium text-gray-700 mb-2">Insalubridade /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="insalubridade" 
+                               name="insalubridade" 
+                               value="{{ old('insalubridade', 0) }}"
+                               x-model="form.insalubridade"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('insalubridade') border-red-500 @enderror">
+                    </div>
                     @error('insalubridade')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -129,34 +118,36 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label for="periculosidade" class="block text-sm font-medium text-gray-700 mb-2">Periculosidade</label>
-                    <input type="number" 
-                           id="periculosidade" 
-                           name="periculosidade" 
-                           value="{{ old('periculosidade', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.periculosidade"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('periculosidade') border-red-500 @enderror">
+                    <label for="periculosidade" class="block text-sm font-medium text-gray-700 mb-2">Periculosidade /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="periculosidade" 
+                               name="periculosidade" 
+                               value="{{ old('periculosidade', 0) }}"
+                               x-model="form.periculosidade"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('periculosidade') border-red-500 @enderror">
+                    </div>
                     @error('periculosidade')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="horas_extras" class="block text-sm font-medium text-gray-700 mb-2">Horas Extras</label>
-                    <input type="number" 
-                           id="horas_extras" 
-                           name="horas_extras" 
-                           value="{{ old('horas_extras', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.horas_extras"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('horas_extras') border-red-500 @enderror">
+                    <label for="horas_extras" class="block text-sm font-medium text-gray-700 mb-2">Horas Extras /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="horas_extras" 
+                               name="horas_extras" 
+                               value="{{ old('horas_extras', 0) }}"
+                               x-model="form.horas_extras"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('horas_extras') border-red-500 @enderror">
+                    </div>
                     @error('horas_extras')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -165,34 +156,36 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label for="adicional_noturno" class="block text-sm font-medium text-gray-700 mb-2">Adicional Noturno</label>
-                    <input type="number" 
-                           id="adicional_noturno" 
-                           name="adicional_noturno" 
-                           value="{{ old('adicional_noturno', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.adicional_noturno"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('adicional_noturno') border-red-500 @enderror">
+                    <label for="adicional_noturno" class="block text-sm font-medium text-gray-700 mb-2">Adicional Noturno /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="adicional_noturno" 
+                               name="adicional_noturno" 
+                               value="{{ old('adicional_noturno', 0) }}"
+                               x-model="form.adicional_noturno"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('adicional_noturno') border-red-500 @enderror">
+                    </div>
                     @error('adicional_noturno')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="extras" class="block text-sm font-medium text-gray-700 mb-2">Extras</label>
-                    <input type="number" 
-                           id="extras" 
-                           name="extras" 
-                           value="{{ old('extras', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.extras"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('extras') border-red-500 @enderror">
+                    <label for="extras" class="block text-sm font-medium text-gray-700 mb-2">Extras /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="extras" 
+                               name="extras" 
+                               value="{{ old('extras', 0) }}"
+                               x-model="form.extras"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('extras') border-red-500 @enderror">
+                    </div>
                     @error('extras')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -201,34 +194,36 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label for="vale_transporte" class="block text-sm font-medium text-gray-700 mb-2">Vale Transporte</label>
-                    <input type="number" 
-                           id="vale_transporte" 
-                           name="vale_transporte" 
-                           value="{{ old('vale_transporte', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.vale_transporte"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('vale_transporte') border-red-500 @enderror">
+                    <label for="vale_transporte" class="block text-sm font-medium text-gray-700 mb-2">Vale Transporte /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="vale_transporte" 
+                               name="vale_transporte" 
+                               value="{{ old('vale_transporte', 0) }}"
+                               x-model="form.vale_transporte"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('vale_transporte') border-red-500 @enderror">
+                    </div>
                     @error('vale_transporte')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="beneficios" class="block text-sm font-medium text-gray-700 mb-2">Benefícios</label>
-                    <input type="number" 
-                           id="beneficios" 
-                           name="beneficios" 
-                           value="{{ old('beneficios', 0) }}"
-                           step="0.01"
-                           min="0"
-                           x-model="form.beneficios"
-                           @input="calcularCustos()"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 @error('beneficios') border-red-500 @enderror">
+                    <label for="beneficios" class="block text-sm font-medium text-gray-700 mb-2">Benefícios /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="beneficios" 
+                               name="beneficios" 
+                               value="{{ old('beneficios', 0) }}"
+                               x-model="form.beneficios"
+                               @input="calcularCustos()"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 money-mask @error('beneficios') border-red-500 @enderror">
+                    </div>
                     @error('beneficios')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -259,30 +254,32 @@
                 </div>
                 
                 <div>
-                    <label for="encargos_sociais" class="block text-sm font-medium text-gray-700 mb-2">Encargos Sociais</label>
-                    <input type="number" 
-                           id="encargos_sociais" 
-                           name="encargos_sociais" 
-                           x-model="calculated.encargos_sociais"
-                           step="0.01"
-                           min="0"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
-                           readonly>
+                    <label for="encargos_sociais" class="block text-sm font-medium text-gray-700 mb-2">Encargos Sociais /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="encargos_sociais" 
+                               name="encargos_sociais" 
+                               x-model="calculated.encargos_sociais"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
+                               readonly>
+                    </div>
                     <p class="text-xs text-gray-500 mt-1">Calculado automaticamente</p>
                 </div>
                 
                 <div>
-                    <label for="custo_total_mao_obra" class="block text-sm font-medium text-gray-700 mb-2">Custo Total Mão de Obra</label>
-                    <input type="number" 
-                           id="custo_total_mao_obra" 
-                           name="custo_total_mao_obra" 
-                           x-model="calculated.custo_total"
-                           step="0.01"
-                           min="0"
-                           placeholder="0,00"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none font-semibold" 
-                           readonly>
+                    <label for="custo_total_mao_obra" class="block text-sm font-medium text-gray-700 mb-2">Custo Total Mão de Obra /mês</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input type="text" 
+                               id="custo_total_mao_obra" 
+                               name="custo_total_mao_obra" 
+                               x-model="calculated.custo_total"
+                               placeholder="0,00"
+                               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none font-semibold" 
+                               readonly>
+                    </div>
                     <p class="text-xs text-gray-500 mt-1">Calculado automaticamente</p>
                 </div>
             </div>
@@ -318,68 +315,68 @@
     </form>
 </div>
 
-<script>
-function rhForm() {
-    return {
-        form: {
-            tipo_contratacao: '{{ old('tipo_contratacao') }}',
-            salario_base: {{ old('salario_base', 0) }},
-            insalubridade: {{ old('insalubridade', 0) }},
-            periculosidade: {{ old('periculosidade', 0) }},
-            horas_extras: {{ old('horas_extras', 0) }},
-            adicional_noturno: {{ old('adicional_noturno', 0) }},
-            extras: {{ old('extras', 0) }},
-            vale_transporte: {{ old('vale_transporte', 0) }},
-            beneficios: {{ old('beneficios', 0) }},
-            percentual_encargos: {{ old('percentual_encargos', 0) }}
-        },
-        calculated: {
-            salario_bruto: 0,
-            encargos_sociais: 0,
-            custo_total: 0
-        },
-        
-        init() {
-            this.calcularCustos();
-        },
-        
-        calcularCustos() {
-            // Definir percentual de encargos baseado no tipo de contratação
-            if (this.form.tipo_contratacao === 'CLT') {
-                this.form.percentual_encargos = 68.5;
-            } else if (this.form.tipo_contratacao === 'PJ') {
-                this.form.percentual_encargos = 0;
-            } else if (this.form.tipo_contratacao === 'Terceirizado') {
-                this.form.percentual_encargos = 45.0;
-            } else if (this.form.tipo_contratacao === 'Temporário') {
-                this.form.percentual_encargos = 55.0;
-            } else if (this.form.tipo_contratacao === 'Estagiário') {
-                this.form.percentual_encargos = 15.0;
-            }
-            
-            // Calcular salário bruto
-            this.calculated.salario_bruto = parseFloat(this.form.salario_base || 0) +
-                                          parseFloat(this.form.insalubridade || 0) +
-                                          parseFloat(this.form.periculosidade || 0) +
-                                          parseFloat(this.form.horas_extras || 0) +
-                                          parseFloat(this.form.adicional_noturno || 0) +
-                                          parseFloat(this.form.extras || 0) +
-                                          parseFloat(this.form.vale_transporte || 0);
-            
-            // Calcular encargos sociais
-            this.calculated.encargos_sociais = this.calculated.salario_bruto * (parseFloat(this.form.percentual_encargos || 0) / 100);
-            
-            // Calcular custo total
-            this.calculated.custo_total = this.calculated.salario_bruto + 
-                                        this.calculated.encargos_sociais + 
-                                        parseFloat(this.form.beneficios || 0);
-            
-            // Atualizar campos hidden
-            document.getElementById('encargos_sociais').value = this.calculated.encargos_sociais.toFixed(2);
-            document.getElementById('custo_total_mao_obra').value = this.calculated.custo_total.toFixed(2);
-            document.getElementById('percentual_encargos').value = this.form.percentual_encargos;
-        }
-    }
-}
-</script>
 @endsection
+
+@push('scripts')
+<script src="{{ asset('js/money-mask.js') }}"></script>
+<script>
+function calcularCustos() {
+    // Obter valores dos campos usando a função de máscara monetária
+    const salarioBase = window.getFieldNumericValue('salario_base') || 0;
+    const insalubridade = window.getFieldNumericValue('insalubridade') || 0;
+    const periculosidade = window.getFieldNumericValue('periculosidade') || 0;
+    const horasExtras = window.getFieldNumericValue('horas_extras') || 0;
+    const adicionalNoturno = window.getFieldNumericValue('adicional_noturno') || 0;
+    const extras = window.getFieldNumericValue('extras') || 0;
+    const valeTransporte = window.getFieldNumericValue('vale_transporte') || 0;
+    const beneficios = window.getFieldNumericValue('beneficios') || 0;
+    const percentualEncargos = parseFloat(document.getElementById('percentual_encargos').value) || 0;
+
+    // Calcular salário bruto
+    const salarioBruto = salarioBase + insalubridade + periculosidade + horasExtras + adicionalNoturno + extras + valeTransporte;
+    
+    // Calcular encargos sociais
+    const encargosSociais = salarioBruto * (percentualEncargos / 100);
+    
+    // Calcular custo total
+    const custoTotal = salarioBruto + encargosSociais + beneficios;
+    
+    // Atualizar campos calculados com formatação
+    const encargosSociaisField = document.getElementById('encargos_sociais');
+    const custoTotalField = document.getElementById('custo_total_mao_obra');
+    
+    encargosSociaisField.value = encargosSociais.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    custoTotalField.value = custoTotal.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    // Atualizar valores numéricos para envio do formulário
+    encargosSociaisField.setAttribute('data-numeric-value', encargosSociais);
+    custoTotalField.setAttribute('data-numeric-value', custoTotal);
+}
+
+// Adicionar event listeners para recalcular quando os valores mudarem
+document.addEventListener('DOMContentLoaded', function() {
+    const camposCalculo = [
+        'salario_base', 'insalubridade', 'periculosidade', 'horas_extras',
+        'adicional_noturno', 'extras', 'vale_transporte', 'beneficios', 'percentual_encargos'
+    ];
+    
+    camposCalculo.forEach(campo => {
+        const elemento = document.getElementById(campo);
+        if (elemento) {
+            elemento.addEventListener('input', calcularCustos);
+            elemento.addEventListener('change', calcularCustos);
+        }
+    });
+    
+    // Calcular valores iniciais
+    setTimeout(calcularCustos, 100);
+});
+</script>
+@endpush
