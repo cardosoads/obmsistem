@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Campo Rastreador no Cálculo</title>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="js/money-mask.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .field-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .result {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .breakdown {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 18px;
+            color: #007bff;
+        }
+        .test-values {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        .test-button {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .test-button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" x-data="frotaTest()">
+        <h1>🧪 Teste - Campo Rastreador no Cálculo de Custos</h1>
+        
+        <div class="test-values">
+            <h3>📋 Cenários de Teste</h3>
+            <p>Clique nos botões abaixo para testar diferentes valores:</p>
+            <button class="test-button" @click="aplicarTeste1()">Teste 1: Rastreador R$ 89,90</button>
+            <button class="test-button" @click="aplicarTeste2()">Teste 2: Rastreador R$ 150,00</button>
+            <button class="test-button" @click="aplicarTeste3()">Teste 3: Rastreador R$ 0,00</button>
+            <button class="test-button" @click="zerarTodos()">Zerar Todos</button>
+        </div>
+
+        <div class="field-group">
+            <label for="fipe">Valor FIPE:</label>
+            <input type="text" 
+                   id="fipe" 
+                   x-model="form.fipe" 
+                   @input="updateFipeValue(); $nextTick(() => calcularCustos())" 
+                   placeholder="0,00" 
+                   class="money-mask">
+        </div>
+
+        <div class="field-group">
+            <label for="percentual_fipe">Percentual FIPE (%):</label>
+            <input type="number" 
+                   id="percentual_fipe" 
+                   x-model="form.percentual_fipe" 
+                   @input="calcularCustos()" 
+                   step="0.1" 
+                   placeholder="0.0">
+        </div>
+
+        <div class="field-group">
+            <label for="aluguel_carro">Aluguel do Carro (calculado automaticamente):</label>
+            <input type="text" 
+                   id="aluguel_carro" 
+                   x-model="form.aluguel_carro" 
+                   placeholder="0,00" 
+                   class="money-mask" 
+                   readonly>
+        </div>
+
+        <div class="field-group">
+            <label for="rastreador">🎯 Rastreador (CAMPO TESTADO):</label>
+            <input type="text" 
+                   id="rastreador" 
+                   x-model="form.rastreador" 
+                   @input="calcularCustos()" 
+                   placeholder="0,00" 
+                   class="money-mask" 
+                   style="border-color: #dc3545; background-color: #fff5f5;">
+        </div>
+
+        <div class="field-group">
+            <label for="provisoes_avarias">Provisões para Avarias:</label>
+            <input type="text" 
+                   id="provisoes_avarias" 
+                   x-model="form.provisoes_avarias" 
+                   placeholder="0,00" 
+                   class="money-mask" 
+                   readonly>
+        </div>
+
+        <div class="result">
+            <h3>💰 Resultado do Cálculo</h3>
+            <div class="breakdown">
+                <div class="breakdown-item">
+                    <span>FIPE Calculado:</span>
+                    <span x-text="formatCurrency(getFipeCalculado())"></span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Aluguel:</span>
+                    <span x-text="formatCurrency(getNumericValue('aluguel_carro'))"></span>
+                </div>
+                <div class="breakdown-item" style="background-color: #ffebee;">
+                    <span>🎯 Rastreador:</span>
+                    <span x-text="formatCurrency(getNumericValue('rastreador'))"></span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Provisões Avarias:</span>
+                    <span x-text="formatCurrency(getNumericValue('provisoes_avarias'))"></span>
+                </div>
+                <div class="breakdown-item">
+                    <span>TOTAL FINAL:</span>
+                    <span x-text="formatCurrency(calcularCustoTotal())"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="result" style="background: #d4edda; border-left-color: #28a745;">
+            <h3>✅ Verificação</h3>
+            <p><strong>Status:</strong> <span x-text="verificarInclusaoRastreador()"></span></p>
+            <p><strong>Valor do Rastreador no Total:</strong> <span x-text="formatCurrency(getNumericValue('rastreador'))"></span></p>
+            <p><strong>Total sem Rastreador:</strong> <span x-text="formatCurrency(calcularTotalSemRastreador())"></span></p>
+            <p><strong>Total com Rastreador:</strong> <span x-text="formatCurrency(calcularCustoTotal())"></span></p>
+            <p><strong>Diferença:</strong> <span x-text="formatCurrency(calcularCustoTotal() - calcularTotalSemRastreador())"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function frotaTest() {
+            return {
+                form: {
+                    fipe: '50000,00',
+                    percentual_fipe: 75,
+                    aluguel_carro: '0,00',
+                    rastreador: '89,90',
+                    provisoes_avarias: '0,00'
+                },
+                
+                fipeNumericValue: 50000,
+                
+                aplicarTeste1() {
+                    this.form.fipe = '50000,00';
+                    this.form.percentual_fipe = 75;
+                    this.form.rastreador = '89,90';
+                    this.updateFipeValue();
+                    this.$nextTick(() => this.calcularCustos());
+                },
+                
+                aplicarTeste2() {
+                    this.form.fipe = '80000,00';
+                    this.form.percentual_fipe = 80;
+                    this.form.rastreador = '150,00';
+                    this.updateFipeValue();
+                    this.$nextTick(() => this.calcularCustos());
+                },
+                
+                aplicarTeste3() {
+                    this.form.fipe = '60000,00';
+                    this.form.percentual_fipe = 70;
+                    this.form.rastreador = '0,00';
+                    this.updateFipeValue();
+                    this.$nextTick(() => this.calcularCustos());
+                },
+                
+                zerarTodos() {
+                    this.form.fipe = '0,00';
+                    this.form.percentual_fipe = 0;
+                    this.form.rastreador = '0,00';
+                    this.form.aluguel_carro = '0,00';
+                    this.form.provisoes_avarias = '0,00';
+                    this.updateFipeValue();
+                },
+                
+                updateFipeValue() {
+                    const fipeValue = this.form.fipe || '0,00';
+                    const cleanValue = fipeValue
+                        .replace(/[R$\s]/g, '')
+                        .replace(/\./g, '')
+                        .replace(',', '.');
+                    this.fipeNumericValue = parseFloat(cleanValue) || 0;
+                },
+                
+                getNumericValue(fieldId) {
+                    const field = document.getElementById(fieldId);
+                    if (!field || !field.value) return 0;
+                    
+                    const cleanValue = field.value
+                        .replace(/[R$\s]/g, '')
+                        .replace(/\./g, '')
+                        .replace(',', '.');
+                    
+                    return parseFloat(cleanValue) || 0;
+                },
+                
+                formatMoneyValue(value) {
+                    if (!value || isNaN(value)) return '0,00';
+                    return value.toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                },
+                
+                calcularCustos() {
+                    const fipe = this.getNumericValue('fipe');
+                    const percentualFipe = parseFloat(this.form.percentual_fipe || 0);
+                    
+                    // Calcular aluguel
+                    const aluguelCalculado = (fipe * percentualFipe) / 100;
+                    const aluguelFormatado = this.formatMoneyValue(aluguelCalculado);
+                    this.form.aluguel_carro = aluguelFormatado;
+                    
+                    const aluguelField = document.getElementById('aluguel_carro');
+                    if (aluguelField) {
+                        aluguelField.value = aluguelFormatado;
+                    }
+                    
+                    // Simular cálculo de provisões (10% do aluguel)
+                    const provisoesCalculadas = aluguelCalculado * 0.1;
+                    const provisoesFormatadas = this.formatMoneyValue(provisoesCalculadas);
+                    this.form.provisoes_avarias = provisoesFormatadas;
+                    
+                    const provisoesField = document.getElementById('provisoes_avarias');
+                    if (provisoesField) {
+                        provisoesField.value = provisoesFormatadas;
+                    }
+                },
+                
+                getFipeCalculado() {
+                    const fipe = this.getNumericValue('fipe');
+                    const percentualFipe = parseFloat(this.form.percentual_fipe || 0);
+                    return (fipe * percentualFipe) / 100;
+                },
+                
+                calcularCustoTotal() {
+                    const fipe = this.getNumericValue('fipe');
+                    const percentualFipe = parseFloat(this.form.percentual_fipe || 0);
+                    const fipeCalculado = (fipe * percentualFipe) / 100;
+                    
+                    const aluguel = this.getNumericValue('aluguel_carro');
+                    const rastreador = this.getNumericValue('rastreador'); // ← CAMPO INCLUÍDO
+                    const provisoesAvarias = this.getNumericValue('provisoes_avarias');
+                    
+                    return fipeCalculado + aluguel + rastreador + provisoesAvarias;
+                },
+                
+                calcularTotalSemRastreador() {
+                    const fipe = this.getNumericValue('fipe');
+                    const percentualFipe = parseFloat(this.form.percentual_fipe || 0);
+                    const fipeCalculado = (fipe * percentualFipe) / 100;
+                    
+                    const aluguel = this.getNumericValue('aluguel_carro');
+                    const provisoesAvarias = this.getNumericValue('provisoes_avarias');
+                    
+                    return fipeCalculado + aluguel + provisoesAvarias;
+                },
+                
+                verificarInclusaoRastreador() {
+                    const totalComRastreador = this.calcularCustoTotal();
+                    const totalSemRastreador = this.calcularTotalSemRastreador();
+                    const valorRastreador = this.getNumericValue('rastreador');
+                    
+                    if (Math.abs((totalComRastreador - totalSemRastreador) - valorRastreador) < 0.01) {
+                        return '✅ RASTREADOR INCLUÍDO CORRETAMENTE';
+                    } else {
+                        return '❌ RASTREADOR NÃO INCLUÍDO';
+                    }
+                },
+                
+                formatCurrency(value) {
+                    return new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }).format(value || 0);
+                },
+                
+                init() {
+                    this.updateFipeValue();
+                    this.$nextTick(() => {
+                        this.calcularCustos();
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

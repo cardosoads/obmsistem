@@ -118,8 +118,11 @@ class FrotaController extends Controller
             'percentual_fipe' => 'nullable|numeric|min:0|max:999.99',
             'aluguel_carro' => 'required|numeric|min:0|max:9999999999.99',
             'rastreador' => 'nullable|numeric|min:0|max:9999999999.99',
+            'percentual_provisoes_avarias' => 'nullable|numeric|min:0|max:100',
             'provisoes_avarias' => 'nullable|numeric|min:0|max:9999999999.99',
+            'percentual_provisao_desmobilizacao' => 'nullable|numeric|min:0|max:100',
             'provisao_desmobilizacao' => 'nullable|numeric|min:0|max:9999999999.99',
+            'percentual_provisao_rac' => 'nullable|numeric|min:0|max:100',
             'provisao_diaria_rac' => 'nullable|numeric|min:0|max:9999999999.99',
             'active' => 'boolean',
         ]);
@@ -127,8 +130,11 @@ class FrotaController extends Controller
         $validated['active'] = $request->has('active');
         $validated['percentual_fipe'] = $validated['percentual_fipe'] ?? 0;
         $validated['rastreador'] = $validated['rastreador'] ?? 0;
+        $validated['percentual_provisoes_avarias'] = $validated['percentual_provisoes_avarias'] ?? 0;
         $validated['provisoes_avarias'] = $validated['provisoes_avarias'] ?? 0;
+        $validated['percentual_provisao_desmobilizacao'] = $validated['percentual_provisao_desmobilizacao'] ?? 0;
         $validated['provisao_desmobilizacao'] = $validated['provisao_desmobilizacao'] ?? 0;
+        $validated['percentual_provisao_rac'] = $validated['percentual_provisao_rac'] ?? 0;
         $validated['provisao_diaria_rac'] = $validated['provisao_diaria_rac'] ?? 0;
 
         Frota::create($validated);
@@ -170,8 +176,11 @@ class FrotaController extends Controller
             'percentual_fipe' => 'nullable|numeric|min:0|max:999.99',
             'aluguel_carro' => 'required|numeric|min:0|max:9999999999.99',
             'rastreador' => 'nullable|numeric|min:0|max:9999999999.99',
+            'percentual_provisoes_avarias' => 'nullable|numeric|min:0|max:100',
             'provisoes_avarias' => 'nullable|numeric|min:0|max:9999999999.99',
+            'percentual_provisao_desmobilizacao' => 'nullable|numeric|min:0|max:100',
             'provisao_desmobilizacao' => 'nullable|numeric|min:0|max:9999999999.99',
+            'percentual_provisao_rac' => 'nullable|numeric|min:0|max:100',
             'provisao_diaria_rac' => 'nullable|numeric|min:0|max:9999999999.99',
             'active' => 'boolean',
         ]);
@@ -179,8 +188,11 @@ class FrotaController extends Controller
         $validated['active'] = $request->has('active');
         $validated['percentual_fipe'] = $validated['percentual_fipe'] ?? 0;
         $validated['rastreador'] = $validated['rastreador'] ?? 0;
+        $validated['percentual_provisoes_avarias'] = $validated['percentual_provisoes_avarias'] ?? 0;
         $validated['provisoes_avarias'] = $validated['provisoes_avarias'] ?? 0;
+        $validated['percentual_provisao_desmobilizacao'] = $validated['percentual_provisao_desmobilizacao'] ?? 0;
         $validated['provisao_desmobilizacao'] = $validated['provisao_desmobilizacao'] ?? 0;
+        $validated['percentual_provisao_rac'] = $validated['percentual_provisao_rac'] ?? 0;
         $validated['provisao_diaria_rac'] = $validated['provisao_diaria_rac'] ?? 0;
 
         $frota->update($validated);
@@ -253,5 +265,75 @@ class FrotaController extends Controller
                 'message' => 'Erro ao recalcular custo: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Buscar valor da frota para orçamento próprio nova rota
+     */
+    public function buscarValor(Request $request): JsonResponse
+    {
+        $request->validate([
+            'codigo_veiculo' => 'required|string'
+        ]);
+
+        $frota = Frota::whereHas('tipoVeiculo', function ($query) use ($request) {
+                    $query->where('codigo', $request->codigo_veiculo);
+                })
+                ->where('active', true)
+                ->first();
+
+        if (!$frota) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Veículo não encontrado ou inativo.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $frota->id,
+                'codigo_veiculo' => $frota->tipoVeiculo->codigo,
+                'descricao_veiculo' => $frota->tipoVeiculo->descricao,
+                'valor_aluguel' => $frota->aluguel_carro,
+                'custo_total' => $frota->custo_total,
+                'custo_total_formatado' => 'R$ ' . number_format($frota->custo_total, 2, ',', '.')
+            ]
+        ]);
+    }
+
+    /**
+     * API para listar frotas ativas
+     */
+    public function apiIndex(Request $request): JsonResponse
+    {
+        $query = Frota::with('tipoVeiculo')->where('active', true);
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->whereHas('tipoVeiculo', function ($q) use ($search) {
+                $q->where('codigo', 'like', "%{$search}%")
+                  ->orWhere('descricao', 'like', "%{$search}%");
+            });
+        }
+
+        $frotas = $query->orderBy('custo_total', 'asc')
+                       ->limit(50)
+                       ->get()
+                       ->map(function ($frota) {
+                           return [
+                               'id' => $frota->id,
+                               'codigo' => $frota->tipoVeiculo->codigo,
+                               'descricao' => $frota->tipoVeiculo->descricao,
+                               'valor_aluguel' => $frota->aluguel_carro,
+                               'custo_total' => $frota->custo_total,
+                               'custo_formatado' => 'R$ ' . number_format($frota->custo_total, 2, ',', '.')
+                           ];
+                       });
+
+        return response()->json([
+            'success' => true,
+            'data' => $frotas
+        ]);
     }
 }

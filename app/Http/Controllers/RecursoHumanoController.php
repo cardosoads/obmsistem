@@ -304,4 +304,40 @@ class RecursoHumanoController extends Controller
 
         return response()->json($relatorio);
     }
+
+    /**
+     * Buscar valor do recurso humano para orçamento próprio nova rota
+     */
+    public function buscarValor(Request $request): JsonResponse
+    {
+        $request->validate([
+            'cargo' => 'required|string',
+            'base_id' => 'required|exists:bases,id'
+        ]);
+
+        $recursoHumano = RecursoHumano::where('cargo', $request->cargo)
+                                    ->where('base_id', $request->base_id)
+                                    ->where('active', true)
+                                    ->first();
+
+        if (!$recursoHumano) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Recurso humano não encontrado para o cargo e base especificados.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'recurso_humano' => [
+                'id' => $recursoHumano->id,
+                'cargo' => $recursoHumano->cargo,
+                'base' => $recursoHumano->base,
+                'base_id' => $recursoHumano->base_id,
+                'custo_total_mao_obra' => $recursoHumano->custo_total_mao_obra,
+                'salario_base' => $recursoHumano->salario_base,
+                'custo_total_formatado' => 'R$ ' . number_format($recursoHumano->custo_total_mao_obra, 2, ',', '.')
+            ]
+        ]);
+    }
 }

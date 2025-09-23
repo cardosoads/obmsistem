@@ -9,6 +9,9 @@ use App\Models\OrcamentoAumentoKm;
 use App\Models\OrcamentoProprioNovaRota;
 use App\Models\CentroCusto;
 use App\Models\GrupoImposto;
+use App\Models\RecursoHumano;
+use App\Models\Frota;
+use App\Models\Base;
 use App\Services\OmieService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +25,28 @@ class OrcamentoController extends Controller
     public function __construct(OmieService $omieService)
     {
         $this->omieService = $omieService;
+    }
+
+    /**
+     * Buscar cargos disponíveis por base específica
+     */
+    public function buscarCargosPorBase(Request $request)
+    {
+        $request->validate([
+            'base_id' => 'required|exists:bases,id'
+        ]);
+
+        $cargos = RecursoHumano::where('base_id', $request->base_id)
+                              ->where('active', true)
+                              ->select('cargo')
+                              ->distinct()
+                              ->orderBy('cargo')
+                              ->pluck('cargo');
+
+        return response()->json([
+            'success' => true,
+            'cargos' => $cargos
+        ]);
     }
     /**
      * Display a listing of the resource.
@@ -163,11 +188,50 @@ class OrcamentoController extends Controller
             'valor_lucro_aumento' => 'nullable|numeric|min:0',
             'valor_impostos_aumento' => 'nullable|numeric|min:0',
             // Campos específicos do Próprio Nova Rota
+            'motivo_alteracao' => 'nullable|string|max:500',
+            // Campos funcionário
+            'tem_funcionario' => 'nullable|boolean',
+            'recurso_humano_id' => 'required_if:tem_funcionario,1|nullable|exists:recursos_humanos,id',
+            'cargo_funcionario' => 'nullable|string|max:255',
+            'base_funcionario_id' => 'nullable|exists:bases,id',
+            'valor_funcionario' => 'nullable|numeric|min:0',
+            // Campos veículo próprio
+            'tem_veiculo_proprio' => 'nullable|boolean',
+            'frota_id' => 'required_if:tem_veiculo_proprio,1|nullable|exists:frotas,id',
+            'valor_aluguel_veiculo' => 'nullable|numeric|min:0',
+            // Campos prestador
+            'tem_prestador' => 'nullable|boolean',
+            'fornecedor_omie_id_prestador' => 'required_if:tem_prestador,1|nullable|string',
+            'fornecedor_nome_prestador' => 'required_if:tem_prestador,1|nullable|string|max:255',
+            'valor_referencia_prestador' => 'required_if:tem_prestador,1|nullable|numeric|min:0',
+            'qtd_dias_prestador' => 'required_if:tem_prestador,1|nullable|integer|min:1',
+            'lucro_percentual_prestador' => 'nullable|numeric|min:0|max:100',
+            'impostos_percentual_prestador' => 'nullable|numeric|min:0|max:100',
+            'grupo_imposto_prestador_id' => 'nullable|exists:grupos_impostos,id',
+            // Campos específicos do Próprio Nova Rota
             'nova_origem' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
             'novo_destino' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|string|max:255',
             'km_nova_rota' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|numeric|min:0',
             'valor_km_nova_rota' => 'required_if:tipo_orcamento,proprio_nova_rota|nullable|numeric|min:0',
-            'motivo_alteracao' => 'nullable|string|max:500'
+            'motivo_alteracao' => 'nullable|string|max:500',
+            // Campos funcionário
+            'tem_funcionario' => 'nullable|boolean',
+            'cargo_funcionario' => 'required_if:tem_funcionario,1|nullable|string|max:255',
+            'base_funcionario_id' => 'required_if:tem_funcionario,1|nullable|exists:bases,id',
+            'valor_funcionario' => 'nullable|numeric|min:0',
+            // Campos veículo próprio
+            'tem_veiculo_proprio' => 'nullable|boolean',
+            'frota_id' => 'required_if:tem_veiculo_proprio,1|nullable|exists:frotas,id',
+            'valor_aluguel_veiculo' => 'nullable|numeric|min:0',
+            // Campos prestador
+            'tem_prestador' => 'nullable|boolean',
+            'fornecedor_omie_id_prestador' => 'required_if:tem_prestador,1|nullable|string',
+            'fornecedor_nome_prestador' => 'required_if:tem_prestador,1|nullable|string|max:255',
+            'valor_referencia_prestador' => 'required_if:tem_prestador,1|nullable|numeric|min:0',
+            'qtd_dias_prestador' => 'required_if:tem_prestador,1|nullable|integer|min:1',
+            'lucro_percentual_prestador' => 'nullable|numeric|min:0|max:100',
+            'impostos_percentual_prestador' => 'nullable|numeric|min:0|max:100',
+            'grupo_imposto_prestador_id' => 'nullable|exists:grupos_impostos,id'
         ]);
 
         try {
@@ -666,22 +730,70 @@ class OrcamentoController extends Controller
     {
         $novaRotaData = [
             'orcamento_id' => $orcamento->id,
-            'nova_origem' => $validated['nova_origem'],
-            'novo_destino' => $validated['novo_destino'],
-            'km_nova_rota' => $validated['km_nova_rota'] ?? 0,
-            'valor_km_nova_rota' => $validated['valor_km_nova_rota'] ?? 0,
             'motivo_alteracao' => $validated['motivo_alteracao'] ?? null,
-            'observacoes' => $validated['observacoes'] ?? null
+            'observacoes' => $validated['observacoes'] ?? null,
+            // Campos funcionário
+            'tem_funcionario' => $validated['tem_funcionario'] ?? false,
+            'recurso_humano_id' => $validated['recurso_humano_id'] ?? null,
+            'cargo_funcionario' => $validated['cargo_funcionario'] ?? null,
+            'base_funcionario_id' => $validated['base_funcionario_id'] ?? null,
+            'valor_funcionario' => $validated['valor_funcionario'] ?? 0,
+            // Campos veículo próprio
+            'tem_veiculo_proprio' => $validated['tem_veiculo_proprio'] ?? false,
+            'frota_id' => $validated['frota_id'] ?? null,
+            'valor_aluguel_veiculo' => $validated['valor_aluguel_veiculo'] ?? 0,
+            // Campos prestador
+            'tem_prestador' => $validated['tem_prestador'] ?? false,
+            'fornecedor_omie_id' => $validated['fornecedor_omie_id_prestador'] ?? null,
+            'fornecedor_nome' => $validated['fornecedor_nome_prestador'] ?? null,
+            'valor_referencia_prestador' => $validated['valor_referencia_prestador'] ?? 0,
+            'qtd_dias_prestador' => $validated['qtd_dias_prestador'] ?? 0,
+            'lucro_percentual_prestador' => $validated['lucro_percentual_prestador'] ?? 0,
+            'impostos_percentual_prestador' => $validated['impostos_percentual_prestador'] ?? 0,
+            'grupo_imposto_prestador_id' => $validated['grupo_imposto_prestador_id'] ?? null
         ];
 
         $orcamentoNovaRota = OrcamentoProprioNovaRota::create($novaRotaData);
         
+        // Buscar valores automáticos se necessário
+        $this->buscarValoresAutomaticos($orcamentoNovaRota, $validated);
+        
         // Atualizar cálculos automáticos
-        $orcamentoNovaRota->calcularValorTotal();
+        $orcamentoNovaRota->atualizarCalculos();
         $orcamentoNovaRota->save();
         
         // Atualizar valor total do orçamento principal
-         $orcamento->update(['valor_total' => $orcamentoNovaRota->valor_total_nova_rota]);
+         $orcamento->update(['valor_total' => $orcamentoNovaRota->valor_total_geral]);
+     }
+
+     /**
+      * Busca valores automáticos para funcionário e veículo
+      */
+     private function buscarValoresAutomaticos(OrcamentoProprioNovaRota $orcamentoNovaRota, array $validated)
+     {
+         // Buscar valor do funcionário se habilitado
+         if ($orcamentoNovaRota->tem_funcionario && $orcamentoNovaRota->recurso_humano_id) {
+             $recursoHumano = RecursoHumano::where('id', $orcamentoNovaRota->recurso_humano_id)
+                                         ->where('active', true)
+                                         ->first();
+             
+             if ($recursoHumano) {
+                 $orcamentoNovaRota->valor_funcionario = $recursoHumano->custo_total_mao_obra ?? 0;
+                 $orcamentoNovaRota->cargo_funcionario = $recursoHumano->cargo;
+                 $orcamentoNovaRota->base_funcionario_id = $recursoHumano->base_id;
+             }
+         }
+         
+         // Buscar valor do veículo se habilitado
+         if ($orcamentoNovaRota->tem_veiculo_proprio && $orcamentoNovaRota->frota_id) {
+             $frota = Frota::where('id', $orcamentoNovaRota->frota_id)
+                          ->where('active', true)
+                          ->first();
+             
+             if ($frota) {
+                 $orcamentoNovaRota->valor_aluguel_veiculo = $frota->aluguel_carro ?? 0;
+             }
+         }
      }
 
      /**
@@ -791,12 +903,27 @@ class OrcamentoController extends Controller
      private function atualizarOrcamentoProprioNovaRota(Orcamento $orcamento, array $validated)
      {
          $novaRotaData = [
-             'nova_origem' => $validated['nova_origem'],
-             'novo_destino' => $validated['novo_destino'],
-             'km_nova_rota' => $validated['km_nova_rota'] ?? 0,
-             'valor_km_nova_rota' => $validated['valor_km_nova_rota'] ?? 0,
              'motivo_alteracao' => $validated['motivo_alteracao'] ?? null,
-             'observacoes' => $validated['observacoes'] ?? null
+             'observacoes' => $validated['observacoes'] ?? null,
+             // Campos funcionário
+             'tem_funcionario' => $validated['tem_funcionario'] ?? false,
+             'recurso_humano_id' => $validated['recurso_humano_id'] ?? null,
+             'cargo_funcionario' => $validated['cargo_funcionario'] ?? null,
+             'base_funcionario_id' => $validated['base_funcionario_id'] ?? null,
+             'valor_funcionario' => $validated['valor_funcionario'] ?? 0,
+             // Campos veículo próprio
+             'tem_veiculo_proprio' => $validated['tem_veiculo_proprio'] ?? false,
+             'frota_id' => $validated['frota_id'] ?? null,
+             'valor_aluguel_veiculo' => $validated['valor_aluguel_veiculo'] ?? 0,
+             // Campos prestador
+             'tem_prestador' => $validated['tem_prestador'] ?? false,
+             'fornecedor_omie_id' => $validated['fornecedor_omie_id_prestador'] ?? null,
+             'fornecedor_nome' => $validated['fornecedor_nome_prestador'] ?? null,
+             'valor_referencia_prestador' => $validated['valor_referencia_prestador'] ?? 0,
+             'qtd_dias_prestador' => $validated['qtd_dias_prestador'] ?? 0,
+             'lucro_percentual_prestador' => $validated['lucro_percentual_prestador'] ?? 0,
+             'impostos_percentual_prestador' => $validated['impostos_percentual_prestador'] ?? 0,
+             'grupo_imposto_prestador_id' => $validated['grupo_imposto_prestador_id'] ?? null
          ];
 
          $orcamentoNovaRota = $orcamento->orcamentoProprioNovaRota;
@@ -810,8 +937,11 @@ class OrcamentoController extends Controller
              $orcamentoNovaRota = OrcamentoProprioNovaRota::create($novaRotaData);
          }
          
+         // Buscar valores automáticos se necessário
+         $this->buscarValoresAutomaticos($orcamentoNovaRota, $validated);
+         
          // Atualizar cálculos automáticos
-         $orcamentoNovaRota->calcularValorTotal();
+         $orcamentoNovaRota->atualizarCalculos();
          $orcamentoNovaRota->save();
          
          // Atualizar valor total do orçamento principal

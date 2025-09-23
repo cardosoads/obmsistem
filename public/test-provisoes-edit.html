@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Campos de Porcentagem na Edição</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">🧪 Teste - Campos de Porcentagem na Edição</h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Verificação dos Campos de Porcentagem</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Simulação dos campos como na view edit.blade.php -->
+                <div class="space-y-4">
+                    <h3 class="font-medium text-gray-700">Campos de Porcentagem</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Percentual Provisões Avarias (%)</label>
+                        <input type="number" 
+                               id="percentual_provisoes_avarias" 
+                               value="13.33"
+                               step="0.1"
+                               min="0"
+                               max="100"
+                               placeholder="0.0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Percentual Provisão Desmobilização (%)</label>
+                        <input type="number" 
+                               id="percentual_provisao_desmobilizacao" 
+                               value="25.00"
+                               step="0.1"
+                               min="0"
+                               max="100"
+                               placeholder="0.0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Percentual Provisão RAC (%)</label>
+                        <input type="number" 
+                               id="percentual_provisao_rac" 
+                               value="2.00"
+                               step="0.1"
+                               min="0"
+                               max="100"
+                               placeholder="0.0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <h3 class="font-medium text-gray-700">Valores Calculados</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Provisões para

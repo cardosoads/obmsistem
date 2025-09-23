@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Seleção Hierárquica - Base → Cargos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: white;
+        }
+        .form-group select:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .test-log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+        .log-success { color: #28a745; }
+        .log-error { color: #dc3545; }
+        .log-info { color: #17a2b8; }
+        .log-warning { color: #ffc107; }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success { background-color: #28a745; }
+        .status-error { background-color: #dc3545; }
+        .status-warning { background-color: #ffc107; }
+        .status-info { background-color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Seleção Hierárquica</h1>
+        <p><strong>Objetivo:</strong> Validar a funcionalidade de seleção onde primeiro se escolhe a base e depois os cargos disponíveis nessa base.</p>
+        
+        <!-- Seção 1: Teste Manual -->
+        <div class="test-section">
+            <h2>📋 Teste Manual</h2>
+            <p>Selecione uma base para ver os cargos disponíveis:</p>
+            
+            <div class="form-group">
+                <label for="base_select">🏢 Selecionar Base:</label>
+                <select id="base_select">
+                    <option value="">Carregando bases...</option>
+                </select>
+                <div id="base_result" class="result-box info" style="display: none;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="cargo_select">👤 Selecionar Cargo:</label>
+                <select id="cargo_select" disabled>
+                    <option value="">Primeiro selecione uma base</option>
+                </select>
+                <div id="cargo_result" class="result-box info" style="display: none;"></div>
+            </div>
+            
+            <div class="form-group">
+                <button onclick="buscarFuncionarios()" id="buscar_funcionarios_btn" disabled>
+                    🔍 Buscar Funcionários
+                </button>
+                <div id="funcionarios_result" class="result-box info" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Seção 2: Teste Automatizado -->
+        <div class="test-section">
+            <h2>🤖 Teste Automatizado</h2>
+            <p>Executa testes automáticos para validar todas as combinações:</p>
+            
+            <button onclick="executarTesteAutomatizado()" id="teste_auto_btn">
+                🚀 Executar Teste Automatizado
+            </button>
+            <button onclick="limparLog()">
+                🗑️ Limpar Log
+            </button>
+            
+            <div id="teste_status" class="result-box info" style="display: none;"></div>
+            
+            <div class="test-log" id="test_log">
+                <div class="log-entry log-info">📋 Log de testes aparecerá aqui...</div>
+            </div>
+        </div>
+        
+        <!-- Seção 3: Estatísticas -->
+        <div class="test-section">
+            <h2>📊 Estatísticas dos Testes</h2>
+            <div id="estatisticas">
+                <p><span class="status-indicator status-info"></span>Aguardando execução dos testes...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let bases = [];
+        let testResults = [];
+        let isTestRunning = false;
+        
+        // URLs da API
+        const API_URLS = {
+            bases: '/api/bases',
+            cargosPorBase: '/admin/orcamentos/buscar-cargos-por-base',
+            buscarFuncionarios: '/api/recursos-humanos/buscar-valor'
+        };
+        
+        // Função para adicionar log
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('test_log');
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Função para limpar log
+        function limparLog() {
+            document.getElementById('test_log').innerHTML = '<div class="log-entry log-info">📋 Log limpo...</div>';
+            testResults = [];
+            atualizarEstatisticas();
+        }
+        
+        // Função para carregar bases
+        async function carregarBases() {
+            try {
+                addLog('🔄 Carregando bases...', 'info');
+                const response = await fetch(API_URLS.bases);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                bases = data.bases || data; // Flexibilidade na estrutura da resposta
+                
+                const baseSelect = document.getElementById('base_select');
+                baseSelect.innerHTML = '<option value="">Selecione uma base...</option>';
+                
+                bases.forEach(base => {
+                    const option = document.createElement('option');
+                    option.value = base.id;
+                    option.textContent = `${base.name} (${base.sigla || base.uf})`;
+                    baseSelect.appendChild(option);
+                });
+                
+                addLog(`✅ ${bases.length} bases carregadas com sucesso`, 'success');
+                
+            } catch (error) {
+                addLog(`❌ Erro ao carregar bases: ${error.message}`, 'error');
+                document.getElementById('base_select').innerHTML = '<option value="">Erro ao carregar bases</option>';
+            }
+        }
+        
+        // Função para carregar cargos por base
+        async function carregarCargosPorBase(baseId) {
+            try {
+                addLog(`🔄 Carregando cargos para base ID: ${baseId}`, 'info');
+                
+                const response = await fetch(`${API_URLS.cargosPorBase}?base_id=${baseId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Erro desconhecido');
+                }
+                
+                const cargoSelect = document.getElementById('cargo_select');
+                cargoSelect.innerHTML = '<option value="">Selecione um cargo...</option>';
+                cargoSelect.disabled = false;
+                
+                if (data.cargos && data.cargos.length > 0) {
+                    data.cargos.forEach(cargo => {
+                        const option = document.createElement('option');
+                        option.value = cargo;
+                        option.textContent = cargo;
+                        cargoSelect.appendChild(option);
+                    });
+                    
+                    addLog(`✅ ${data.cargos.length} cargos encontrados`, 'success');
+                    return data.cargos;
+                } else {
+                    cargoSelect.innerHTML = '<option value="">Nenhum cargo encontrado</option>';
+                    addLog(`⚠️ Nenhum cargo encontrado para esta base`, 'warning');
+                    return [];
+                }
+                
+            } catch (error) {
+                addLog(`❌ Erro ao carregar cargos: ${error.message}`, 'error');
+                const cargoSelect = document.getElementById('cargo_select');
+                cargoSelect.innerHTML = '<option value="">Erro ao carregar cargos</option>';
+                cargoSelect.disabled = true;
+                return [];
+            }
+        }
+        
+        // Função para buscar funcionários
+        async function buscarFuncionarios() {
+            const baseId = document.getElementById('base_select').value;
+            const cargo = document.getElementById('cargo_select').value;
+            
+            if (!baseId || !cargo) {
+                addLog('⚠️ Selecione base e cargo antes de buscar funcionários', 'warning');
+                return;
+            }
+            
+            try {
+                addLog(`🔄 Buscando funcionários: Base ${baseId}, Cargo ${cargo}`, 'info');
+                
+                const response = await fetch(`${API_URLS.buscarFuncionarios}?base_id=${baseId}&cargo=${encodeURIComponent(cargo)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('funcionarios_result');
+                resultDiv.style.display = 'block';
+                
+                if (data.success && data.recurso_humano) {
+                    resultDiv.className = 'result-box success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Funcionário encontrado:</strong><br>
+                        <strong>Cargo:</strong> ${data.recurso_humano.cargo}<br>
+                        <strong>Base:</strong> ${data.recurso_humano.base?.name || 'N/A'}<br>
+                        <strong>Custo Total:</strong> R$ ${parseFloat(data.recurso_humano.custo_total_mao_obra || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                    `;
+                    addLog(`✅ Funcionário encontrado: ${data.recurso_humano.cargo}`, 'success');
+                } else {
+                    resultDiv.className = 'result-box error';
+                    resultDiv.innerHTML = `❌ ${data.message || 'Nenhum funcionário encontrado'}`;
+                    addLog(`❌ Nenhum funcionário encontrado`, 'error');
+                }
+                
+            } catch (error) {
+                addLog(`❌ Erro ao buscar funcionários: ${error.message}`, 'error');
+                const resultDiv = document.getElementById('funcionarios_result');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box error';
+                resultDiv.innerHTML = `❌ Erro: ${error.message}`;
+            }
+        }
+        
+        // Função para executar teste automatizado
+        async function executarTesteAutomatizado() {
+            if (isTestRunning) {
+                addLog('⚠️ Teste já está em execução', 'warning');
+                return;
+            }
+            
+            isTestRunning = true;
+            testResults = [];
+            
+            const statusDiv = document.getElementById('teste_status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'result-box loading';
+            statusDiv.innerHTML = '🔄 Executando teste automatizado...';
+            
+            const testeBtn = document.getElementById('teste_auto_btn');
+            testeBtn.disabled = true;
+            
+            try {
+                addLog('🚀 Iniciando teste automatizado completo', 'info');
+                
+                for (const base of bases) {
+                    addLog(`📍 Testando base: ${base.name}`, 'info');
+                    
+                    const cargos = await carregarCargosPorBase(base.id);
+                    
+                    const testResult = {
+                        base: base,
+                        cargos: cargos,
+                        funcionarios: []
+                    };
+                    
+                    for (const cargo of cargos) {
+                        try {
+                            const response = await fetch(`${API_URLS.buscarFuncionarios}?base_id=${base.id}&cargo=${encodeURIComponent(cargo)}`);
+                            const data = await response.json();
+                            
+                            testResult.funcionarios.push({
+                                cargo: cargo,
+                                encontrado: data.success,
+                                dados: data.recurso_humano || null
+                            });
+                            
+                            if (data.success) {
+                                addLog(`  ✅ ${cargo}: Funcionário encontrado`, 'success');
+                            } else {
+                                addLog(`  ❌ ${cargo}: Nenhum funcionário`, 'warning');
+                            }
+                            
+                        } catch (error) {
+                            addLog(`  ❌ ${cargo}: Erro - ${error.message}`, 'error');
+                            testResult.funcionarios.push({
+                                cargo: cargo,
+                                encontrado: false,
+                                erro: error.message
+                            });
+                        }
+                        
+                        // Pequena pausa entre requisições
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                    
+                    testResults.push(testResult);
+                }
+                
+                addLog('🎉 Teste automatizado concluído!', 'success');
+                statusDiv.className = 'result-box success';
+                statusDiv.innerHTML = '✅ Teste automatizado concluído com sucesso!';
+                
+                atualizarEstatisticas();
+                
+            } catch (error) {
+                addLog(`❌ Erro durante teste automatizado: ${error.message}`, 'error');
+                statusDiv.className = 'result-box error';
+                statusDiv.innerHTML = `❌ Erro: ${error.message}`;
+            } finally {
+                isTestRunning = false;
+                testeBtn.disabled = false;
+            }
+        }
+        
+        // Função para atualizar estatísticas
+        function atualizarEstatisticas() {
+            const estatisticasDiv = document.getElementById('estatisticas');
+            
+            if (testResults.length === 0) {
+                estatisticasDiv.innerHTML = '<p><span class="status-indicator status-info"></span>Aguardando execução dos testes...</p>';
+                return;
+            }
+            
+            let totalBases = testResults.length;
+            let totalCargos = 0;
+            let totalFuncionarios = 0;
+            let funcionariosEncontrados = 0;
+            
+            testResults.forEach(result => {
+                totalCargos += result.cargos.length;
+                totalFuncionarios += result.funcionarios.length;
+                funcionariosEncontrados += result.funcionarios.filter(f => f.encontrado).length;
+            });
+            
+            const taxaSucesso = totalFuncionarios > 0 ? ((funcionariosEncontrados / totalFuncionarios) * 100).toFixed(1) : 0;
+            
+            estatisticasDiv.innerHTML = `
+                <h3>📈 Resumo dos Testes</h3>
+                <p><span class="status-indicator status-info"></span><strong>Bases testadas:</strong> ${totalBases}</p>
+                <p><span class="status-indicator status-info"></span><strong>Cargos únicos encontrados:</strong> ${totalCargos}</p>
+                <p><span class="status-indicator status-info"></span><strong>Combinações testadas:</strong> ${totalFuncionarios}</p>
+                <p><span class="status-indicator status-success"></span><strong>Funcionários encontrados:</strong> ${funcionariosEncontrados}</p>
+                <p><span class="status-indicator ${taxaSucesso >= 70 ? 'status-success' : taxaSucesso >= 40 ? 'status-warning' : 'status-error'}"></span><strong>Taxa de sucesso:</strong> ${taxaSucesso}%</p>
+            `;
+        }
+        
+        // Event listeners
+        document.getElementById('base_select').addEventListener('change', async function() {
+            const baseId = this.value;
+            const resultDiv = document.getElementById('base_result');
+            const cargoSelect = document.getElementById('cargo_select');
+            const buscarBtn = document.getElementById('buscar_funcionarios_btn');
+            
+            // Reset cargo selection
+            cargoSelect.innerHTML = '<option value="">Primeiro selecione uma base</option>';
+            cargoSelect.disabled = true;
+            buscarBtn.disabled = true;
+            document.getElementById('cargo_result').style.display = 'none';
+            document.getElementById('funcionarios_result').style.display = 'none';
+            
+            if (baseId) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box info';
+                resultDiv.innerHTML = '🔄 Carregando cargos...';
+                
+                const cargos = await carregarCargosPorBase(baseId);
+                
+                if (cargos.length > 0) {
+                    resultDiv.className = 'result-box success';
+                    resultDiv.innerHTML = `✅ Base selecionada. ${cargos.length} cargo(s) disponível(is).`;
+                } else {
+                    resultDiv.className = 'result-box error';
+                    resultDiv.innerHTML = '❌ Nenhum cargo encontrado para esta base.';
+                }
+            } else {
+                resultDiv.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('cargo_select').addEventListener('change', function() {
+            const cargo = this.value;
+            const resultDiv = document.getElementById('cargo_result');
+            const buscarBtn = document.getElementById('buscar_funcionarios_btn');
+            
+            if (cargo) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box success';
+                resultDiv.innerHTML = `✅ Cargo selecionado: ${cargo}`;
+                buscarBtn.disabled = false;
+            } else {
+                resultDiv.style.display = 'none';
+                buscarBtn.disabled = true;
+            }
+            
+            document.getElementById('funcionarios_result').style.display = 'none';
+        });
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('🚀 Iniciando teste de seleção hierárquica', 'info');
+            carregarBases();
+        });
+    </script>
+</body>
+</html>

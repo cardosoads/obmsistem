@@ -175,4 +175,41 @@ class BaseController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * API para listar bases ativas
+     */
+    public function apiIndex(Request $request)
+    {
+        $query = Base::where('active', true);
+
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('uf', 'like', "%{$search}%")
+                  ->orWhere('regional', 'like', "%{$search}%")
+                  ->orWhere('sigla', 'like', "%{$search}%");
+            });
+        }
+
+        $bases = $query->orderBy('name')
+                      ->limit(50)
+                      ->get()
+                      ->map(function ($base) {
+                          return [
+                              'id' => $base->id,
+                              'name' => $base->name,
+                              'uf' => $base->uf,
+                              'regional' => $base->regional,
+                              'sigla' => $base->sigla,
+                              'supervisor' => $base->supervisor
+                          ];
+                      });
+
+        return response()->json([
+            'success' => true,
+            'bases' => $bases
+        ]);
+    }
 }

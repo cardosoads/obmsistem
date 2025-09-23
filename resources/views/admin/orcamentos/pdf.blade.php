@@ -646,30 +646,7 @@
         <div class="section page-break">
             <h3 class="section-title">Dados da Nova Rota Própria</h3>
             <div class="info-grid">
-                @if($orcamento->orcamentoProprioNovaRota->nova_origem)
-                <div class="info-row">
-                    <div class="info-label">Nova Origem:</div>
-                    <div class="info-value">{{ $orcamento->orcamentoProprioNovaRota->nova_origem }}</div>
-                </div>
-                @endif
-                @if($orcamento->orcamentoProprioNovaRota->novo_destino)
-                <div class="info-row">
-                    <div class="info-label">Novo Destino:</div>
-                    <div class="info-value">{{ $orcamento->orcamentoProprioNovaRota->novo_destino }}</div>
-                </div>
-                @endif
-                @if($orcamento->orcamentoProprioNovaRota->km_nova_rota)
-                <div class="info-row">
-                    <div class="info-label">KM da Nova Rota:</div>
-                    <div class="info-value">{{ number_format($orcamento->orcamentoProprioNovaRota->km_nova_rota, 0, ',', '.') }} km</div>
-                </div>
-                @endif
-                @if($orcamento->orcamentoProprioNovaRota->valor_km_nova_rota)
-                <div class="info-row">
-                    <div class="info-label">Valor por KM:</div>
-                    <div class="info-value">R$ {{ number_format($orcamento->orcamentoProprioNovaRota->valor_km_nova_rota, 2, ',', '.') }}</div>
-                </div>
-                @endif
+
                 @if($orcamento->orcamentoProprioNovaRota->motivo_alteracao)
                 <div class="info-row">
                     <div class="info-label">Motivo da Alteração:</div>

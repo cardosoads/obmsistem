@@ -847,167 +847,196 @@
                                 </div>
                             </div>
                             
-                            <!-- Mensagem de Em Desenvolvimento -->
-                            <div class="px-8 py-4 bg-yellow-50 border-b border-yellow-200">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                        </svg>
+
+                            
+                            <div class="px-8 py-6 space-y-8">
+
+
+                                
+                                <!-- Seção Funcionário -->
+                                <div class="bg-blue-50 rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <input type="checkbox" id="tem_funcionario" name="tem_funcionario" value="1" 
+                                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <label for="tem_funcionario" class="ml-3 text-lg font-semibold text-gray-900">
+                                            <svg class="w-5 h-5 inline mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                            Incluir Funcionário
+                                        </label>
                                     </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-yellow-800">
-                                            <strong>Em desenvolvimento</strong> - Esta funcionalidade está sendo implementada e pode não estar totalmente funcional.
-                                        </p>
+                                    <div id="funcionario_fields" class="space-y-4" style="display: none;">
+                                        <!-- Seleção Hierárquica: Base → Cargo -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Base <span class="text-red-500">*</span></label>
+                                                <select id="base_funcionario_select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                                    <option value="">Carregando bases...</option>
+                                                </select>
+                                                <p class="text-xs text-gray-500 mt-1">Primeiro selecione a base</p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Cargo <span class="text-red-500">*</span></label>
+                                                <select id="cargo_funcionario_select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" disabled>
+                                                    <option value="">Primeiro selecione uma base</option>
+                                                </select>
+                                                <p class="text-xs text-gray-500 mt-1">Cargos disponíveis na base selecionada</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Funcionário e Valor -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Funcionário <span class="text-red-500">*</span></label>
+                                                <select id="recurso_humano_id" name="recurso_humano_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" disabled>
+                                                    <option value="">Selecione base e cargo primeiro</option>
+                                                </select>
+                                                <p class="text-xs text-gray-500 mt-1">Funcionários da base e cargo selecionados</p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Custo Total (R$)</label>
+                                                <input type="number" step="0.01" min="0" id="valor_funcionario" name="valor_funcionario" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-50" 
+                                                       placeholder="0,00" readonly>
+                                                <p class="text-xs text-gray-500 mt-1">Valor será preenchido automaticamente</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Campos ocultos para manter compatibilidade -->
+                                        <input type="hidden" id="cargo_funcionario" name="cargo_funcionario">
+                                        <input type="hidden" id="base_funcionario_id" name="base_funcionario_id">
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="px-8 py-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Nova Origem -->
-                                    <div>
-                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
-                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            </svg>
-                                            Nova Origem
-                                        </label>
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <input type="text" 
-                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
-                                                   id="nova_origem" 
-                                                   name="nova_origem" 
-                                                   value="{{ old('nova_origem') }}"
-                                                   placeholder="Digite a nova origem">
-                                        </div>
-                                        @error('nova_origem')
-                                            <div class="flex items-center mt-2 text-sm text-red-600">
-                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                                </svg>
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
 
-                                    <!-- Novo Destino -->
-                                    <div>
-                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
-                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <!-- Seção Veículo Próprio -->
+                                <div class="bg-green-50 rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <input type="checkbox" id="tem_veiculo_proprio" name="tem_veiculo_proprio" value="1" 
+                                               class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                        <label for="tem_veiculo_proprio" class="ml-3 text-lg font-semibold text-gray-900">
+                                            <svg class="w-5 h-5 inline mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
-                                            Novo Destino
+                                            Incluir Veículo Próprio
                                         </label>
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <input type="text" 
-                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
-                                                   id="novo_destino" 
-                                                   name="novo_destino" 
-                                                   value="{{ old('novo_destino') }}"
-                                                   placeholder="Digite o novo destino">
-                                        </div>
-                                        @error('novo_destino')
-                                            <div class="flex items-center mt-2 text-sm text-red-600">
-                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                                </svg>
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
                                     </div>
-
-                                    <!-- Distância (KM) -->
-                                    <div>
-                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
-                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                                            </svg>
-                                            Distância (KM)
-                                        </label>
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                                                </svg>
-                                            </div>
-                                            <input type="number" 
-                                                   step="0.01" 
-                                                   min="0"
-                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
-                                                   id="distancia_km_proprio" 
-                                                   name="distancia_km_proprio" 
-                                                   value="{{ old('distancia_km_proprio') }}"
-                                                   placeholder="0,00">
+                                    <div id="veiculo_fields" class="grid grid-cols-1 md:grid-cols-2 gap-4" style="display: none;">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Código do Veículo</label>
+                                            <select id="frota_id" name="frota_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                                                <option value="">Selecione o veículo</option>
+                                                <!-- Frotas serão carregadas via JavaScript -->
+                                            </select>
                                         </div>
-                                        @error('distancia_km_proprio')
-                                            <div class="flex items-center mt-2 text-sm text-red-600">
-                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                                </svg>
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Valor por KM -->
-                                    <div>
-                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
-                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                            </svg>
-                                            Valor por KM
-                                        </label>
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                                </svg>
-                                            </div>
-                                            <input type="number" 
-                                                   step="0.01" 
-                                                   min="0"
-                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-400" 
-                                                   id="valor_km_proprio" 
-                                                   name="valor_km_proprio" 
-                                                   value="{{ old('valor_km_proprio') }}"
-                                                   placeholder="0,00">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Valor Aluguel (R$)</label>
+                                            <input type="number" step="0.01" min="0" id="valor_aluguel_veiculo" name="valor_aluguel_veiculo" 
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" 
+                                                   placeholder="0,00" readonly>
                                         </div>
-                                        @error('valor_km_proprio')
-                                            <div class="flex items-center mt-2 text-sm text-red-600">
-                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                                </svg>
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
                                     </div>
+                                </div>
 
-                                    <!-- Valor Total Calculado -->
-                                    <div class="md:col-span-2">
-                                        <label class="flex items-center text-sm font-semibold text-gray-800 mb-3">
-                                            <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                <!-- Seção Prestador -->
+                                <div class="bg-purple-50 rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <input type="checkbox" id="tem_prestador" name="tem_prestador" value="1" 
+                                               class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                                        <label for="tem_prestador" class="ml-3 text-lg font-semibold text-gray-900">
+                                            <svg class="w-5 h-5 inline mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                             </svg>
-                                            Valor Total Calculado
+                                            Incluir Prestador
                                         </label>
-                                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
-                                            <div class="text-2xl font-bold text-indigo-600" id="valor_total_proprio_nova_rota">R$ 0,00</div>
-                                            <div class="text-sm text-gray-600 mt-1">Distância × Valor/KM</div>
+                                    </div>
+                                    <div id="prestador_fields" class="space-y-4" style="display: none;">
+                                        <!-- Busca de Fornecedor -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Buscar por Código</label>
+                                                <input type="text" id="fornecedor_codigo_search_prestador" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" 
+                                                       placeholder="Ex: 123456">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Buscar por Nome</label>
+                                                <input type="text" id="fornecedor_nome_search_prestador" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" 
+                                                       placeholder="Ex: Empresa ABC">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Campos ocultos -->
+                                        <input type="hidden" id="fornecedor_omie_id_prestador" name="fornecedor_omie_id_prestador">
+                                        <input type="hidden" id="fornecedor_nome_prestador" name="fornecedor_nome_prestador">
+                                        
+                                        <!-- Campos do prestador -->
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Valor Referência (R$)</label>
+                                                <input type="number" step="0.01" min="0" id="valor_referencia_prestador" name="valor_referencia_prestador" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" 
+                                                       placeholder="0,00">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Qtd. Dias</label>
+                                                <input type="number" min="1" id="qtd_dias_prestador" name="qtd_dias_prestador" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" 
+                                                       placeholder="1">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Lucro (%)</label>
+                                                <input type="number" step="0.01" min="0" max="100" id="lucro_percentual_prestador" name="lucro_percentual_prestador" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" 
+                                                       placeholder="0,00">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Impostos (%)</label>
+                                                <input type="number" step="0.01" min="0" max="100" id="impostos_percentual_prestador" name="impostos_percentual_prestador" 
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" 
+                                                       placeholder="0,00">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Grupo de Impostos</label>
+                                                <select id="grupo_imposto_prestador_id" name="grupo_imposto_prestador_id" 
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                                    <option value="">Selecione o grupo</option>
+                                                    @foreach($gruposImpostos as $grupo)
+                                                        <option value="{{ $grupo->id }}">{{ $grupo->nome }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Valor Total Geral -->
+                                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-4">Resumo Financeiro</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Nova Rota:</span>
+                                            <span id="valor_nova_rota_display" class="font-medium">R$ 0,00</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Funcionário:</span>
+                                            <span id="valor_funcionario_display" class="font-medium">R$ 0,00</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Veículo:</span>
+                                            <span id="valor_veiculo_display" class="font-medium">R$ 0,00</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Prestador:</span>
+                                            <span id="valor_prestador_display" class="font-medium">R$ 0,00</span>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="flex justify-between text-lg font-bold">
+                                            <span class="text-gray-900">Total Geral:</span>
+                                            <span id="valor_total_geral_display" class="text-indigo-600">R$ 0,00</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1659,6 +1688,433 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar estado inicial
     toggleSections();
     
+    // ===== FUNCIONALIDADES ORÇAMENTO PRÓPRIO NOVA ROTA =====
+    
+    // Elementos dos novos campos
+    const temFuncionarioCheckbox = document.getElementById('tem_funcionario');
+    const funcionarioFields = document.getElementById('funcionario_fields');
+    const baseFuncionarioSelect = document.getElementById('base_funcionario_select');
+    const cargoFuncionarioSelect = document.getElementById('cargo_funcionario_select');
+    const recursoHumanoId = document.getElementById('recurso_humano_id');
+    const cargoFuncionario = document.getElementById('cargo_funcionario');
+    const baseFuncionarioId = document.getElementById('base_funcionario_id');
+    const valorFuncionario = document.getElementById('valor_funcionario');
+    
+    const temVeiculoProprioCheckbox = document.getElementById('tem_veiculo_proprio');
+    const veiculoFields = document.getElementById('veiculo_fields');
+    const frotaId = document.getElementById('frota_id');
+    const valorAluguelVeiculo = document.getElementById('valor_aluguel_veiculo');
+    
+    const temPrestadorCheckbox = document.getElementById('tem_prestador');
+    const prestadorFields = document.getElementById('prestador_fields');
+    const fornecedorCodigoSearchPrestador = document.getElementById('fornecedor_codigo_search_prestador');
+    const fornecedorNomeSearchPrestador = document.getElementById('fornecedor_nome_search_prestador');
+    const valorReferenciaPrestador = document.getElementById('valor_referencia_prestador');
+    const qtdDiasPrestador = document.getElementById('qtd_dias_prestador');
+    const lucroPercentualPrestador = document.getElementById('lucro_percentual_prestador');
+    const impostosPercentualPrestador = document.getElementById('impostos_percentual_prestador');
+    
+    // Elementos de display dos valores
+    const valorNovaRotaDisplay = document.getElementById('valor_nova_rota_display');
+    const valorFuncionarioDisplay = document.getElementById('valor_funcionario_display');
+    const valorVeiculoDisplay = document.getElementById('valor_veiculo_display');
+    const valorPrestadorDisplay = document.getElementById('valor_prestador_display');
+    const valorTotalGeralDisplay = document.getElementById('valor_total_geral_display');
+    
+    // ===== SELEÇÃO HIERÁRQUICA BASE → CARGOS =====
+    
+    // Carregar bases quando o formulário for carregado
+    function carregarBases() {
+        if (!baseFuncionarioSelect) return;
+        
+        fetch('/api/bases')
+            .then(response => response.json())
+            .then(data => {
+                baseFuncionarioSelect.innerHTML = '<option value="">Selecione uma base...</option>';
+                
+                if (data.success && data.bases) {
+                    data.bases.forEach(base => {
+                        const option = document.createElement('option');
+                        option.value = base.id;
+                        option.textContent = `${base.name} (${base.sigla || base.uf})`;
+                        baseFuncionarioSelect.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar bases:', error);
+                baseFuncionarioSelect.innerHTML = '<option value="">Erro ao carregar bases</option>';
+            });
+    }
+    
+    // Carregar cargos por base
+    function carregarCargosPorBase(baseId) {
+        if (!cargoFuncionarioSelect || !baseId) {
+            resetarCargoSelect();
+            return;
+        }
+        
+        cargoFuncionarioSelect.innerHTML = '<option value="">Carregando cargos...</option>';
+        cargoFuncionarioSelect.disabled = true;
+        
+        fetch(`/admin/orcamentos/buscar-cargos-por-base?base_id=${baseId}`)
+            .then(response => response.json())
+            .then(data => {
+                cargoFuncionarioSelect.innerHTML = '<option value="">Selecione um cargo...</option>';
+                
+                if (data.success && data.cargos && data.cargos.length > 0) {
+                    data.cargos.forEach(cargo => {
+                        const option = document.createElement('option');
+                        option.value = cargo;
+                        option.textContent = cargo;
+                        cargoFuncionarioSelect.appendChild(option);
+                    });
+                    cargoFuncionarioSelect.disabled = false;
+                } else {
+                    cargoFuncionarioSelect.innerHTML = '<option value="">Nenhum cargo encontrado</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar cargos:', error);
+                cargoFuncionarioSelect.innerHTML = '<option value="">Erro ao carregar cargos</option>';
+            });
+    }
+    
+    // Buscar funcionários por base e cargo
+    function buscarFuncionariosPorBaseCargo(baseId, cargo) {
+        if (!recursoHumanoId || !baseId || !cargo) {
+            resetarFuncionarioSelect();
+            return;
+        }
+        
+        recursoHumanoId.innerHTML = '<option value="">Carregando funcionários...</option>';
+        recursoHumanoId.disabled = true;
+        
+        fetch(`/api/recursos-humanos/buscar-valor?base_id=${baseId}&cargo=${encodeURIComponent(cargo)}`)
+            .then(response => response.json())
+            .then(data => {
+                recursoHumanoId.innerHTML = '<option value="">Selecione um funcionário...</option>';
+                
+                if (data.success && data.recurso_humano) {
+                    const option = document.createElement('option');
+                    option.value = data.recurso_humano.id;
+                    option.textContent = `${data.recurso_humano.cargo} - ${data.recurso_humano.base?.name || 'Base N/A'}`;
+                    option.dataset.custoTotal = data.recurso_humano.custo_total_mao_obra || 0;
+                    recursoHumanoId.appendChild(option);
+                    recursoHumanoId.disabled = false;
+                } else {
+                    recursoHumanoId.innerHTML = '<option value="">Nenhum funcionário encontrado</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar funcionários:', error);
+                recursoHumanoId.innerHTML = '<option value="">Erro ao buscar funcionários</option>';
+            });
+    }
+    
+    // Funções auxiliares para resetar selects
+    function resetarCargoSelect() {
+        if (cargoFuncionarioSelect) {
+            cargoFuncionarioSelect.innerHTML = '<option value="">Primeiro selecione uma base</option>';
+            cargoFuncionarioSelect.disabled = true;
+        }
+        resetarFuncionarioSelect();
+    }
+    
+    function resetarFuncionarioSelect() {
+        if (recursoHumanoId) {
+            recursoHumanoId.innerHTML = '<option value="">Selecione base e cargo primeiro</option>';
+            recursoHumanoId.disabled = true;
+        }
+        limparCamposFuncionario();
+    }
+    
+    // Event listeners para seleção hierárquica
+    if (baseFuncionarioSelect) {
+        baseFuncionarioSelect.addEventListener('change', function() {
+            const baseId = this.value;
+            
+            // Atualizar campo oculto
+            if (baseFuncionarioId) baseFuncionarioId.value = baseId;
+            
+            if (baseId) {
+                carregarCargosPorBase(baseId);
+            } else {
+                resetarCargoSelect();
+            }
+            
+            calcularTotalGeral();
+        });
+    }
+    
+    if (cargoFuncionarioSelect) {
+        cargoFuncionarioSelect.addEventListener('change', function() {
+            const cargo = this.value;
+            const baseId = baseFuncionarioSelect?.value;
+            
+            // Atualizar campo oculto
+            if (cargoFuncionario) cargoFuncionario.value = cargo;
+            
+            if (cargo && baseId) {
+                buscarFuncionariosPorBaseCargo(baseId, cargo);
+            } else {
+                resetarFuncionarioSelect();
+            }
+            
+            calcularTotalGeral();
+        });
+    }
+    
+    // Controle de exibição dos campos
+    if (temFuncionarioCheckbox) {
+        temFuncionarioCheckbox.addEventListener('change', function() {
+            if (funcionarioFields) {
+                funcionarioFields.style.display = this.checked ? 'block' : 'none';
+            }
+            if (!this.checked) {
+                limparCamposFuncionario();
+            } else {
+                // Carregar bases quando o checkbox for marcado
+                carregarBases();
+            }
+            calcularTotalGeral();
+        });
+    }
+    
+    if (temVeiculoProprioCheckbox) {
+        temVeiculoProprioCheckbox.addEventListener('change', function() {
+            if (veiculoFields) {
+                veiculoFields.style.display = this.checked ? 'grid' : 'none';
+            }
+            if (!this.checked) {
+                limparCamposVeiculo();
+            }
+            calcularTotalGeral();
+        });
+    }
+    
+    if (temPrestadorCheckbox) {
+        temPrestadorCheckbox.addEventListener('change', function() {
+            if (prestadorFields) {
+                prestadorFields.style.display = this.checked ? 'block' : 'none';
+            }
+            if (!this.checked) {
+                limparCamposPrestador();
+            }
+            calcularTotalGeral();
+        });
+    }
+    
+    // Buscar dados do funcionário quando recurso humano for selecionado
+    function buscarDadosFuncionario() {
+        if (!recursoHumanoId || !recursoHumanoId.value) {
+            if (valorFuncionario) valorFuncionario.value = '';
+            calcularTotalGeral();
+            return;
+        }
+        
+        // Usar o valor do dataset se disponível (mais eficiente)
+        const selectedOption = recursoHumanoId.options[recursoHumanoId.selectedIndex];
+        if (selectedOption && selectedOption.dataset.custoTotal) {
+            if (valorFuncionario) valorFuncionario.value = selectedOption.dataset.custoTotal;
+            calcularTotalGeral();
+            return;
+        }
+        
+        // Fallback: buscar via API
+        fetch(`/admin/recursos-humanos/${recursoHumanoId.value}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data && valorFuncionario) {
+                    // Preencher valor do funcionário
+                    valorFuncionario.value = data.custo_total_mao_obra || 0;
+                    calcularTotalGeral();
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados do funcionário:', error);
+                if (valorFuncionario) valorFuncionario.value = '';
+                calcularTotalGeral();
+            });
+    }
+    
+    // Buscar valor do veículo quando frota for selecionada
+    function buscarValorVeiculo() {
+        if (!frotaId || !frotaId.value) {
+            return;
+        }
+        
+        fetch(`/api/frotas/buscar-valor?frota_id=${frotaId.value}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && valorAluguelVeiculo) {
+                    valorAluguelVeiculo.value = data.valor || 0;
+                    calcularTotalGeral();
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar valor do veículo:', error);
+            });
+    }
+    
+    // Event listeners para busca automática de valores
+    if (recursoHumanoId) {
+        recursoHumanoId.addEventListener('change', buscarDadosFuncionario);
+    }
+    if (frotaId) {
+        frotaId.addEventListener('change', buscarValorVeiculo);
+    }
+    
+    // Cálculo do prestador
+    function calcularValorPrestador() {
+        if (!temPrestadorCheckbox?.checked) return 0;
+        
+        const valorRef = parseFloat(valorReferenciaPrestador?.value || 0);
+        const qtdDias = parseInt(qtdDiasPrestador?.value || 0);
+        const lucroPerc = parseFloat(lucroPercentualPrestador?.value || 0);
+        const impostosPerc = parseFloat(impostosPercentualPrestador?.value || 0);
+        
+        const custo = valorRef * qtdDias;
+        const lucro = custo * (lucroPerc / 100);
+        const subtotal = custo + lucro;
+        const impostos = subtotal * (impostosPerc / 100);
+        
+        return subtotal + impostos;
+    }
+    
+    // Cálculo total geral
+    function calcularTotalGeral() {
+        let total = 0;
+        
+        // Valor do funcionário
+        const valorFunc = temFuncionarioCheckbox?.checked ? parseFloat(valorFuncionario?.value || 0) : 0;
+        total += valorFunc;
+        
+        // Valor do veículo
+        const valorVeic = temVeiculoProprioCheckbox?.checked ? parseFloat(valorAluguelVeiculo?.value || 0) : 0;
+        total += valorVeic;
+        
+        // Valor do prestador
+        const valorPrest = calcularValorPrestador();
+        total += valorPrest;
+        
+        // Atualizar displays
+        if (valorFuncionarioDisplay) valorFuncionarioDisplay.textContent = formatarMoeda(valorFunc);
+        if (valorVeiculoDisplay) valorVeiculoDisplay.textContent = formatarMoeda(valorVeic);
+        if (valorPrestadorDisplay) valorPrestadorDisplay.textContent = formatarMoeda(valorPrest);
+        if (valorTotalGeralDisplay) valorTotalGeralDisplay.textContent = formatarMoeda(total);
+        
+        // Atualizar campo valor_total do orçamento principal se for proprio_nova_rota
+        const valorTotalPrincipal = document.getElementById('valor_total');
+        if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'proprio_nova_rota' && valorTotalPrincipal) {
+            valorTotalPrincipal.value = total.toFixed(2);
+        }
+    }
+    
+    // Funções para limpar campos
+    function limparCamposFuncionario() {
+        if (baseFuncionarioSelect) baseFuncionarioSelect.value = '';
+        if (cargoFuncionarioSelect) {
+            cargoFuncionarioSelect.innerHTML = '<option value="">Primeiro selecione uma base</option>';
+            cargoFuncionarioSelect.disabled = true;
+        }
+        if (recursoHumanoId) {
+            recursoHumanoId.innerHTML = '<option value="">Selecione base e cargo primeiro</option>';
+            recursoHumanoId.disabled = true;
+        }
+        if (cargoFuncionario) cargoFuncionario.value = '';
+        if (baseFuncionarioId) baseFuncionarioId.value = '';
+        if (valorFuncionario) valorFuncionario.value = '';
+    }
+    
+    function limparCamposVeiculo() {
+        if (frotaId) frotaId.value = '';
+        if (valorAluguelVeiculo) valorAluguelVeiculo.value = '';
+    }
+    
+    function limparCamposPrestador() {
+        if (fornecedorCodigoSearchPrestador) fornecedorCodigoSearchPrestador.value = '';
+        if (fornecedorNomeSearchPrestador) fornecedorNomeSearchPrestador.value = '';
+        if (valorReferenciaPrestador) valorReferenciaPrestador.value = '';
+        if (qtdDiasPrestador) qtdDiasPrestador.value = '';
+        if (lucroPercentualPrestador) lucroPercentualPrestador.value = '';
+        if (impostosPercentualPrestador) impostosPercentualPrestador.value = '';
+    }
+    
+    // Event listeners para recálculo automático
+    if (valorReferenciaPrestador) valorReferenciaPrestador.addEventListener('input', calcularTotalGeral);
+    if (qtdDiasPrestador) qtdDiasPrestador.addEventListener('input', calcularTotalGeral);
+    if (lucroPercentualPrestador) lucroPercentualPrestador.addEventListener('input', calcularTotalGeral);
+    if (impostosPercentualPrestador) impostosPercentualPrestador.addEventListener('input', calcularTotalGeral);
+    
+    // Carregar dados iniciais
+    carregarRecursosHumanos();
+    carregarFrotas();
+    
+    // Função para carregar recursos humanos
+    function carregarRecursosHumanos() {
+        fetch('/admin/recursos-humanos', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.data && recursoHumanoId) {
+                    recursoHumanoId.innerHTML = '<option value="">Selecione o funcionário</option>';
+                    data.data.forEach(recurso => {
+                        const option = document.createElement('option');
+                        option.value = recurso.id;
+                        option.textContent = `${recurso.cargo} - ${recurso.base?.name || 'Sem base'} (R$ ${parseFloat(recurso.custo_total_mao_obra || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})})`;
+                        recursoHumanoId.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Erro ao carregar recursos humanos:', error));
+    }
+    
+    // Função para carregar bases (mantida para compatibilidade)
+    function carregarBases() {
+        fetch('/api/bases')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && baseFuncionarioId) {
+                    baseFuncionarioId.innerHTML = '<option value="">Selecione a base</option>';
+                    data.data.forEach(base => {
+                        const option = document.createElement('option');
+                        option.value = base.id;
+                        option.textContent = base.name;
+                        baseFuncionarioId.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Erro ao carregar bases:', error));
+    }
+    
+    // Função para carregar frotas
+    function carregarFrotas() {
+        fetch('/api/frotas')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && frotaId) {
+                    frotaId.innerHTML = '<option value="">Selecione o veículo</option>';
+                    data.data.forEach(frota => {
+                        const option = document.createElement('option');
+                        option.value = frota.id;
+                        option.textContent = `${frota.id} - ${frota.tipo_veiculo?.nome || 'Veículo'}`;
+                        frotaId.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Erro ao carregar frotas:', error));
+    }
+    
     // Cálculos automáticos do prestador
     const valorReferenciaInput = document.getElementById('valor_referencia');
     const qtdDiasInput = document.getElementById('qtd_dias');
@@ -1917,36 +2373,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Calcular valores iniciais do Aumento KM
     calcularValoresAumentoKm();
     
-    // Cálculos automáticos do Próprio Nova Rota
-    const distanciaKmInput = document.getElementById('distancia_km_proprio');
-    const valorKmProprioInput = document.getElementById('valor_km_proprio');
-    const valorTotalProprioNovaRotaDisplay = document.getElementById('valor_total_proprio_nova_rota');
-    
-    function calcularValoresProprioNovaRota() {
-        const distanciaKm = parseFloat(distanciaKmInput.value) || 0;
-        const valorKmProprio = parseFloat(valorKmProprioInput.value) || 0;
-        
-        // Valor Total = Distância KM × Valor por KM
-        const valorTotal = distanciaKm * valorKmProprio;
-        
-        // Atualizar display
-        if (valorTotalProprioNovaRotaDisplay) {
-            valorTotalProprioNovaRotaDisplay.textContent = formatarMoeda(valorTotal);
-        }
-        
-        // Atualizar campo valor_total do orçamento principal se for proprio_nova_rota
-        const valorTotalPrincipal = document.getElementById('valor_total');
-        if (tipoOrcamentoSelect && tipoOrcamentoSelect.value === 'proprio_nova_rota' && valorTotalPrincipal) {
-            valorTotalPrincipal.value = valorTotal.toFixed(2);
-        }
-    }
-    
-    // Event listeners para cálculos automáticos do Próprio Nova Rota
-    if (distanciaKmInput) distanciaKmInput.addEventListener('input', calcularValoresProprioNovaRota);
-    if (valorKmProprioInput) valorKmProprioInput.addEventListener('input', calcularValoresProprioNovaRota);
-    
-    // Calcular valores iniciais do Próprio Nova Rota
-    calcularValoresProprioNovaRota();
+    // Cálculos automáticos do Próprio Nova Rota - removidos pois agora usamos o sistema de funcionário/veículo/prestador
+    // A função calcularTotalGeral() já cuida dos cálculos do orçamento próprio nova rota
     
     // Busca de clientes OMIE
     const clienteSearch = document.getElementById('cliente_omie_search');
@@ -2556,6 +2984,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // ===== FUNCIONALIDADES ORÇAMENTO PRÓPRIO NOVA ROTA =====
+    // Código movido para dentro do DOMContentLoaded
+    
     // Validação do formulário
     if (orcamentoForm) {
         orcamentoForm.addEventListener('submit', function(e) {
@@ -2584,6 +3015,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Por favor, selecione um fornecedor válido.');
                 if (fornecedorSearch) fornecedorSearch.focus();
                 return false;
+            }
+            
+            // Validações específicas para próprio nova rota
+            if (tipoOrcamento === 'proprio_nova_rota') {
+                // Validar se pelo menos uma opção está selecionada
+                if (!temFuncionarioCheckbox?.checked && !temVeiculoProprioCheckbox?.checked && !temPrestadorCheckbox?.checked) {
+                    e.preventDefault();
+                    alert('Por favor, selecione pelo menos uma opção: Funcionário, Veículo Próprio ou Prestador.');
+                    return false;
+                }
+                
+                // Validar campos do funcionário se selecionado
+                if (temFuncionarioCheckbox?.checked) {
+                    if (!cargoFuncionario?.value || !baseFuncionarioId?.value) {
+                        e.preventDefault();
+                        alert('Por favor, preencha o cargo e a base do funcionário.');
+                        return false;
+                    }
+                }
+                
+                // Validar campos do veículo se selecionado
+                if (temVeiculoProprioCheckbox?.checked) {
+                    if (!frotaId?.value) {
+                        e.preventDefault();
+                        alert('Por favor, selecione o código do veículo.');
+                        return false;
+                    }
+                }
+                
+                // Validar campos do prestador se selecionado
+                if (temPrestadorCheckbox?.checked) {
+                    if (!valorReferenciaPrestador?.value || !qtdDiasPrestador?.value) {
+                        e.preventDefault();
+                        alert('Por favor, preencha o valor de referência e quantidade de dias do prestador.');
+                        return false;
+                    }
+                }
             }
         });
     }

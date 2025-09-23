@@ -256,7 +256,17 @@ Route::middleware(['admin.auth'])->group(function () {
             'update' => 'admin.orcamentos.update',
             'destroy' => 'admin.orcamentos.destroy'
         ]
-    ]);    Route::patch('/admin/orcamentos/{orcamento}/status', [OrcamentoController::class, 'updateStatus'])->name('admin.orcamentos.update-status');    Route::get('/admin/orcamentos/{orcamento}/pdf', [OrcamentoController::class, 'gerarPdf'])->name('admin.orcamentos.pdf');    Route::post('/admin/orcamentos/buscar-percentual-grupo-imposto', [OrcamentoController::class, 'buscarPercentualGrupoImposto'])->name('admin.orcamentos.buscar-percentual-grupo-imposto');
+    ]);
+    Route::patch('/admin/orcamentos/{orcamento}/status', [OrcamentoController::class, 'updateStatus'])->name('admin.orcamentos.update-status');
+    Route::get('/admin/orcamentos/{orcamento}/pdf', [OrcamentoController::class, 'gerarPdf'])->name('admin.orcamentos.pdf');
+    Route::post('/admin/orcamentos/buscar-percentual-grupo-imposto', [OrcamentoController::class, 'buscarPercentualGrupoImposto'])->name('admin.orcamentos.buscar-percentual-grupo-imposto');
+    Route::get('/admin/orcamentos/buscar-cargos-por-base', [OrcamentoController::class, 'buscarCargosPorBase'])->name('admin.orcamentos.buscar-cargos-por-base');
+    
+    // APIs para orçamento próprio nova rota
+    Route::get('/api/recursos-humanos/buscar-valor', [RecursoHumanoController::class, 'buscarValor'])->name('api.recursos-humanos.buscar-valor');
+    Route::get('/api/frotas/buscar-valor', [FrotaController::class, 'buscarValor'])->name('api.frotas.buscar-valor');
+    Route::get('/api/bases', [\App\Http\Controllers\Admin\BaseController::class, 'apiIndex'])->name('api.bases.index');
+    Route::get('/api/frotas', [FrotaController::class, 'apiIndex'])->name('api.frotas.index');
     
     // Configurações
     Route::put('/admin/settings/omie', [SettingsController::class, 'updateOmie'])->name('admin.settings.omie.update');
