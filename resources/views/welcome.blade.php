@@ -29,36 +29,36 @@
         <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
             <!-- Flash Messages -->
             @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                <div class="mb-6 p-4 border rounded-xl" style="background-color: rgba(30, 57, 81, 0.1); border-color: #1E3951;">
                     <div class="flex items-center">
-                        <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-3" style="color: #1E3951;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <p class="text-green-800 text-sm font-medium">{{ session('success') }}</p>
+                        <p class="text-sm font-medium" style="color: #1E3951;">{{ session('success') }}</p>
                     </div>
                 </div>
             @endif
 
             @if(session('info'))
-                <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div class="mb-6 p-4 border rounded-xl" style="background-color: rgba(248, 171, 20, 0.1); border-color: #F8AB14;">
                     <div class="flex items-center">
-                        <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-3" style="color: #F8AB14;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <p class="text-blue-800 text-sm font-medium">{{ session('info') }}</p>
+                        <p class="text-sm font-medium" style="color: #F8AB14;">{{ session('info') }}</p>
                     </div>
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div class="mb-6 p-4 border rounded-xl" style="background-color: rgba(248, 171, 20, 0.1); border-color: #F8AB14;">
                     <div class="flex items-start">
-                        <svg class="w-5 h-5 text-red-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-3 mt-0.5" style="color: #F8AB14;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <div>
-                            <p class="text-red-800 text-sm font-medium mb-2">Erro no login:</p>
-                            <ul class="text-red-700 text-sm space-y-1">
+                            <p class="text-sm font-medium mb-2" style="color: #F8AB14;">Erro no login:</p>
+                            <ul class="text-sm space-y-1" style="color: #F8AB14;">
                                 @foreach($errors->all() as $error)
                                     <li>• {{ $error }}</li>
                                 @endforeach
@@ -68,7 +68,7 @@
                 </div>
             @endif
 
-            <form id="loginForm" class="space-y-6" action="{{ route('login') }}" method="POST">
+            <form id="loginForm" class="space-y-6" action="{{ route('login.submit') }}" method="POST">
                 @csrf
                 
                 <!-- Email Field -->
@@ -92,10 +92,10 @@
                             </svg>
                         </div>
                     </div>
-                    <div id="email-error" class="mt-1 text-sm text-red-600 hidden"></div>
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <div id="email-error" class="mt-1 text-sm hidden" style="color: #F8AB14;"></div>
+                @error('email')
+                    <p class="mt-1 text-sm" style="color: #F8AB14;">{{ $message }}</p>
+                @enderror
                 </div>
 
                 <!-- Password Field -->
@@ -123,10 +123,10 @@
                             </svg>
                         </button>
                     </div>
-                    <div id="password-error" class="mt-1 text-sm text-red-600 hidden"></div>
-                    @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <div id="password-error" class="mt-1 text-sm hidden" style="color: #F8AB14;"></div>
+                @error('password')
+                    <p class="mt-1 text-sm" style="color: #F8AB14;">{{ $message }}</p>
+                @enderror
                 </div>
 
                 <!-- Remember Me & Forgot Password -->
@@ -297,7 +297,7 @@
             validateForm();
             
             // Auto-hide flash messages após 5 segundos
-            const flashMessages = document.querySelectorAll('[class*="bg-green-50"], [class*="bg-blue-50"], [class*="bg-red-50"]');
+            const flashMessages = document.querySelectorAll('[style*="background-color: rgba"]');
             flashMessages.forEach(function(message) {
                 setTimeout(function() {
                     message.style.transition = 'opacity 0.5s ease-out';

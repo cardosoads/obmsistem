@@ -12,7 +12,7 @@ function showAlert(type, message) {
     }
     
     const alertDiv = document.createElement('div');
-    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    const bgColor = type === 'success' ? 'bg-blue-900' : 'bg-yellow-500'; // Usando classes Tailwind equivalentes a #1E3951 e #F8AB14
     
     alertDiv.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg mb-4 transform transition-all duration-300 translate-x-full`;
     alertDiv.innerHTML = `

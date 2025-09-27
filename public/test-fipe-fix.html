@@ -10,18 +10,18 @@
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: white;
         }
         .container {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #1E3951;
         }
         .test-field {
             margin-bottom: 20px;
             padding: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #1E3951;
             border-radius: 5px;
         }
         .test-field label {
@@ -32,24 +32,28 @@
         .test-field input {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #1E3951;
             border-radius: 4px;
             font-size: 16px;
         }
         .result {
             margin-top: 10px;
             padding: 10px;
-            background-color: #e8f5e8;
+            background-color: white;
+            border: 1px solid #1E3951;
             border-radius: 4px;
             font-weight: bold;
+            color: #1E3951;
         }
         .error {
-            background-color: #ffe8e8;
-            color: #d00;
+            background-color: white;
+            color: #1E3951;
+            border-color: #F8AB14;
         }
         .success {
-            background-color: #e8f5e8;
-            color: #080;
+            background-color: white;
+            color: #1E3951;
+            border-color: #F8AB14;
         }
     </style>
 </head>
@@ -70,8 +74,8 @@
             <button onclick="testarValor('10000')">Testar: 10.000,00</button>
             <button onclick="testarValor('100000')">Testar: 100.000,00</button>
             <button onclick="testarValor('123456')">Testar: 1.234,56</button>
-            <button onclick="testarValor('1111111111')" style="background-color: #ffeb3b;">🚨 Teste 1: 11.111.111,11</button>
-            <button onclick="testarValor('123456789')" style="background-color: #ffeb3b;">🚨 Teste 2: 1.234.567,89</button>
+            <button onclick="testarValor('1111111111')" style="background-color: #F8AB14; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin: 5px; cursor: pointer;">🚨 Teste 1: 11.111.111,11</button>
+            <button onclick="testarValor('123456789')" style="background-color: #F8AB14; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin: 5px; cursor: pointer;">🚨 Teste 2: 1.234.567,89</button>
             <div class="result" id="resultado-teste">Clique em um botão para testar</div>
         </div>
     </div>

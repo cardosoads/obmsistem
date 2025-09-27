@@ -3,93 +3,155 @@
 @section('title', 'Nova Base')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Nova Base</h1>
-        <a href="{{ route('admin.bases.index') }}" 
-           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
-            <i class="fas fa-arrow-left mr-2"></i>Voltar
-        </a>
+<!-- Header com gradiente -->
+<div class="rounded-xl shadow-lg mb-6" style="background: linear-gradient(135deg, #1E3951 0%, #2A4A66 100%);">
+    <div class="p-6">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-xl flex items-center justify-center" style="background: rgba(248, 171, 20, 0.2);">
+                    <i class="fas fa-plus text-3xl" style="color: #F8AB14;"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Nova Base</h1>
+                    <p class="text-blue-100">Cadastre uma nova base operacional no sistema</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.bases.index') }}" 
+               class="flex items-center px-6 py-3 rounded-xl text-white transition-all duration-200 hover:scale-105" 
+               style="background: rgba(248, 171, 20, 0.2); border: 1px solid rgba(248, 171, 20, 0.3);">
+                <i class="fas fa-arrow-left mr-2"></i>Voltar
+            </a>
+        </div>
     </div>
+</div>
 
-    <form action="{{ route('admin.bases.store') }}" method="POST" class="space-y-6">
+<!-- Breadcrumbs -->
+<nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium hover:text-blue-600" style="color: #1E3951;">
+                <i class="fas fa-home mr-2"></i>Dashboard
+            </a>
+        </li>
+        <li>
+            <div class="flex items-center">
+                <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                <a href="{{ route('admin.bases.index') }}" class="text-sm font-medium hover:text-blue-600" style="color: #1E3951;">Bases</a>
+            </div>
+        </li>
+        <li aria-current="page">
+            <div class="flex items-center">
+                <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                <span class="text-sm font-medium text-gray-500">Nova Base</span>
+            </div>
+        </li>
+    </ol>
+</nav>
+
+<!-- Formulário -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+
+    <form action="{{ route('admin.bases.store') }}" method="POST" class="p-8">
         @csrf
         
         <!-- Dados Básicos -->
-        <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Dados Básicos</h3>
+        <div class="mb-8">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4" style="background: rgba(30, 57, 81, 0.1);">
+                    <i class="fas fa-info-circle text-lg" style="color: #1E3951;"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="color: #1E3951;">Dados Básicos</h3>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="uf" class="block text-sm font-medium text-gray-700 mb-2">UF *</label>
+                    <label for="uf" class="block text-sm font-semibold mb-3" style="color: #1E3951;">UF *</label>
                     <select id="uf" 
                             name="uf" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('uf') border-red-500 @enderror" 
+                            class="w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none @error('uf') border-red-400 @enderror" 
+                            style="border-color: rgba(30, 57, 81, 0.2); focus:border-color: #F8AB14;" 
                             required>
                         <option value="">Selecione um estado</option>
                     </select>
                     @error('uf')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-2 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                        </p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">BASE (Cidade) *</label>
+                    <label for="name" class="block text-sm font-semibold mb-3" style="color: #1E3951;">BASE (Cidade) *</label>
                     <select id="name" 
                             name="name" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror" 
+                            class="w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none @error('name') border-red-400 @enderror" 
+                            style="border-color: rgba(30, 57, 81, 0.2); focus:border-color: #F8AB14;" 
                             required 
                             disabled>
                         <option value="">Primeiro selecione um estado</option>
                     </select>
                     @error('name')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-2 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                        </p>
                     @enderror
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
-                    <label for="regional" class="block text-sm font-medium text-gray-700 mb-2">REGIONAL</label>
+                    <label for="regional" class="block text-sm font-semibold mb-3" style="color: #1E3951;">REGIONAL</label>
                     <input type="text" 
                            id="regional" 
                            name="regional" 
                            value="{{ old('regional') }}"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none" 
+                           class="w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none" 
+                           style="border-color: rgba(30, 57, 81, 0.2); background-color: #f8f9fa;" 
                            readonly>
-                    <p class="text-xs text-gray-500 mt-1">Preenchido automaticamente</p>
+                    <p class="text-xs text-gray-500 mt-2 flex items-center">
+                        <i class="fas fa-info-circle mr-1"></i>Preenchido automaticamente
+                    </p>
                     @error('regional')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-2 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                        </p>
                     @enderror
                 </div>
                 
                 <div>
-                    <label for="sigla" class="block text-sm font-medium text-gray-700 mb-2">SIGLA</label>
+                    <label for="sigla" class="block text-sm font-semibold mb-3" style="color: #1E3951;">SIGLA</label>
                     <input type="text" 
                            id="sigla" 
                            name="sigla" 
                            value="{{ old('sigla') }}"
                            maxlength="3"
                            placeholder="ABC"
-                           style="text-transform: uppercase;"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('sigla') border-red-500 @enderror">
-                    <p class="text-xs text-gray-500 mt-1">3 caracteres maiúsculos</p>
+                           style="text-transform: uppercase; border-color: rgba(30, 57, 81, 0.2);"
+                           class="w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none @error('sigla') border-red-400 @enderror">
+                    <p class="text-xs text-gray-500 mt-2 flex items-center">
+                        <i class="fas fa-info-circle mr-1"></i>3 caracteres maiúsculos
+                    </p>
                     @error('sigla')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-2 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                        </p>
                     @enderror
                 </div>
             </div>
             
-            <div class="mt-4">
+            <div class="mt-6">
                 <div>
-                    <label for="supervisor" class="block text-sm font-medium text-gray-700 mb-2">SUPERVISOR</label>
+                    <label for="supervisor" class="block text-sm font-semibold mb-3" style="color: #1E3951;">SUPERVISOR</label>
                     <input type="text" 
                            id="supervisor" 
                            name="supervisor" 
                            value="{{ old('supervisor') }}"
                            placeholder="Nome do supervisor"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('supervisor') border-red-500 @enderror">
+                           style="border-color: rgba(30, 57, 81, 0.2);"
+                           class="w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none @error('supervisor') border-red-400 @enderror">
                     @error('supervisor')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-400 text-sm mt-2 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                        </p>
                     @enderror
                 </div>
             </div>
@@ -98,29 +160,37 @@
 
 
         <!-- Status -->
-        <div class="bg-gray-50 p-6 rounded-lg">
-            <h3 class="text-lg font-semibold text-gray-700 mb-4">Status</h3>
-            <div class="flex items-center">
+        <div class="mb-8">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4" style="background: rgba(30, 57, 81, 0.1);">
+                    <i class="fas fa-toggle-on text-lg" style="color: #1E3951;"></i>
+                </div>
+                <h3 class="text-xl font-bold" style="color: #1E3951;">Status</h3>
+            </div>
+            <div class="flex items-center p-4 rounded-xl" style="background: rgba(30, 57, 81, 0.05);">
                 <input type="checkbox" 
                        id="active" 
                        name="active" 
                        value="1" 
                        {{ old('active', true) ? 'checked' : '' }}
-                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="active" class="ml-2 block text-sm text-gray-700">
-                    Base ativa
+                       class="h-5 w-5 rounded transition-all duration-200" 
+                       style="accent-color: #F8AB14;">
+                <label for="active" class="ml-3 block text-sm font-medium" style="color: #1E3951;">
+                    <i class="fas fa-check-circle mr-2" style="color: #F8AB14;"></i>Base ativa
                 </label>
             </div>
         </div>
 
         <!-- Botões -->
-        <div class="flex justify-end space-x-4">
+        <div class="flex justify-end space-x-4 pt-6 border-t" style="border-color: rgba(30, 57, 81, 0.1);">
             <a href="{{ route('admin.bases.index') }}" 
-               class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-200">
-                Cancelar
+               class="flex items-center px-6 py-3 rounded-xl text-white transition-all duration-200 hover:scale-105" 
+               style="background: rgba(108, 117, 125, 0.8);">
+                <i class="fas fa-times mr-2"></i>Cancelar
             </a>
             <button type="submit" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition duration-200">
+                    class="flex items-center px-8 py-3 rounded-xl text-white font-semibold transition-all duration-200 hover:scale-105 shadow-lg" 
+                    style="background: linear-gradient(135deg, #F8AB14 0%, #E09612 100%);">
                 <i class="fas fa-save mr-2"></i>Salvar Base
             </button>
         </div>

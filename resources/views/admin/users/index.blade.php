@@ -10,7 +10,7 @@
         <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <h1 class="text-xl font-semibold text-gray-900">Gerenciar Usuários</h1>
-                <a href="{{ route('admin.users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a href="{{ route('admin.users.create') }}" class="text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200" style="background: #1E3951;" onmouseover="this.style.background='#2A4A63'" onmouseout="this.style.background='#1E3951'">
                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
@@ -85,7 +85,7 @@
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
                                     @if($user->id === auth()->id())
-                                        <div class="text-xs text-blue-600">(Você)</div>
+                                        <div class="text-xs" style="color: #1E3951;">(Você)</div>
                                     @endif
                                 </div>
                             </div>
@@ -95,9 +95,12 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                @if($user->role === 'admin') bg-red-100 text-red-800
-                                @elseif($user->role === 'manager') bg-yellow-100 text-yellow-800
-                                @else bg-green-100 text-green-800 @endif">
+                                @if($user->role === 'admin') text-white
+                        @elseif($user->role === 'manager') text-white
+                        @else text-white @endif"
+                        style="@if($user->role === 'admin') background: #1E3951;
+                        @elseif($user->role === 'manager') background: #F8AB14;
+                        @else background: #1E3951; @endif">
                                 @if($user->role === 'admin') Administrador
                                 @elseif($user->role === 'manager') Gerente
                                 @else Usuário @endif
@@ -105,11 +108,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($user->email_verified_at)
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" style="background: #1E3951;">
                                     Ativo
                                 </span>
                             @else
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" style="background: #F8AB14;">
                                     Inativo
                                 </span>
                             @endif
@@ -119,7 +122,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center space-x-2">
-                                <a href="{{ route('admin.users.show', $user) }}" class="text-blue-600 hover:text-blue-900" title="Visualizar">
+                                <a href="{{ route('admin.users.show', $user) }}" class="transition-colors duration-200" style="color: #1E3951;" onmouseover="this.style.color='#2A4A63'" onmouseout="this.style.color='#1E3951'" title="Visualizar">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -135,7 +138,7 @@
                                     <form method="POST" action="{{ route('admin.users.toggle-status', $user) }}" class="inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="{{ $user->email_verified_at ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }}" title="{{ $user->email_verified_at ? 'Desativar' : 'Ativar' }}">
+                                        <button type="submit" class="transition-colors duration-200" style="color: {{ $user->email_verified_at ? '#F8AB14' : '#1E3951' }};" onmouseover="this.style.color='{{ $user->email_verified_at ? '#E09712' : '#2A4A63' }}'" onmouseout="this.style.color='{{ $user->email_verified_at ? '#F8AB14' : '#1E3951' }}'" title="{{ $user->email_verified_at ? 'Desativar' : 'Ativar' }}">
                                             @if($user->email_verified_at)
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
@@ -161,7 +164,7 @@
                                     <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
+                                        <button type="submit" class="transition-colors duration-200" style="color: #F8AB14;" onmouseover="this.style.color='#E09712'" onmouseout="this.style.color='#F8AB14'" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>

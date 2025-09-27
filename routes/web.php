@@ -26,7 +26,8 @@ use App\Http\Controllers\CombustivelController;
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login.form');
 
 // Rotas de autenticação
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/check-auth', [AuthController::class, 'checkAuth'])->name('auth.check');
 
@@ -75,6 +76,26 @@ Route::middleware(['admin.auth'])->group(function () {
     //     ]
     // ]);
     // Route::patch('/admin/clientes/{cliente}/status', [ClienteController::class, 'toggleStatus'])->name('admin.clientes.toggle-status');
+    
+    // Rotas temporárias para testar as novas views de clientes
+    Route::get('/admin/clientes-new', function() {
+        $clientes = \App\Models\Cliente::latest()->paginate(15);
+        return view('admin.clientes.clientes-new', compact('clientes'));
+    })->name('admin.clientes.new-index');
+    
+    Route::get('/admin/clientes-new/create', function() {
+        return view('admin.clientes.create-new');
+    })->name('admin.clientes.new-create');
+    
+    Route::get('/admin/clientes-new/{cliente}/edit', function($cliente) {
+        $cliente = \App\Models\Cliente::findOrFail($cliente);
+        return view('admin.clientes.edit-new', compact('cliente'));
+    })->name('admin.clientes.new-edit');
+    
+    Route::get('/admin/clientes-new/{cliente}', function($cliente) {
+        $cliente = \App\Models\Cliente::findOrFail($cliente);
+        return view('admin.clientes.show-new', compact('cliente'));
+    })->name('admin.clientes.new-show');
     
     // Fornecedores - Removido: agora utilizamos integração com API OMIE
     // Route::resource('admin/fornecedores', FornecedorController::class, [

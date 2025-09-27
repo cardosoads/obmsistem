@@ -10,7 +10,7 @@
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: white;
         }
         .container {
             background: white;
@@ -21,7 +21,7 @@
         .test-field {
             margin-bottom: 20px;
             padding: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #1E3951;
             border-radius: 5px;
         }
         .test-field label {
@@ -32,43 +32,47 @@
         .test-field input {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #1E3951;
             border-radius: 4px;
             font-size: 16px;
         }
         .result {
             margin-top: 10px;
             padding: 10px;
-            background-color: #e8f5e8;
+            background-color: white;
+            border: 1px solid #1E3951;
             border-radius: 4px;
             font-weight: bold;
+            color: #1E3951;
         }
         .error {
-            background-color: #ffe8e8;
-            color: #d00;
+            background-color: white;
+            color: #1E3951;
+            border-color: #F8AB14;
         }
         .success {
-            background-color: #e8f5e8;
-            color: #080;
+            background-color: white;
+            color: #1E3951;
+            border-color: #F8AB14;
         }
         .test-case {
             margin-bottom: 15px;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #1E3951;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: white;
         }
         button {
             margin: 5px;
             padding: 8px 15px;
-            background-color: #007bff;
+            background-color: #1E3951;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #F8AB14;
         }
     </style>
 </head>
@@ -112,12 +116,12 @@
             
             <div style="margin-top: 15px;">
                 <h4>📊 Log de Eventos em Tempo Real:</h4>
-                <div id="log-eventos" style="background: #f0f0f0; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+                <div id="log-eventos" style="background: white; border: 1px solid #1E3951; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
             </div>
             
             <div style="margin-top: 15px;">
                 <h4>📈 Resumo dos Resultados:</h4>
-                <div id="resumo-resultados" style="background: #e8f5e8; padding: 10px; border-radius: 5px;"></div>
+                <div id="resumo-resultados" style="background: white; border: 1px solid #1E3951; padding: 10px; border-radius: 5px;"></div>
             </div>
         </div>
         
@@ -362,28 +366,28 @@
                 
                 <h5>📋 Detalhes por Cenário:</h5>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                    <tr style="background: #ddd; font-weight: bold;">
-                        <td style="border: 1px solid #ccc; padding: 5px;">Cenário</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">Digitado</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">Campo</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">Numérico</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">Formatado</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">Status</td>
+                    <tr style="background: #F8AB14; font-weight: bold; color: white;">
+                        <td style="border: 1px solid #1E3951; padding: 5px;">Cenário</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px;">Digitado</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px;">Campo</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px;">Numérico</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px;">Formatado</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px;">Status</td>
                     </tr>
             `;
             
             resultadosTeste.forEach(resultado => {
                 const statusIcon = resultado.sucesso ? '✅' : '❌';
-                const rowColor = resultado.sucesso ? '#e8f5e8' : '#ffe8e8';
+                const rowColor = resultado.sucesso ? 'white' : 'white';
                 
                 html += `
                     <tr style="background: ${rowColor};">
-                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.cenario}</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorDigitado}</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorCampo}</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorNumerico}</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">${resultado.valorFormatado}</td>
-                        <td style="border: 1px solid #ccc; padding: 5px;">${statusIcon}</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px; color: #1E3951;">${resultado.cenario}</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px; color: #1E3951;">${resultado.valorDigitado}</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px; color: #1E3951;">${resultado.valorCampo}</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px; color: #1E3951;">${resultado.valorNumerico}</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px; color: #1E3951;">${resultado.valorFormatado}</td>
+                        <td style="border: 1px solid #1E3951; padding: 5px; color: #1E3951;">${statusIcon}</td>
                     </tr>
                 `;
             });
@@ -498,18 +502,18 @@
                 try {
                     const testResult = window.BrazilianValues.formatToBRL(1234.56);
                     statusDiv.innerHTML = `
-                        <span style="color: green;">✅ Brazilian Values carregado com sucesso!</span><br>
+                        <span style="color: #1E3951;">✅ Brazilian Values carregado com sucesso!</span><br>
                         <strong>Teste:</strong> BrazilianValues.formatToBRL(1234.56) = ${testResult}<br>
                         <strong>Versão:</strong> Biblioteca carregada via CDN
                     `;
                 } catch (e) {
                     statusDiv.innerHTML = `
-                        <span style="color: red;">❌ Erro ao usar Brazilian Values: ${e.message}</span>
+                        <span style="color: #1E3951;">❌ Erro ao usar Brazilian Values: ${e.message}</span>
                     `;
                 }
             } else {
                 statusDiv.innerHTML = `
-                    <span style="color: orange;">⚠️ Brazilian Values não carregado, usando implementação fallback</span><br>
+                    <span style="color: #F8AB14;">⚠️ Brazilian Values não carregado, usando implementação fallback</span><br>
                     <small>A máscara funcionará normalmente com nossa implementação manual</small>
                 `;
                 // Tentar novamente em 1 segundo, mas apenas por 10 tentativas

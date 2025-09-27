@@ -4,409 +4,369 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-<div class="space-y-8">
-    <!-- Welcome Section -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl shadow-xl">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full"></div>
-        <div class="absolute bottom-0 left-0 -mb-8 -ml-8 w-24 h-24 bg-white opacity-5 rounded-full"></div>
-        <div class="relative p-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-white mb-2">Olá, {{ $user->name }}! 👋</h1>
-                    <p class="text-blue-100 text-lg">Bem-vindo de volta ao seu painel administrativo</p>
-                    <p class="text-blue-200 text-sm mt-1">{{ now()->format('l, d \d\e F \d\e Y') }}</p>
-                </div>
-                <div class="hidden md:block">
-                    <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                        <i class="fas fa-chart-line text-white text-2xl"></i>
+<div class="min-h-screen bg-gray-50">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden" style="background: linear-gradient(135deg, #1E3951 0%, #2A4A63 100%);">
+        <div class="absolute inset-0 bg-black opacity-5"></div>
+        <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 rounded-full" style="background: #F8AB14; opacity: 0.1;"></div>
+        <div class="absolute bottom-0 left-0 -mb-6 -ml-6 w-32 h-32 rounded-full" style="background: #F8AB14; opacity: 0.08;"></div>
+        <div class="relative px-6 py-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold text-white mb-3">Olá, {{ $user->name }}! 👋</h1>
+                        <p class="text-blue-100 text-xl mb-2">Bem-vindo ao seu painel de controle</p>
+                        <p class="text-blue-200 text-sm">{{ now()->format('l, d \d\e F \d\e Y') }} • {{ now()->format('H:i') }}</p>
+                    </div>
+                    <div class="hidden lg:block">
+                        <div class="w-24 h-24 rounded-2xl flex items-center justify-center" style="background: rgba(248, 171, 20, 0.2);">
+                            <i class="fas fa-tachometer-alt text-white text-3xl"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Users -->
-        <div class="group bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Total de Usuários</p>
-                        <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_users']) }}</p>
-                        <p class="text-xs text-green-600 mt-1">
-                            <i class="fas fa-arrow-up mr-1"></i>+12% este mês
-                        </p>
+    <div class="max-w-7xl mx-auto px-6 -mt-8 relative z-10">
+
+        <!-- Cards de Métricas Principais -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total de Orçamentos -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-600 mb-2">Total de Orçamentos</p>
+                            <p class="text-3xl font-bold" style="color: #1E3951;">{{ number_format($stats['total_orcamentos'] ?? 0) }}</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-xs px-2 py-1 rounded-full" style="background: rgba(248, 171, 20, 0.1); color: #F8AB14;">
+                                    <i class="fas fa-arrow-up mr-1"></i>+15% este mês
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #1E3951, #2A4A63);">
+                            <i class="fas fa-file-invoice-dollar text-white text-xl"></i>
+                        </div>
                     </div>
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users text-white text-lg"></i>
+                </div>
+            </div>
+
+            <!-- Valor Total dos Orçamentos -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-600 mb-2">Valor Total</p>
+                            <p class="text-3xl font-bold" style="color: #1E3951;">R$ {{ number_format($stats['valor_total_orcamentos'] ?? 0, 0, ',', '.') }}</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-xs px-2 py-1 rounded-full" style="background: rgba(248, 171, 20, 0.1); color: #F8AB14;">
+                                    <i class="fas fa-chart-line mr-1"></i>Crescimento
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #F8AB14, #E09712);">
+                            <i class="fas fa-dollar-sign text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usuários Ativos -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-600 mb-2">Usuários Ativos</p>
+                            <p class="text-3xl font-bold" style="color: #1E3951;">{{ number_format($stats['active_users'] ?? 0) }}</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-xs px-2 py-1 rounded-full" style="background: rgba(30, 57, 81, 0.1); color: #1E3951;">
+                                    <i class="fas fa-users mr-1"></i>Online agora
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #1E3951, #2A4A63);">
+                            <i class="fas fa-user-check text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status do Sistema -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-600 mb-2">Sistema</p>
+                            <p class="text-2xl font-bold" style="color: #1E3951;">Operacional</p>
+                            <div class="flex items-center mt-2">
+                                <span class="text-xs px-2 py-1 rounded-full" style="background: rgba(30, 57, 81, 0.1); color: #1E3951;">
+                                    <i class="fas fa-circle mr-1 animate-pulse" style="color: #1E3951;"></i>99.9% uptime
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #1E3951, #2A4A63);">
+                            <i class="fas fa-server text-white text-xl"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Active Users -->
-        <div class="group bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Usuários Ativos</p>
-                        <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['active_users']) }}</p>
-                        <p class="text-xs text-green-600 mt-1">
-                            <i class="fas fa-arrow-up mr-1"></i>+8% esta semana
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-user-check text-white text-lg"></i>
-                    </div>
-                </div>
+        <!-- Ações Rápidas - Largura Total -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <h3 class="text-xl font-bold flex items-center" style="color: #1E3951;">
+                    <i class="fas fa-bolt mr-3" style="color: #F8AB14;"></i>
+                    Ações Rápidas
+                </h3>
+                <p class="text-gray-600 text-sm mt-1">Acesso direto às principais funcionalidades do sistema</p>
             </div>
-        </div>
-
-        <!-- Recent Logins -->
-        <div class="group bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Logins Hoje</p>
-                        <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['recent_logins']) }}</p>
-                        <p class="text-xs text-yellow-600 mt-1">
-                            <i class="fas fa-clock mr-1"></i>Últimas 24h
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-sign-in-alt text-white text-lg"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- System Status -->
-        <div class="group bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Status do Sistema</p>
-                        <p class="text-xl font-bold text-green-600">{{ $stats['system_status'] }}</p>
-                        <p class="text-xs text-green-600 mt-1">
-                            <i class="fas fa-circle text-green-400 mr-1 animate-pulse"></i>Online
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-server text-white text-lg"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Módulos Stats Cards -->
-    <div class="bg-white overflow-hidden shadow-lg rounded-xl">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <i class="fas fa-cubes text-blue-500 mr-2"></i>
-                Estatísticas dos Módulos
-            </h3>
-        </div>
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Recursos Humanos -->
-                <div class="group bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-users text-white text-lg"></i>
+            <div class="p-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- Novo Orçamento -->
+                    <a href="{{ route('admin.orcamentos.create') }}" class="group flex flex-col items-center p-6 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border: 1px solid rgba(30, 57, 81, 0.1);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: #1E3951;">
+                            <i class="fas fa-plus text-white text-lg"></i>
                         </div>
-                        <a href="{{ route('admin.recursos-humanos.index') }}" class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Recursos Humanos</h4>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Total:</span>
-                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_funcionarios']) }}</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Ativos:</span>
-                            <span class="font-medium text-green-600">{{ number_format($modulesStats['funcionarios_ativos']) }}</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Custo Total:</span>
-                            <span class="font-medium text-blue-600">R$ {{ number_format($modulesStats['custo_total_funcionarios'], 2, ',', '.') }}</span>
-                        </div>
-                    </div>
-                </div>
+                        <p class="text-sm font-semibold text-gray-900 text-center">Novo Orçamento</p>
+                        <p class="text-xs text-gray-600 text-center mt-1">Criar orçamento</p>
+                    </a>
 
-                <!-- Frotas -->
-                <div class="group bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <!-- Gerenciar Frotas -->
+                    <a href="{{ route('admin.frotas.index') }}" class="group flex flex-col items-center p-6 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border: 1px solid rgba(30, 57, 81, 0.1);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: #1E3951;">
                             <i class="fas fa-car text-white text-lg"></i>
                         </div>
-                        <a href="{{ route('admin.frotas.index') }}" class="text-green-600 hover:text-green-800 transition-colors duration-200">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Frotas</h4>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Total:</span>
-                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_veiculos']) }}</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Ativos:</span>
-                            <span class="font-medium text-green-600">{{ number_format($modulesStats['veiculos_ativos']) }}</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Valor Médio:</span>
-                            <span class="font-medium text-green-600">R$ {{ number_format($modulesStats['valor_medio_veiculo'] ?? 0, 2, ',', '.') }}</span>
-                        </div>
-                    </div>
-                </div>
+                        <p class="text-sm font-semibold text-gray-900 text-center">Frotas</p>
+                        <p class="text-xs text-gray-600 text-center mt-1">Gerenciar veículos</p>
+                    </a>
 
-                <!-- Tipos de Veículos -->
-                <div class="group bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-truck text-white text-lg"></i>
+                    <!-- Recursos Humanos -->
+                    <a href="{{ route('admin.recursos-humanos.index') }}" class="group flex flex-col items-center p-6 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border: 1px solid rgba(30, 57, 81, 0.1);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: #1E3951;">
+                            <i class="fas fa-users text-white text-lg"></i>
                         </div>
-                        <a href="{{ route('admin.tipos-veiculos.index') }}" class="text-purple-600 hover:text-purple-800 transition-colors duration-200">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Tipos de Veículos</h4>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Total:</span>
-                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_tipos_veiculos']) }}</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Ativos:</span>
-                            <span class="font-medium text-green-600">{{ number_format($modulesStats['tipos_veiculos_ativos']) }}</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Consumo Médio:</span>
-                            <span class="font-medium text-purple-600">{{ number_format($modulesStats['consumo_medio'] ?? 0, 1, ',', '.') }} km/l</span>
-                        </div>
-                    </div>
-                </div>
+                        <p class="text-sm font-semibold text-gray-900 text-center">RH</p>
+                        <p class="text-xs text-gray-600 text-center mt-1">Funcionários</p>
+                    </a>
 
-                <!-- Combustíveis -->
-                <div class="group bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-gas-pump text-white text-lg"></i>
+                    <!-- Bases -->
+                    <a href="{{ route('admin.bases.index') }}" class="group flex flex-col items-center p-6 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border: 1px solid rgba(30, 57, 81, 0.1);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: #1E3951;">
+                            <i class="fas fa-map-marker-alt text-white text-lg"></i>
                         </div>
-                        <a href="{{ route('admin.combustiveis.index') }}" class="text-orange-600 hover:text-orange-800 transition-colors duration-200">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
+                        <p class="text-sm font-semibold text-gray-900 text-center">Bases</p>
+                        <p class="text-xs text-gray-600 text-center mt-1">Localizações</p>
+                    </a>
+
+                    <!-- Relatórios -->
+                    <a href="{{ route('admin.reports') }}" class="group flex flex-col items-center p-6 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border: 1px solid rgba(30, 57, 81, 0.1);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: #1E3951;">
+                            <i class="fas fa-chart-bar text-white text-lg"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-900 text-center">Relatórios</p>
+                        <p class="text-xs text-gray-600 text-center mt-1">Análises</p>
+                    </a>
+
+                    <!-- Configurações -->
+                    <a href="{{ route('admin.settings') }}" class="group flex flex-col items-center p-6 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border: 1px solid rgba(30, 57, 81, 0.1);">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background: #1E3951;">
+                            <i class="fas fa-cog text-white text-lg"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-900 text-center">Configurações</p>
+                        <p class="text-xs text-gray-600 text-center mt-1">Sistema</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Módulos do Sistema -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <h3 class="text-xl font-bold flex items-center" style="color: #1E3951;">
+                    <i class="fas fa-th-large mr-3" style="color: #F8AB14;"></i>
+                    Módulos do Sistema
+                </h3>
+                <p class="text-gray-600 text-sm mt-1">Visão geral dos principais módulos e suas estatísticas</p>
+            </div>
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Recursos Humanos -->
+                    <div class="group relative p-6 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border-color: rgba(30, 57, 81, 0.2);">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #1E3951;">
+                                <i class="fas fa-users text-white text-lg"></i>
+                            </div>
+                            <a href="{{ route('admin.recursos-humanos.index') }}" class="transition-colors duration-200" style="color: #1E3951;" onmouseover="this.style.color='#2A4A63'" onmouseout="this.style.color='#1E3951'">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Recursos Humanos</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Total:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['total_funcionarios'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Ativos:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['funcionarios_ativos'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Custo Total:</span>
+                                <span class="font-semibold" style="color: #F8AB14;">R$ {{ number_format($modulesStats['custo_total_funcionarios'] ?? 0, 2, ',', '.') }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Combustíveis</h4>
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Total:</span>
-                            <span class="font-medium text-gray-900">{{ number_format($modulesStats['total_combustiveis']) }}</span>
+
+                    <!-- Frotas -->
+                    <div class="group relative p-6 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border" style="background: linear-gradient(135deg, rgba(30, 57, 81, 0.05), rgba(30, 57, 81, 0.1)); border-color: rgba(30, 57, 81, 0.2);">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #1E3951;">
+                                <i class="fas fa-car text-white text-lg"></i>
+                            </div>
+                            <a href="{{ route('admin.frotas.index') }}" class="transition-colors duration-200" style="color: #1E3951;" onmouseover="this.style.color='#2A4A63'" onmouseout="this.style.color='#1E3951'">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
                         </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Ativos:</span>
-                            <span class="font-medium text-green-600">{{ number_format($modulesStats['combustiveis_ativos']) }}</span>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Frotas</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Total:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['total_veiculos'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Ativos:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['veiculos_ativos'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Valor Médio:</span>
+                                <span class="font-semibold" style="color: #F8AB14;">R$ {{ number_format($modulesStats['valor_medio_veiculo'] ?? 0, 2, ',', '.') }}</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-600">Preço Médio:</span>
-                            <span class="font-medium text-orange-600">R$ {{ number_format($modulesStats['preco_medio_combustivel'] ?? 0, 2, ',', '.') }}</span>
+                    </div>
+
+                    <!-- Bases -->
+                    <div class="group relative p-6 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border" style="background: linear-gradient(135deg, rgba(248, 171, 20, 0.05), rgba(248, 171, 20, 0.1)); border-color: rgba(248, 171, 20, 0.2);">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #F8AB14;">
+                                <i class="fas fa-map-marker-alt text-white text-lg"></i>
+                            </div>
+                            <a href="{{ route('admin.bases.index') }}" class="transition-colors duration-200" style="color: #F8AB14;" onmouseover="this.style.color='#E09712'" onmouseout="this.style.color='#F8AB14'">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Bases</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Total:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['total_bases'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Ativas:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['bases_ativas'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Regiões:</span>
+                                <span class="font-semibold" style="color: #F8AB14;">{{ number_format($modulesStats['total_regioes'] ?? 0) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orçamentos -->
+                    <div class="group relative p-6 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border" style="background: linear-gradient(135deg, rgba(248, 171, 20, 0.05), rgba(248, 171, 20, 0.1)); border-color: rgba(248, 171, 20, 0.2);">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #F8AB14;">
+                                <i class="fas fa-file-invoice-dollar text-white text-lg"></i>
+                            </div>
+                            <a href="{{ route('admin.orcamentos.index') }}" class="transition-colors duration-200" style="color: #F8AB14;" onmouseover="this.style.color='#E09712'" onmouseout="this.style.color='#F8AB14'">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Orçamentos</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Total:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['total_orcamentos'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Aprovados:</span>
+                                <span class="font-semibold" style="color: #1E3951;">{{ number_format($modulesStats['orcamentos_aprovados'] ?? 0) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Valor Médio:</span>
+                                <span class="font-semibold" style="color: #F8AB14;">R$ {{ number_format($modulesStats['valor_medio_orcamento'] ?? 0, 2, ',', '.') }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Recent Activity -->
-        <div class="lg:col-span-2">
-            <div class="bg-white overflow-hidden shadow-lg rounded-xl">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-gray-100">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                            <i class="fas fa-history text-blue-500 mr-2"></i>
-                            Atividade Recente
-                        </h3>
-                        <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">Tempo real</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900">Sistema iniciado com sucesso</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ now()->format('d/m/Y H:i') }}</p>
-                                <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
-                                    <div class="bg-green-400 h-1 rounded-full" style="width: 100%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="w-3 h-3 bg-blue-400 rounded-full"></div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900">Usuário {{ $user->name }} fez login</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ now()->format('d/m/Y H:i') }}</p>
-                                <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
-                                    <div class="bg-blue-400 h-1 rounded-full" style="width: 85%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900">Dashboard carregado</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ now()->format('d/m/Y H:i') }}</p>
-                                <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
-                                    <div class="bg-yellow-400 h-1 rounded-full" style="width: 70%"></div>
-                                </div>
-                            </div>
+
+
+        <!-- Seção Principal: Atividades Recentes -->
+        <div class="grid grid-cols-1 gap-8">
+            <!-- Atividades Recentes -->
+            <div class="w-full">
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                    <div class="px-8 py-6 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-bold flex items-center" style="color: #1E3951;">
+                                <i class="fas fa-clock mr-3" style="color: #F8AB14;"></i>
+                                Atividades Recentes
+                            </h3>
+                            <span class="text-xs px-3 py-1 rounded-full" style="background: rgba(248, 171, 20, 0.1); color: #F8AB14;">Tempo real</span>
                         </div>
                     </div>
-                    <div class="mt-6 text-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200">
-                            Ver todas as atividades <i class="fas fa-arrow-right ml-1"></i>
-                        </a>
+                    <div class="p-8">
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-4 h-4 rounded-full animate-pulse shadow-lg" style="background: #1E3951;"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900">Sistema iniciado com sucesso</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ now()->format('d/m/Y H:i') }}</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                        <div class="h-2 rounded-full transition-all duration-500" style="width: 100%; background: #1E3951;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-4 h-4 rounded-full shadow-lg" style="background: #1E3951;"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900">Usuário {{ $user->name }} fez login</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ now()->format('d/m/Y H:i') }}</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                        <div class="h-2 rounded-full transition-all duration-500" style="width: 85%; background: #1E3951;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-4 h-4 rounded-full shadow-lg" style="background: #F8AB14;"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900">Dashboard carregado</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ now()->format('d/m/Y H:i') }}</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                        <div class="h-2 rounded-full transition-all duration-500" style="width: 70%; background: #F8AB14;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <a href="#" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md" style="background: rgba(30, 57, 81, 0.1); color: #1E3951;">
+                                Ver todas as atividades <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Quick Actions Sidebar -->
-        <div class="lg:col-span-1">
-            <div class="bg-white overflow-hidden shadow-lg rounded-xl">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-gray-100">
-                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                        <i class="fas fa-bolt text-yellow-500 mr-2"></i>
-                        Ações Rápidas
-                    </h3>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-3">
-                        <!-- Orçamentos -->
-                        <a href="{{ route('admin.orcamentos.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-600 transition-colors duration-200">
-                                <i class="fas fa-file-invoice-dollar text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Orçamentos</p>
-                                <p class="text-xs text-gray-500">Gerenciar orçamentos</p>
-                            </div>
-                        </a>
-
-                        <!-- Clientes/Fornecedores -->
-                        <a href="{{ route('admin.omie.pessoas') }}" class="group flex items-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg hover:from-green-100 hover:to-green-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-600 transition-colors duration-200">
-                                <i class="fas fa-users text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Clientes</p>
-                                <p class="text-xs text-gray-500">API OMIE</p>
-                            </div>
-                        </a>
-
-                        <!-- Bases -->
-                        <a href="{{ route('admin.bases.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg hover:from-red-100 hover:to-red-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-red-600 transition-colors duration-200">
-                                <i class="fas fa-map-marker-alt text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Bases</p>
-                                <p class="text-xs text-gray-500">Localizações</p>
-                            </div>
-                        </a>
-
-                        <!-- Marcas -->
-                        <a href="{{ route('admin.marcas.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg hover:from-purple-100 hover:to-purple-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-600 transition-colors duration-200">
-                                <i class="fas fa-tags text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Marcas</p>
-                                <p class="text-xs text-gray-500">Gerenciar marcas</p>
-                            </div>
-                        </a>
-
-                        <!-- Centros de Custo -->
-                        <a href="{{ route('admin.centros-custo.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-lg hover:from-indigo-100 hover:to-indigo-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-indigo-600 transition-colors duration-200">
-                                <i class="fas fa-building text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Centros de Custo</p>
-                                <p class="text-xs text-gray-500">Controle financeiro</p>
-                            </div>
-                        </a>
-
-                        <!-- Recursos Humanos -->
-                        <a href="{{ route('admin.recursos-humanos.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-600 transition-colors duration-200">
-                                <i class="fas fa-users text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Recursos Humanos</p>
-                                <p class="text-xs text-gray-500">Funcionários</p>
-                            </div>
-                        </a>
-
-                        <!-- Frotas -->
-                        <a href="{{ route('admin.frotas.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg hover:from-green-100 hover:to-green-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-600 transition-colors duration-200">
-                                <i class="fas fa-car text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Frotas</p>
-                                <p class="text-xs text-gray-500">Veículos</p>
-                            </div>
-                        </a>
-
-                        <!-- Tipos de Veículos -->
-                        <a href="{{ route('admin.tipos-veiculos.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg hover:from-purple-100 hover:to-purple-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-600 transition-colors duration-200">
-                                <i class="fas fa-truck text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Tipos de Veículos</p>
-                                <p class="text-xs text-gray-500">Categorias</p>
-                            </div>
-                        </a>
-
-                        <!-- Combustíveis -->
-                        <a href="{{ route('admin.combustiveis.index') }}" class="group flex items-center p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg hover:from-orange-100 hover:to-orange-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-600 transition-colors duration-200">
-                                <i class="fas fa-gas-pump text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Combustíveis</p>
-                                <p class="text-xs text-gray-500">Preços e dados</p>
-                            </div>
-                        </a>
-
-                        <!-- Relatórios -->
-                        <a href="{{ route('admin.reports') }}" class="group flex items-center p-3 bg-gradient-to-r from-teal-50 to-teal-100 rounded-lg hover:from-teal-100 hover:to-teal-200 transition-all duration-200 transform hover:scale-105">
-                            <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-teal-600 transition-colors duration-200">
-                                <i class="fas fa-chart-bar text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Relatórios</p>
-                                <p class="text-xs text-gray-500">Análises e dados</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

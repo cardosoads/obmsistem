@@ -22,7 +22,7 @@
                 </div>
                 <nav class="p-2">
                     <button @click="activeTab = 'profile'" 
-                            :class="activeTab === 'profile' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+                            :class="activeTab === 'profile' ? 'border-2' : 'text-gray-600 hover:text-gray-900'" :style="activeTab === 'profile' ? 'background-color: rgba(30, 57, 81, 0.1); color: #1E3951; border-color: #1E3951;' : ''"
                             class="w-full text-left px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-200 mb-2">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -30,7 +30,7 @@
                         Perfil
                     </button>
                     <button @click="activeTab = 'security'" 
-                            :class="activeTab === 'security' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+                            :class="activeTab === 'security' ? 'border-2' : 'text-gray-600 hover:text-gray-900'" :style="activeTab === 'security' ? 'background-color: rgba(30, 57, 81, 0.1); color: #1E3951; border-color: #1E3951;' : ''"
                             class="w-full text-left px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-200 mb-2">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -38,7 +38,7 @@
                         Segurança
                     </button>
                     <button @click="activeTab = 'system'" 
-                            :class="activeTab === 'system' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+                            :class="activeTab === 'system' ? 'border-2' : 'text-gray-600 hover:text-gray-900'" :style="activeTab === 'system' ? 'background-color: rgba(30, 57, 81, 0.1); color: #1E3951; border-color: #1E3951;' : ''"
                             class="w-full text-left px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-200 mb-2">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -47,7 +47,7 @@
                         Sistema
                     </button>
                     <button @click="activeTab = 'omie'" 
-                            :class="activeTab === 'omie' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+                            :class="activeTab === 'omie' ? 'border-2' : 'text-gray-600 hover:text-gray-900'" :style="activeTab === 'omie' ? 'background-color: rgba(30, 57, 81, 0.1); color: #1E3951; border-color: #1E3951;' : ''"
                             class="w-full text-left px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-200 mb-2">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
@@ -55,7 +55,7 @@
                         API Omie
                     </button>
                     <button @click="activeTab = 'notifications'" 
-                            :class="activeTab === 'notifications' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+                            :class="activeTab === 'notifications' ? 'border-2' : 'text-gray-600 hover:text-gray-900'" :style="activeTab === 'notifications' ? 'background-color: rgba(30, 57, 81, 0.1); color: #1E3951; border-color: #1E3951;' : ''"
                             class="w-full text-left px-4 py-2 text-sm font-medium rounded-md border transition-colors duration-200">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h8v-2H4v2zM4 11h10V9H4v2z"></path>
@@ -89,7 +89,7 @@
                         <textarea id="bio" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Conte um pouco sobre você..."></textarea>
                     </div>
                     <div class="flex justify-end">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <button type="submit" class="text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200" style="background: #1E3951;" onmouseover="this.style.background='#2A4A63'" onmouseout="this.style.background='#1E3951'">
                             Salvar Alterações
                         </button>
                     </div>
@@ -116,7 +116,7 @@
                             <input type="password" id="confirm_password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                            <button type="submit" class="text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200" style="background: #F8AB14;" onmouseover="this.style.background='#E09712'" onmouseout="this.style.background='#F8AB14'">
                                 Alterar Senha
                             </button>
                         </div>
@@ -131,7 +131,7 @@
                                 <p class="text-sm font-medium text-gray-900">2FA não está ativado</p>
                                 <p class="text-sm text-gray-500">Adicione uma camada extra de segurança à sua conta</p>
                             </div>
-                            <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                            <button class="text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200" style="background: #1E3951;" onmouseover="this.style.background='#2A4A63'" onmouseout="this.style.background='#1E3951'">
                                 Ativar 2FA
                             </button>
                         </div>
@@ -174,7 +174,7 @@
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style="peer-focus:ring-color: rgba(30, 57, 81, 0.3); peer-checked:background: #1E3951;"></div>
                                 </label>
                             </div>
                             
@@ -185,14 +185,14 @@
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style="peer-focus:ring-color: rgba(30, 57, 81, 0.3); peer-checked:background: #1E3951;"></div>
                                 </label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="flex justify-end">
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <button class="text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200" style="background: #1E3951;" onmouseover="this.style.background='#2A4A63'" onmouseout="this.style.background='#1E3951'">
                             Salvar Configurações
                         </button>
                     </div>
@@ -207,25 +207,25 @@
                 </div>
                 <div class="p-6">
                     @if(session('success'))
-                        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                        <div class="mb-4 p-4 rounded-md" style="background: rgba(30, 57, 81, 0.1); border: 1px solid rgba(30, 57, 81, 0.2);">
                             <div class="flex">
-                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-5 h-5" style="color: #1E3951;" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
-                                <p class="ml-3 text-sm text-green-700">{{ session('success') }}</p>
+                                <p class="ml-3 text-sm" style="color: #1E3951;">{{ session('success') }}</p>
                             </div>
                         </div>
                     @endif
 
                     @if($errors->any())
-                        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                        <div class="mb-4 p-4 rounded-md" style="background: rgba(248, 171, 20, 0.1); border: 1px solid rgba(248, 171, 20, 0.2);">
                             <div class="flex">
-                                <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-5 h-5" style="color: #F8AB14;" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                                 </svg>
                                 <div class="ml-3">
                                     @foreach($errors->all() as $error)
-                                        <p class="text-sm text-red-700">{{ $error }}</p>
+                                        <p class="text-sm" style="color: #F8AB14;">{{ $error }}</p>
                                     @endforeach
                                 </div>
                             </div>
